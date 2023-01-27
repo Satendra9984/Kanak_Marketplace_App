@@ -13,7 +13,9 @@ Color text500 = const Color(0XFFFFFFFF);
 Color text400 = const Color(0XFFBDBDBD);
 Color text300 = const Color(0XFF828282);
 Color text200 = const Color(0XFF4F4F4F);
-Color text100 = const Color(0XFF333333);
+Color text150 = Colors.grey.shade800;
+Color text100 = const Color(0XFF242424);
+Color darkGreen = const Color(0XFF1D3625);
 
 /// FONT SIZES
 double title = 28.0;

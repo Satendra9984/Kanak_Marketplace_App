@@ -14,8 +14,8 @@ class Tasvat extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(),
-      // home: HomeScreen(),
-      home: PortfolioHome(),
+      home: HomeScreen(),
+      // home: PortfolioHome(),
     );
   }
 }

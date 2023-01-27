@@ -48,7 +48,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
           /// for brief account details
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
@@ -75,6 +75,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
                   style: TextStyle(
                     color: text400,
                     fontSize: body1,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -93,38 +94,19 @@ class _PortfolioHomeState extends State<PortfolioHome> {
                       'MACE',
                       style: TextStyle(
                         fontSize: caption,
-                        color: text500,
+                        color: text400,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
-                // RichText(
-                //   textAlign: TextAlign.start,
-                //   text: TextSpan(
-                //     text: '30.0',
-                //     style: TextStyle(
-                //       fontSize: 48,
-                //       color: text500,
-                //       fontWeight: FontWeight.w600,
-                //     ),
-                //     children: [
-                //       TextSpan(
-                //         text: 'MACE',
-                //         style: TextStyle(
-                //           fontSize: caption,
-                //           color: text500,
-                //         ),
-                //
-                //       ),
-                //     ],
-                //   ),
-                // ),
                 const SizedBox(height: 10),
                 Text(
                   '~ 9,000.00USD',
                   style: TextStyle(
-                    color: text200,
+                    color: text300,
                     fontSize: body2,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],

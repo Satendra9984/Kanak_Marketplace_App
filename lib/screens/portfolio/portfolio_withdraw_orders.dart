@@ -31,6 +31,7 @@ class PortfolioWithdrawOrders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -40,7 +41,7 @@ class PortfolioWithdrawOrders extends StatelessWidget {
             itemBuilder: (context, index) {
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: text200,
+                  backgroundColor: text150,
                   child: Icon(
                     Icons.file_download_outlined,
                     color: accent1,

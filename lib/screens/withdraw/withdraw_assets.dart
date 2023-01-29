@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tasvat/app_constants.dart';
 import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/sell/sell_confirmation.dart';
+import 'package:tasvat/screens/withdraw/select_time_&_vendor.dart';
 
 class WithdrawAssets extends StatelessWidget {
   WithdrawAssets({Key? key}) : super(key: key);
@@ -184,8 +185,7 @@ class WithdrawAssets extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (ctx) =>
-                                            SellConfirmationScreen(
+                                        builder: (ctx) => SelectTimeAndVendor(
                                           buyOrderDetails: Transaction(
                                             activityName: 'Sell',
                                             quantity: double.parse(

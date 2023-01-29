@@ -9,10 +9,10 @@ import '../../app_constants.dart';
 import '../../widgets/row_details_widget.dart';
 import 'book_completed.dart';
 
-class ViewBookingDetailsScreen extends StatelessWidget {
+class WithdrawCompletedScreen extends StatelessWidget {
   final Transaction buyOrderDetails;
   final String id;
-  const ViewBookingDetailsScreen({
+  const WithdrawCompletedScreen({
     Key? key,
     required this.buyOrderDetails,
     required this.id,
@@ -38,27 +38,88 @@ class ViewBookingDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   CircleAvatar(
                     radius: 32,
-                    backgroundColor: warning.withOpacity(0.15),
+                    backgroundColor: darkGreen,
                     child: Icon(
-                      FontAwesomeIcons.rotate,
+                      FontAwesomeIcons.check,
                       size: 32,
-                      color: warning,
+                      color: success,
                     ),
                   ),
                   const SizedBox(height: 15),
+                  Text(
+                    'Withdraw Completed',
+                    style: TextStyle(
+                      fontSize: title,
+                      color: text500,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'ID: $id',
+                        style: TextStyle(
+                          color: text300,
+                          fontSize: body1,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          //TODO: COPY TO CLIPBOARD
+                        },
+                        icon: Icon(
+                          Icons.copy,
+                          size: 18,
+                          color: accent1,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  /// Order Tracking
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: text100,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Order Tracking',
+                          style: TextStyle(
+                            color: text300,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 15),
+                    alignment: AlignmentDirectional.centerStart,
                     child: Text(
-                      'Expired In 72 hours',
+                      'Other Details',
                       style: TextStyle(
-                        fontSize: title,
+                        fontSize: body1,
                         color: text500,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-
-                  const SizedBox(height: 15),
+                  // const SizedBox(height: 5),
 
                   /// Identification
                   Container(
@@ -86,12 +147,11 @@ class ViewBookingDetailsScreen extends StatelessWidget {
                             value: buyOrderDetails.activityName),
                         const SizedBox(height: 25),
                         RowDetailWidget(
-                            title: 'Amount',
+                            title: 'Withdraw Amount',
                             value: '${buyOrderDetails.quantity} mace'),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 5),
 
                   /// vendor details
                   Container(

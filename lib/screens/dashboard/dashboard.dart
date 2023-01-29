@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tasvat/app_constants.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -7,29 +8,32 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: background,
       appBar: AppBar(
         backgroundColor: const Color(0XFF141414),
         elevation: 0.0,
         title: const Text(
-          'Hello Tasvat',
+          'Tasvat',
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
           ),
         ),
         actions: [
-          ClipRRect(
-            child: IconButton(
-              onPressed: () {
-                // navigate to profile screen
-              },
-              icon: const Icon(Icons.person),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 5),
+            child: const CircleAvatar(
+              // borderRadius: BorderRadius.circular(100),
+              radius: 16,
+              backgroundImage: AssetImage(
+                'assets/images/a_man_reading.png',
+              ),
             ),
           ),
         ],
       ),
-      body: Container(
-        child: Text('Gold prices'),
+      body: Column(
+        children: [],
       ),
     );
   }

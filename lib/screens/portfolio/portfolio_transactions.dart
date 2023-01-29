@@ -7,6 +7,9 @@ import 'package:tasvat/screens/buy/buy_completed.dart';
 
 import '../../app_constants.dart';
 import '../../models/withdraw_orders_model.dart';
+import '../sell/sell_completed_screen.dart';
+import '../withdraw/book_completed.dart';
+import '../withdraw/withdraw_completed.dart';
 
 class PortfolioTransactions extends StatelessWidget {
   PortfolioTransactions({super.key});
@@ -143,14 +146,8 @@ class PortfolioTransactions extends StatelessWidget {
                     IconButton(
                       onPressed: () {
                         // TODO: ADD IN WITHDRAW ORDER LIST ARROW BUTTON
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (ctx) => BuyCompletedScreen(
-                                buyOrderDetails: _transactionList[index],
-                                id: index.toString()),
-                          ),
-                        );
+                        _navigateToCompletedScreen(
+                            context, _transactionList[index], index.toString());
                       },
                       icon: Icon(
                         Icons.arrow_forward_ios,
@@ -165,5 +162,40 @@ class PortfolioTransactions extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _navigateToCompletedScreen(
+      BuildContext context, Transaction transactionDetails, String id) {
+    if (transactionDetails.activityName == 'Buy') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => BuyCompletedScreen(
+            buyOrderDetails: transactionDetails,
+            id: id,
+          ),
+        ),
+      );
+    } else if (transactionDetails.activityName == 'Sell') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => SellCompletedScreen(
+            buyOrderDetails: transactionDetails,
+            id: id,
+          ),
+        ),
+      );
+    } else if (transactionDetails.activityName == 'Withdraw') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => WithdrawCompletedScreen(
+            buyOrderDetails: transactionDetails,
+            id: id,
+          ),
+        ),
+      );
+    }
   }
 }

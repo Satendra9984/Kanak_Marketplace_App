@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:tasvat/app_constants.dart';
 import 'package:tasvat/screens/portfolio/portfolio_assets.dart';
 import 'package:tasvat/screens/portfolio/portfolio_transactions.dart';
 import 'package:tasvat/screens/portfolio/portfolio_withdraw_orders.dart';
-
 import '../../widgets/tabs.dart';
 
 class PortfolioHome extends StatefulWidget {

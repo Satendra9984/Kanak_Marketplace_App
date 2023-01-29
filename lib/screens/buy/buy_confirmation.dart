@@ -27,9 +27,11 @@ class BuyConfirmationScreen extends StatelessWidget {
       body: Container(
         margin: const EdgeInsets.symmetric(vertical: 15),
         child: Column(
+          // mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
@@ -122,6 +124,7 @@ class BuyConfirmationScreen extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   /// proceed to buy completed SCREEN
+
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(

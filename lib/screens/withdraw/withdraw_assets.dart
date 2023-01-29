@@ -182,6 +182,7 @@ class WithdrawAssets extends StatelessWidget {
                                   if (_formKey.currentState != null &&
                                       _formKey.currentState!.validate()) {
                                     // TODO : PROCEED TO CONFIRMATION SCREEN
+                                    closeKeyboard(context);
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -235,5 +236,12 @@ class WithdrawAssets extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  closeKeyboard(BuildContext context) {
+    var currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
   }
 }

@@ -181,7 +181,6 @@ class WithdrawAssets extends StatelessWidget {
                                   /// proceed to buy
                                   if (_formKey.currentState != null &&
                                       _formKey.currentState!.validate()) {
-                                    // TODO : PROCEED TO CONFIRMATION SCREEN
                                     closeKeyboard(context);
                                     Navigator.push(
                                       context,

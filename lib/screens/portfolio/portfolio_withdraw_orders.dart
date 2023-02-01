@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:tasvat/app_constants.dart';
+import 'package:tasvat/utils/app_constants.dart';
 import '../../models/withdraw_orders_model.dart';
 
 class PortfolioWithdrawOrders extends StatelessWidget {
@@ -31,6 +29,7 @@ class PortfolioWithdrawOrders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -40,7 +39,7 @@ class PortfolioWithdrawOrders extends StatelessWidget {
             itemBuilder: (context, index) {
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: text200,
+                  backgroundColor: text150,
                   child: Icon(
                     Icons.file_download_outlined,
                     color: accent1,

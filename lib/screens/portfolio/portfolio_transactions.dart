@@ -1,11 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:tasvat/models/transaction_model.dart';
+import 'package:tasvat/screens/buy/buy_completed.dart';
 
-import '../../app_constants.dart';
-import '../../models/withdraw_orders_model.dart';
+import '../../utils/app_constants.dart';
 
 class PortfolioTransactions extends StatelessWidget {
   PortfolioTransactions({super.key});
@@ -54,6 +51,7 @@ class PortfolioTransactions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -63,7 +61,7 @@ class PortfolioTransactions extends StatelessWidget {
             itemBuilder: (context, index) {
               return ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: text200,
+                  backgroundColor: text150,
                   child: Icon(
                     _getIcon(index),
                     color: accent1,
@@ -141,6 +139,14 @@ class PortfolioTransactions extends StatelessWidget {
                     IconButton(
                       onPressed: () {
                         // TODO: ADD IN WITHDRAW ORDER LIST ARROW BUTTON
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) => BuyCompletedScreen(
+                                buyOrderDetails: _transactionList[index],
+                                id: index.toString()),
+                          ),
+                        );
                       },
                       icon: Icon(
                         Icons.arrow_forward_ios,

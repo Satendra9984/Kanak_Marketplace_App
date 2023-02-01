@@ -1,34 +1,31 @@
 {
   "staging": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-tasvat-staging-154629-authRole",
-      "UnauthRoleArn": "arn:aws:iam::640586525302:role/amplify-tasvat-staging-154629-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::640586525302:role/amplify-tasvat-staging-154629-authRole",
-      "Region": "ap-northeast-1",
-      "DeploymentBucketName": "amplify-tasvat-staging-154629-deployment",
-      "UnauthRoleName": "amplify-tasvat-staging-154629-unauthRole",
-      "StackName": "amplify-tasvat-staging-154629",
-      "StackId": "arn:aws:cloudformation:ap-northeast-1:640586525302:stack/amplify-tasvat-staging-154629/99b30090-9d90-11ed-98b9-0ee615f49255",
-      "AmplifyAppId": "d3kmgvkr7drtat",
-      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-tasvat-staging-154629-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+      "AuthRoleName": "amplify-tasvatbackend-staging-153737-authRole",
+      "UnauthRoleArn": "arn:aws:iam::640586525302:role/amplify-tasvatbackend-staging-153737-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::640586525302:role/amplify-tasvatbackend-staging-153737-authRole",
+      "Region": "ap-south-1",
+      "DeploymentBucketName": "amplify-tasvatbackend-staging-153737-deployment",
+      "UnauthRoleName": "amplify-tasvatbackend-staging-153737-unauthRole",
+      "StackName": "amplify-tasvatbackend-staging-153737",
+      "StackId": "arn:aws:cloudformation:ap-south-1:640586525302:stack/amplify-tasvatbackend-staging-153737/30cf0150-a17d-11ed-b811-0669b720ed0e",
+      "AmplifyAppId": "d1zycmfmjxvur5"
     },
     "categories": {
       "auth": {
-        "users": {}
+        "auth": {}
       },
       "function": {
-        "usersCreateAuthChallenge": {
-          "deploymentBucketName": "amplify-tasvat-staging-154629-deployment",
-          "s3Key": "amplify-builds/usersCreateAuthChallenge-4f47453670524c533665-build.zip"
-        },
-        "usersDefineAuthChallenge": {
-          "deploymentBucketName": "amplify-tasvat-staging-154629-deployment",
-          "s3Key": "amplify-builds/usersDefineAuthChallenge-4c51573259564b2b6a32-build.zip"
-        },
-        "usersVerifyAuthChallengeResponse": {
-          "deploymentBucketName": "amplify-tasvat-staging-154629-deployment",
-          "s3Key": "amplify-builds/usersVerifyAuthChallengeResponse-356b7a57483547597765-build.zip",
+        "authDefineAuthChallenge": {},
+        "authCreateAuthChallenge": {},
+        "authVerifyAuthChallengeResponse": {
           "RECAPTCHASECRET": "tasvat"
+        }
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d1zycmfmjxvur5",
+          "type": "manual"
         }
       }
     }

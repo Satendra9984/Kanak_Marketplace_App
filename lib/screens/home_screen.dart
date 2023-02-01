@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tasvat/screens/buy/buy_assets.dart';
+import 'package:tasvat/screens/dashboard/dashboard.dart';
+import 'package:tasvat/screens/portfolio/portfolio_home.dart';
+import 'package:tasvat/screens/sell/sell_assets.dart';
+import 'package:tasvat/screens/withdraw/withdraw_assets.dart';
+import 'package:tasvat/utils/app_constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,101 +15,263 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentSelectedBottomNavItem = 0;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    _pageController = PageController();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       backgroundColor: const Color(0XFF141414),
-      appBar: AppBar(
-        backgroundColor: const Color(0XFF141414),
-        elevation: 0.0,
-        title: const Text(
-          'Hello Tasvat',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-          ),
+      body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _pageController,
+        children: const [
+          DashboardScreen(),
+          PortfolioHome()
+        ],
+        onPageChanged: (int index) {},
+      ),
+      floatingActionButton: Container(
+        // alignment: Alignment.bottomCenter,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(50),
+          color: text150,
         ),
-        actions: [
-          ClipRRect(
-            child: IconButton(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              heroTag: '0',
+              elevation: 0.0,
+              backgroundColor:
+                  _currentSelectedBottomNavItem == 0 ? accent2 : text150,
               onPressed: () {
-                // navigate to profile screen
-                
+                setState(() {
+                  _currentSelectedBottomNavItem = 0;
+                  _pageController.jumpToPage(0);
+                });
               },
-              icon: const Icon(Icons.person),
+              child: Icon(
+                Icons.home_filled,
+                size: 28,
+                color:
+                    _currentSelectedBottomNavItem == 0 ? background : text400,
+              ),
+            ),
+            const SizedBox(width: 15),
+            FloatingActionButton(
+              heroTag: '1',
+              elevation: 0.0,
+              backgroundColor:
+                  _currentSelectedBottomNavItem == 1 ? accent2 : text150,
+              onPressed: () async {
+                setState(() {
+                  _currentSelectedBottomNavItem = 1;
+                });
+                await _showBottomSheet();
+              },
+              child: Icon(
+                Icons.import_export_rounded,
+                size: 28,
+                color:
+                    _currentSelectedBottomNavItem == 1 ? background : text400,
+              ),
+            ),
+            const SizedBox(width: 15),
+            FloatingActionButton(
+              heroTag: '2',
+              elevation: 0.0,
+              backgroundColor:
+                  _currentSelectedBottomNavItem == 2 ? accent2 : text150,
+              onPressed: () {
+                setState(() {
+                  _currentSelectedBottomNavItem = 2;
+                  _pageController.jumpToPage(1);
+                });
+              },
+              child: Icon(
+                Icons.grid_view_rounded,
+                size: 28,
+                color:
+                    _currentSelectedBottomNavItem == 2 ? background : text400,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showBottomSheet() async {
+    await showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(35),
+          topRight: Radius.circular(35),
+        ),
+      ),
+      builder: (ctx) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 25),
+          decoration: BoxDecoration(
+            color: text100,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(35),
+              topRight: Radius.circular(35),
             ),
           ),
-        ],
-      ),
-      body: const Center(
-        child: Text('1'),
-      ),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(bottom: 15, left: 80, right: 80),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(80),
-          child: BottomNavigationBar(
-            currentIndex: _currentSelectedBottomNavItem,
-            iconSize: 24,
-            // we have made it a variable so that selected item will be highlighted otherwise no means to notify
-            selectedItemColor: Colors.black,
-            unselectedItemColor: Colors.grey.shade600,
-            // type: BottomNavigationBarType.fixed,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            backgroundColor: const Color(0XFF333333),
-            elevation: 15,
-            items: [
-              BottomNavigationBarItem(
-                icon: CircleAvatar(
-                  maxRadius: 24,
-                  backgroundColor: _currentSelectedBottomNavItem == 0
-                      ? Colors.yellow.shade500
-                      : const Color(0XFF333333),
-                  child: const Icon(
-                    Icons.home,
-                    size: 32,
-                  ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Trade',
+                      style: TextStyle(
+                        color: text300,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        // remove this modalBottomSheet
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(
+                        Icons.clear,
+                        color: text400,
+                        size: 32,
+                      ),
+                    ),
+                  ],
                 ),
-                label: 'Home',
               ),
-              BottomNavigationBarItem(
-                icon: CircleAvatar(
-                  maxRadius: 24,
-                  backgroundColor: _currentSelectedBottomNavItem == 1
-                      ? Colors.yellow.shade500
-                      : const Color(0XFF333333),
-                  child: const Icon(
-                    FontAwesomeIcons.arrowsUpDown,
+
+              /// buy
+              ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => BuyAssets(),
+                    ),
+                  );
+                },
+                leading: CircleAvatar(
+                  backgroundColor: accentBG,
+                  child: Icon(
+                    Icons.add_rounded,
+                    color: accent1,
                     size: 32,
                   ),
                 ),
-                label: 'sell/buy',
+                title: Text(
+                  'Buy',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: heading2,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                subtitle: Text(
+                  'Buy gold with cash in wallet',
+                  style: TextStyle(
+                    color: text300,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
-              BottomNavigationBarItem(
-                icon: CircleAvatar(
-                  maxRadius: 24,
-                  backgroundColor: _currentSelectedBottomNavItem == 2
-                      ? Colors.yellow
-                      : const Color(0XFF333333),
-                  child: const Icon(
-                    Icons.window,
-                    size: 32,
+
+              /// sell
+              ListTile(
+                onTap: () {
+                  // TODO : sell GOLD
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => SellAssets(),
+                    ),
+                  );
+                },
+                leading: CircleAvatar(
+                  backgroundColor: accentBG,
+                  child: Icon(
+                    Icons.currency_exchange,
+                    color: accent1,
                   ),
                 ),
-                label: 'portfolio',
+                title: Text(
+                  'Sell',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: heading2,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                subtitle: Text(
+                  'Sell gold for cash',
+                  style: TextStyle(
+                    color: text300,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+
+              /// withdraw
+              ListTile(
+                onTap: () {
+                  // TODO : WITHDRAW GOLD
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => WithdrawAssets(),
+                    ),
+                  );
+                },
+                leading: CircleAvatar(
+                  backgroundColor: accentBG,
+                  child: Icon(
+                    Icons.file_download_outlined,
+                    color: accent1,
+                  ),
+                ),
+                title: Text(
+                  'Withdraw',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: heading2,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                subtitle: Text(
+                  'Receive physical gold in store',
+                  style: TextStyle(
+                    color: text300,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ],
-            onTap: (screen) {
-              setState(() {
-                _currentSelectedBottomNavItem = screen;
-                // _pageController.jumpToPage(screen);
-              });
-            },
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

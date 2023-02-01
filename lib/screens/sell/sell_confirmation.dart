@@ -5,7 +5,7 @@ import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/buy/buy_completed.dart';
 import 'package:tasvat/screens/sell/sell_completed_screen.dart';
 
-import '../../app_constants.dart';
+import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
 
 class SellConfirmationScreen extends StatelessWidget {

@@ -1,15 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/buy/buy_completed.dart';
+import 'package:tasvat/screens/sell/sell_completed_screen.dart';
+import 'package:tasvat/screens/withdraw/withdraw_completed.dart';
 
-import '../../app_constants.dart';
-import '../../models/withdraw_orders_model.dart';
-import '../sell/sell_completed_screen.dart';
-import '../withdraw/book_completed.dart';
-import '../withdraw/withdraw_completed.dart';
+import '../../utils/app_constants.dart';
 
 class PortfolioTransactions extends StatelessWidget {
   PortfolioTransactions({super.key});

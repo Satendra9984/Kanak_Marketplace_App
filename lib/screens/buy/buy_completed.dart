@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tasvat/models/transaction_model.dart';
-import '../../app_constants.dart';
+import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
 
 class BuyCompletedScreen extends StatelessWidget {
@@ -137,7 +136,7 @@ class BuyCompletedScreen extends StatelessWidget {
                         value:
                             '${buyOrderDetails.quantity * buyOrderDetails.price} USD'),
                     const SizedBox(height: 25),
-                    RowDetailWidget(title: 'Method', value: 'Cash Wallet'),
+                    const RowDetailWidget(title: 'Method', value: 'Cash Wallet'),
                   ],
                 ),
               ),

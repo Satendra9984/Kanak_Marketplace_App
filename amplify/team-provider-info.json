@@ -1,0 +1,33 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-tasvatbackend-staging-153737-authRole",
+      "UnauthRoleArn": "arn:aws:iam::640586525302:role/amplify-tasvatbackend-staging-153737-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::640586525302:role/amplify-tasvatbackend-staging-153737-authRole",
+      "Region": "ap-south-1",
+      "DeploymentBucketName": "amplify-tasvatbackend-staging-153737-deployment",
+      "UnauthRoleName": "amplify-tasvatbackend-staging-153737-unauthRole",
+      "StackName": "amplify-tasvatbackend-staging-153737",
+      "StackId": "arn:aws:cloudformation:ap-south-1:640586525302:stack/amplify-tasvatbackend-staging-153737/30cf0150-a17d-11ed-b811-0669b720ed0e",
+      "AmplifyAppId": "d1zycmfmjxvur5"
+    },
+    "categories": {
+      "auth": {
+        "auth": {}
+      },
+      "function": {
+        "authDefineAuthChallenge": {},
+        "authCreateAuthChallenge": {},
+        "authVerifyAuthChallengeResponse": {
+          "RECAPTCHASECRET": "tasvat"
+        }
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d1zycmfmjxvur5",
+          "type": "manual"
+        }
+      }
+    }
+  }
+}

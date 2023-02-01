@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tasvat/app_constants.dart';
+import 'package:tasvat/utils/app_constants.dart';
 import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/sell/sell_confirmation.dart';
 import 'package:tasvat/screens/withdraw/select_time_&_vendor.dart';

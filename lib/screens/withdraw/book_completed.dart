@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/screens/withdraw/view_details.dart';
 
-import '../../app_constants.dart';
+import '../../utils/app_constants.dart';
 import '../../models/transaction_model.dart';
 
 class BookCompletedScreen extends StatelessWidget {

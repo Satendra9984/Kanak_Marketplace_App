@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../app_constants.dart';
+import '../utils/app_constants.dart';
 
 class TabForDashboard extends StatelessWidget {
   final String label;

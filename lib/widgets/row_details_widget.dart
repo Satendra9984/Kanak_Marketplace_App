@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../app_constants.dart';
+import '../utils/app_constants.dart';
 
 class RowDetailWidget extends StatelessWidget {
   const RowDetailWidget({

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tasvat/app_constants.dart';
 import 'package:tasvat/screens/buy/buy_assets.dart';
 import 'package:tasvat/screens/dashboard/dashboard.dart';
 import 'package:tasvat/screens/portfolio/portfolio_home.dart';
 import 'package:tasvat/screens/sell/sell_assets.dart';
 import 'package:tasvat/screens/withdraw/withdraw_assets.dart';
+import 'package:tasvat/utils/app_constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -36,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
         controller: _pageController,
         children: const [
           DashboardScreen(),
-          PortfolioHome(),
+          PortfolioHome()
         ],
         onPageChanged: (int index) {},
       ),

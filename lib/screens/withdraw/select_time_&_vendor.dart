@@ -5,8 +5,7 @@ import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/buy/buy_completed.dart';
 import 'package:tasvat/screens/sell/sell_completed_screen.dart';
 import 'package:tasvat/screens/withdraw/book_confirmation.dart';
-
-import '../../app_constants.dart';
+import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
 
 class SelectTimeAndVendor extends StatelessWidget {

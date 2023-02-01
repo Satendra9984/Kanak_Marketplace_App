@@ -24,17 +24,14 @@ class BuyAssets extends StatelessWidget {
         elevation: 0.0,
       ),
       body: Container(
-        alignment: Alignment.topCenter,
+        alignment: Alignment.center,
         child: Form(
           key: _formKey,
           child: Column(
-            // mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 25),
-
-              /// buy amount
               Text(
                 'Buy Amount',
                 style: TextStyle(
@@ -43,7 +40,7 @@ class BuyAssets extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 35),
+              const SizedBox(height: 15),
               FormField(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 initialValue: _textEditingController,
@@ -57,7 +54,6 @@ class BuyAssets extends StatelessWidget {
                   } else if (controller != null && controller.text.isEmpty) {
                     return 'Enter Quantity';
                   }
-
                   return null;
                 },
                 builder: (formState) {
@@ -66,11 +62,12 @@ class BuyAssets extends StatelessWidget {
                       margin: const EdgeInsets.symmetric(
                           vertical: 15, horizontal: 15),
                       child: Column(
-                        // mainAxisSize: MainAxisSize.min,
+                        mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -172,10 +169,11 @@ class BuyAssets extends StatelessWidget {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 10),
                               ElevatedButton(
                                 onPressed: () {
                                   /// proceed to buy
+                                  closeKeyboard(context);
                                   if (_formKey.currentState != null &&
                                       _formKey.currentState!.validate()) {
                                     // TODO : PROCEED TO CONFIRMATION SCREEN
@@ -232,5 +230,12 @@ class BuyAssets extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  closeKeyboard(BuildContext context) {
+    var currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
   }
 }

@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: Container(
         // alignment: Alignment.bottomCenter,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2.5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
           color: text150,
@@ -49,9 +49,9 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            FloatingActionButton(
+            FloatingActionButton.small(
               heroTag: '0',
-              elevation: 0.0,
+              elevation: 5.0,
               backgroundColor:
                   _currentSelectedBottomNavItem == 0 ? accent2 : text150,
               onPressed: () {
@@ -62,15 +62,15 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: Icon(
                 Icons.home_filled,
-                size: 28,
+                size: 24,
                 color:
                     _currentSelectedBottomNavItem == 0 ? background : text400,
               ),
             ),
             const SizedBox(width: 15),
-            FloatingActionButton(
+            FloatingActionButton.small(
               heroTag: '1',
-              elevation: 0.0,
+              elevation: 5.0,
               backgroundColor:
                   _currentSelectedBottomNavItem == 1 ? accent2 : text150,
               onPressed: () async {
@@ -80,16 +80,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 await _showBottomSheet();
               },
               child: Icon(
-                Icons.import_export_rounded,
-                size: 28,
+                Icons.swap_vert_outlined,
+                size: 24,
                 color:
                     _currentSelectedBottomNavItem == 1 ? background : text400,
               ),
             ),
             const SizedBox(width: 15),
-            FloatingActionButton(
+            FloatingActionButton.small(
               heroTag: '2',
-              elevation: 0.0,
+              elevation: 5.0,
               backgroundColor:
                   _currentSelectedBottomNavItem == 2 ? accent2 : text150,
               onPressed: () {
@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: Icon(
                 Icons.grid_view_rounded,
-                size: 28,
+                size: 24,
                 color:
                     _currentSelectedBottomNavItem == 2 ? background : text400,
               ),

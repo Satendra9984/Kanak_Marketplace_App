@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tasvat/utils/app_constants.dart';
 import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/sell/sell_confirmation.dart';
+import 'package:tasvat/screens/withdraw/select_time_&_vendor.dart';
 
 class WithdrawAssets extends StatelessWidget {
   WithdrawAssets({Key? key}) : super(key: key);
@@ -181,11 +182,11 @@ class WithdrawAssets extends StatelessWidget {
                                   if (_formKey.currentState != null &&
                                       _formKey.currentState!.validate()) {
                                     // TODO : PROCEED TO CONFIRMATION SCREEN
+                                    closeKeyboard(context);
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (ctx) =>
-                                            SellConfirmationScreen(
+                                        builder: (ctx) => SelectTimeAndVendor(
                                           buyOrderDetails: Transaction(
                                             activityName: 'Sell',
                                             quantity: double.parse(
@@ -235,5 +236,12 @@ class WithdrawAssets extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  closeKeyboard(BuildContext context) {
+    var currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
   }
 }

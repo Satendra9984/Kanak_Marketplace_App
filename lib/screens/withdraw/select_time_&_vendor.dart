@@ -1,14 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/buy/buy_completed.dart';
-
+import 'package:tasvat/screens/sell/sell_completed_screen.dart';
+import 'package:tasvat/screens/withdraw/book_confirmation.dart';
 import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
 
-class BuyConfirmationScreen extends StatelessWidget {
+class SelectTimeAndVendor extends StatelessWidget {
   final Transaction buyOrderDetails;
   final String id;
-  const BuyConfirmationScreen({
+  const SelectTimeAndVendor({
     Key? key,
     required this.buyOrderDetails,
     required this.id,
@@ -25,17 +28,16 @@ class BuyConfirmationScreen extends StatelessWidget {
       body: Container(
         margin: const EdgeInsets.symmetric(vertical: 15),
         child: Column(
-          // mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Column(
-              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 15),
                   child: Text(
-                    'Buy Confirmation',
+                    'Select Time & Vendor',
                     style: TextStyle(
                       fontSize: title,
                       color: text500,
@@ -48,6 +50,7 @@ class BuyConfirmationScreen extends StatelessWidget {
 
                 /// Identification
                 Container(
+                  alignment: Alignment.centerLeft,
                   margin: const EdgeInsets.all(10),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -59,25 +62,38 @@ class BuyConfirmationScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Identification',
+                        'Time',
                         style: TextStyle(
                           color: text300,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 25),
-                      RowDetailWidget(
-                          title: 'Tx Type',
-                          value: buyOrderDetails.activityName),
-                      const SizedBox(height: 25),
-                      RowDetailWidget(
-                          title: 'Price',
-                          value: '${buyOrderDetails.price} USD/mace'),
-                      const SizedBox(height: 25),
-                      RowDetailWidget(
-                          title: 'Amount',
-                          value: '${buyOrderDetails.quantity} mace'),
+                      const SizedBox(height: 15),
+                      Text(
+                        'Wednesday, Sep 10th 2021',
+                        style: TextStyle(
+                          color: text400,
+                          fontSize: heading2,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_month,
+                              color: accent2.withOpacity(0.9)),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Change Time',
+                            style: TextStyle(
+                              color: accent1.withOpacity(0.8),
+                              fontSize: body1,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -85,6 +101,7 @@ class BuyConfirmationScreen extends StatelessWidget {
 
                 /// Total
                 Container(
+                  width: double.infinity,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                   margin: const EdgeInsets.all(10),
@@ -96,20 +113,46 @@ class BuyConfirmationScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Total',
+                        'Vendor',
                         style: TextStyle(
                             color: text300,
                             fontSize: body2,
                             fontWeight: FontWeight.w600),
                       ),
+                      const SizedBox(height: 15),
+                      Text(
+                        'Goldia Hanoi',
+                        style: TextStyle(
+                          color: text400,
+                          fontSize: heading2,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      Text(
+                        '96 Kim Ma St., Ba Dinh, Hanoi',
+                        style: TextStyle(
+                          color: text300,
+                          fontSize: body2,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                       const SizedBox(height: 25),
-                      RowDetailWidget(
-                          title: 'Equal',
-                          value:
-                              '${buyOrderDetails.quantity * buyOrderDetails.price} USD'),
-                      const SizedBox(height: 25),
-                      const RowDetailWidget(
-                          title: 'Method', value: 'Cash Wallet'),
+                      Row(
+                        children: [
+                          Icon(Icons.location_on,
+                              color: accent2.withOpacity(0.9)),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Change Time',
+                            style: TextStyle(
+                              color: accent1.withOpacity(0.8),
+                              fontSize: body1,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -121,15 +164,13 @@ class BuyConfirmationScreen extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: ElevatedButton(
                 onPressed: () {
-                  /// proceed to buy completed SCREEN
-
+                  /// proceed to BuyCompletedScreen()
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (ctx) => BuyCompletedScreen(
+                      builder: (ctx) => BookConfirmationScreen(
                         buyOrderDetails: buyOrderDetails,
                         id: id,
-                        backToHome: true,
                       ),
                     ),
                     (route) => route.isFirst,
@@ -144,7 +185,7 @@ class BuyConfirmationScreen extends StatelessWidget {
                   backgroundColor: accent1,
                 ),
                 child: Text(
-                  'Confirm',
+                  'Continue',
                   style: TextStyle(
                     color: background,
                     fontSize: heading2,

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasvat/amplifyconfiguration.dart';
 import 'package:tasvat/screens/login/bloc/login_bloc.dart';
 import 'package:tasvat/screens/login/view/pages/login_page.dart';
+import 'package:tasvat/screens/login/view/pages/otp_screen.dart';
 import 'package:tasvat/screens/signup/bloc/sign_up_bloc.dart';
 import 'package:tasvat/services/auth_services.dart';
 
@@ -46,22 +47,21 @@ class _TasvatState extends State<Tasvat> {
     return MaterialApp(
       theme: ThemeData.dark(),
       home: RepositoryProvider(
-            create: (_) => AuthRepository(),
-            child: MultiBlocProvider(
-              providers: [
-                BlocProvider(
-                  create: (context) => LoginBloc(
-                    authRepository: context.read<AuthRepository>()
-                  ),
-                ),
-                BlocProvider(
-                  create: (context) => SignUpBloc(),
-                ),
-              ],
-              child: const LogInPage(),
-            )
-          )
-        );
+        create: (_) => AuthRepository(),
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) =>
+                  LoginBloc(authRepository: context.read<AuthRepository>()),
+            ),
+            BlocProvider(
+              create: (context) => SignUpBloc(),
+            ),
+          ],
+          child: LogInPage(),
+        ),
+      ),
+    );
   }
 }
 // https://www.behance.net/gallery/139996351/Goldia-Gold-Trading-Mobile-App

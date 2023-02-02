@@ -16,7 +16,7 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+  bool _showPassword = false;
   final TextEditingController _phoneCtrl = TextEditingController();
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _passwordCtrl = TextEditingController();
@@ -46,6 +46,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: background,
       body: Form(
         key: _formKey,
         child: Container(
@@ -111,6 +112,13 @@ class _SignUpPageState extends State<SignUpPage> {
                     keyboardType: TextInputType.phone,
                     controller: _phoneCtrl,
                     validator: (value) {
+                      String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+                      RegExp regExp = RegExp(pattern);
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter mobile number';
+                      } else if (!regExp.hasMatch(value)) {
+                        return 'Please enter valid mobile number';
+                      }
                       return null;
                     },
                     style: TextStyle(
@@ -146,6 +154,17 @@ class _SignUpPageState extends State<SignUpPage> {
                     keyboardType: TextInputType.emailAddress,
                     controller: _emailCtrl,
                     validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter an email';
+                      } else {
+                        bool emailValid = RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(value);
+                        if (!emailValid) {
+                          return 'Please Enter a valid email';
+                        }
+                      }
+
                       return null;
                     },
                     style: TextStyle(
@@ -187,7 +206,21 @@ class _SignUpPageState extends State<SignUpPage> {
                       fontWeight: FontWeight.w500,
                       color: accent2,
                     ),
-                    decoration: getInputDecoration('Password'),
+                    obscureText: _showPassword,
+                    decoration: getInputDecoration('Password').copyWith(
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _showPassword = !_showPassword;
+                          });
+                        },
+                        child: Icon(
+                          !_showPassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],

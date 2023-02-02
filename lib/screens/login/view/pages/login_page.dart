@@ -17,6 +17,8 @@ class LogInPage extends StatefulWidget {
 
 class _LogInPageState extends State<LogInPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  bool _showPassword = false;
+
   @override
   void initState() {
     context.read<LoginBloc>().addFormKey(formKey);
@@ -112,7 +114,6 @@ class _LogInPageState extends State<LogInPage> {
                         const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      // color: text150,
                     ),
                     child: TextFormField(
                       onChanged: (value) {
@@ -121,6 +122,13 @@ class _LogInPageState extends State<LogInPage> {
                             .add(PhoneNumberChangedEvent(phone: value));
                       },
                       validator: (value) {
+                        String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+                        RegExp regExp = RegExp(pattern);
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter mobile number';
+                        } else if (!regExp.hasMatch(value)) {
+                          return 'Please enter valid mobile number';
+                        }
                         return null;
                       },
                       keyboardType: TextInputType.phone,
@@ -163,7 +171,22 @@ class _LogInPageState extends State<LogInPage> {
                         fontWeight: FontWeight.w500,
                         color: accent2,
                       ),
-                      decoration: getInputDecoration('Password'),
+                      obscureText: _showPassword,
+                      decoration: getInputDecoration('Password').copyWith(
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _showPassword = !_showPassword;
+                            });
+                          },
+                          child: Icon(
+                            !_showPassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: accent2,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -179,12 +202,9 @@ class _LogInPageState extends State<LogInPage> {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 child: ElevatedButton(
                   onPressed: () {
-                    // context.read<LoginBloc>().add(LoginButtonPressedEvent());
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (ctx) => OtpScreen(phone: 'phone', type: true),
-                      ),
-                    );
+                    if (formKey.currentState!.validate()) {
+                      context.read<LoginBloc>().add(LoginButtonPressedEvent());
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(

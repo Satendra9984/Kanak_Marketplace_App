@@ -1,6 +1,7 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:tasvat/screens/home_screen.dart';
 
 import '../../../../utils/app_constants.dart';
 import '../../../../utils/ui_functions.dart';
@@ -22,7 +23,11 @@ class _OtpScreenState extends State<OtpScreen> {
       safePrint(otp);
       await Amplify.Auth.confirmSignIn(confirmationValue: otp).then((result) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Successfully Logged In!')));
+          const SnackBar(content: Text('Successfully Logged In!')),
+        );
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (ctx) => const HomeScreen()),
+            (route) => true);
       });
     }
   }

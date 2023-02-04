@@ -68,7 +68,7 @@ class _LogInPageState extends State<LogInPage> {
                   /// login text
                   Align(
                     child: Text(
-                      'Login',
+                      'Welcome Back!',
                       style: TextStyle(
                         color: text500,
                         fontSize: title,
@@ -92,7 +92,7 @@ class _LogInPageState extends State<LogInPage> {
                     'Create an account',
                     style: TextStyle(
                       color: text300,
-                      fontSize: body1,
+                      fontSize: body2,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

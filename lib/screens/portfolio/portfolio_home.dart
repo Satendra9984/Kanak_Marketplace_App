@@ -56,10 +56,6 @@ class _PortfolioHomeState extends State<PortfolioHome> {
                   accent2,
                   greyShade2,
                 ],
-                // stops: const [
-                //   0.7,
-                //   0.50,
-                // ],
               ),
             ),
             child: Column(

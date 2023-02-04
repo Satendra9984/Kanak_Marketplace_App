@@ -5,12 +5,14 @@ class TabForDashboard extends StatelessWidget {
   final String label;
   final int currentTabNumber, tabNumber;
   final Function() onPressed;
+  final Color backgroundColor;
   const TabForDashboard({
     Key? key,
     required this.currentTabNumber,
     required this.tabNumber,
     required this.label,
     required this.onPressed,
+    this.backgroundColor = const Color(0XFF242424),
   }) : super(key: key);
 
   @override
@@ -27,7 +29,7 @@ class TabForDashboard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
-          color: currentTabNumber != tabNumber ? text100 : accentBG,
+          color: currentTabNumber != tabNumber ? backgroundColor : accentBG,
         ),
         child: Align(
           alignment: Alignment.center,

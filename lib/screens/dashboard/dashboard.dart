@@ -41,9 +41,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const SizedBox(height: 10),
+
+          /// Free Gifts
           Container(
             margin: const EdgeInsets.all(10),
             padding: const EdgeInsets.all(20),
@@ -60,7 +61,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             child: Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   flex: 5,
@@ -103,8 +103,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
           const SizedBox(height: 10),
+
+          /// Real-Time gold price data
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
             width: double.infinity,
             margin: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -112,71 +114,79 @@ class _DashboardScreenState extends State<DashboardScreen> {
               color: text100,
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  scrollDirection: Axis.horizontal,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25),
-                      color: background,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        TabForDashboard(
-                          currentTabNumber: _currentTabNumber,
-                          label: 'Buy Price',
-                          tabNumber: 0,
-                          onPressed: () {
-                            setState(() {
-                              _currentTabNumber = 0;
-                            });
-                            // _pageController.jumpToPage(_currentTabNumber);
-                          },
-                          backgroundColor: background,
+                // Tab Menu
+                Container(
+                  // alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25),
+                    color: background,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TabForDashboard(
+                        currentTabNumber: _currentTabNumber,
+                        label: 'Buy Price',
+                        tabNumber: 0,
+                        onPressed: () {
+                          setState(() {
+                            _currentTabNumber = 0;
+                          });
+                          // _pageController.jumpToPage(_currentTabNumber);
+                        },
+                        backgroundColor: background,
+                      ),
+                      TabForDashboard(
+                        currentTabNumber: _currentTabNumber,
+                        label: 'Sell Price',
+                        tabNumber: 1,
+                        onPressed: () {
+                          setState(() {
+                            _currentTabNumber = 1;
+                          });
+                          // _pageController.jumpToPage(_currentTabNumber);
+                        },
+                        backgroundColor: background,
+                      ),
+                    ],
+                  ),
+                ),
+                // Some Titles
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  alignment: Alignment.centerLeft,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 25),
+                      Text(
+                        'Market Overview',
+                        style: TextStyle(
+                          color: text500,
+                          fontSize: body1,
+                          fontWeight: FontWeight.w600,
                         ),
-                        // const SizedBox(width: 10),
-                        TabForDashboard(
-                          currentTabNumber: _currentTabNumber,
-                          label: 'Sell Price',
-                          tabNumber: 1,
-                          onPressed: () {
-                            setState(() {
-                              _currentTabNumber = 1;
-                            });
-                            // _pageController.jumpToPage(_currentTabNumber);
-                          },
-                          backgroundColor: background,
+                        softWrap: true,
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        'Rupees per gram',
+                        style: TextStyle(
+                          color: text300,
+                          fontSize: body2,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ],
-                    ),
+                        softWrap: true,
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 25),
-                Text(
-                  'Market Overview',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body1,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  softWrap: true,
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Rupees per gram',
-                  style: TextStyle(
-                    color: text300,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  softWrap: true,
-                ),
+
+                // TODO: GOLD PRICE GRAPH
               ],
             ),
           ),

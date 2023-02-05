@@ -118,7 +118,7 @@ class PortfolioTransactions extends StatelessWidget {
                             ),
                             const SizedBox(width: 2.5),
                             Text(
-                              'mace',
+                              'gm',
                               style: TextStyle(
                                 color: _getPriceColor(index),
                                 fontSize: caption,
@@ -129,7 +129,7 @@ class PortfolioTransactions extends StatelessWidget {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          '${_transactionList[index].price} USD',
+                          '${_transactionList[index].price} INR',
                           style: TextStyle(
                             color: text300,
                             fontSize: body2,

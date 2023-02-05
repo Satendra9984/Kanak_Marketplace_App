@@ -49,7 +49,7 @@ class ViewBookingDetailsScreen extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 15),
                     child: Text(
-                      'Expired In 72 hours',
+                      'Expire On ${buyOrderDetails.date}',
                       style: TextStyle(
                         fontSize: title,
                         color: text500,
@@ -82,12 +82,12 @@ class ViewBookingDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 25),
                         RowDetailWidget(
-                            title: 'Tx Type',
+                            title: 'Transaction Type',
                             value: buyOrderDetails.activityName),
                         const SizedBox(height: 25),
                         RowDetailWidget(
                             title: 'Amount',
-                            value: '${buyOrderDetails.quantity} mace'),
+                            value: '${buyOrderDetails.quantity} gm'),
                       ],
                     ),
                   ),

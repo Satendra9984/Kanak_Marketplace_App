@@ -3,16 +3,38 @@ import 'package:tasvat/utils/app_constants.dart';
 import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/buy/buy_confirmation.dart';
 
-class BuyAssets extends StatelessWidget {
+class BuyAssets extends StatefulWidget {
   BuyAssets({Key? key}) : super(key: key);
 
+  @override
+  State<BuyAssets> createState() => _BuyAssetsState();
+}
+
+class _BuyAssetsState extends State<BuyAssets> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  String _buyTypeString = 'Buy Amount';
+  BuyType _buyType = BuyType.buyByAmount;
   final TextEditingController _textEditingController = TextEditingController();
 
   String _getTotal() {
     double? tryQuantity = double.tryParse(_textEditingController.text);
     double quantity = tryQuantity ?? 0.00;
     return (quantity * 300.00).toString();
+  }
+
+  void setBuyType(BuyType buyType) {
+    debugPrint('${buyType}');
+    if (buyType == BuyType.buyByAmount) {
+      setState(() {
+        _buyTypeString = 'Buy Amount';
+        _buyType = BuyType.buyByAmount;
+      });
+    } else if (buyType == BuyType.buyByQuantity) {
+      setState(() {
+        _buyTypeString = 'Buy Quantity';
+        _buyType = BuyType.buyByQuantity;
+      });
+    }
   }
 
   @override
@@ -29,16 +51,80 @@ class BuyAssets extends StatelessWidget {
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            // mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'Buy Amount',
-                style: TextStyle(
-                  fontSize: body2,
-                  color: text300,
-                  fontWeight: FontWeight.w600,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  PopupMenuButton<BuyType>(
+                    onSelected: (buyType) {
+                      setBuyType(buyType);
+                    },
+                    itemBuilder: (ctx) {
+                      return [
+                        PopupMenuItem(
+                          value: BuyType.buyByAmount,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Buy By Amount',
+                                style: TextStyle(
+                                  fontSize: heading2,
+                                  color: text500,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Icon(
+                                Icons.currency_rupee_rounded,
+                                color: accent2,
+                              )
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: BuyType.buyByQuantity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Buy by Quantity',
+                                style: TextStyle(
+                                  fontSize: heading2,
+                                  color: text500,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Icon(
+                                Icons.line_weight,
+                                color: accent2,
+                              )
+                            ],
+                          ),
+                        ),
+                      ];
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    color: text150,
+                    // icon:
+                    child: Row(
+                      children: [
+                        Text(
+                          _buyTypeString,
+                          style: TextStyle(
+                            fontSize: body1,
+                            color: text400,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_drop_down,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 15),
               FormField(
@@ -124,11 +210,18 @@ class BuyAssets extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    'mace',
+                                    _buyType == BuyType.buyByAmount
+                                        ? '₹'
+                                        : 'gram',
                                     style: TextStyle(
-                                      fontSize: body2,
+                                      fontSize: _buyType == BuyType.buyByAmount
+                                          ? heading1
+                                          : body1,
                                       color: text400,
-                                      fontWeight: FontWeight.w500,
+                                      fontWeight:
+                                          _buyType == BuyType.buyByAmount
+                                              ? FontWeight.w400
+                                              : FontWeight.w600,
                                     ),
                                   ),
                                 ],
@@ -238,4 +331,9 @@ class BuyAssets extends StatelessWidget {
       currentFocus.unfocus();
     }
   }
+}
+
+enum BuyType {
+  buyByAmount,
+  buyByQuantity,
 }

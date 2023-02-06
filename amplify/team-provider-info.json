@@ -9,18 +9,12 @@
       "UnauthRoleName": "amplify-tasvatbackend-staging-153737-unauthRole",
       "StackName": "amplify-tasvatbackend-staging-153737",
       "StackId": "arn:aws:cloudformation:ap-south-1:640586525302:stack/amplify-tasvatbackend-staging-153737/30cf0150-a17d-11ed-b811-0669b720ed0e",
-      "AmplifyAppId": "d1zycmfmjxvur5"
+      "AmplifyAppId": "d1zycmfmjxvur5",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-tasvatbackend-staging-153737-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
     },
     "categories": {
       "auth": {
         "auth": {}
-      },
-      "function": {
-        "authDefineAuthChallenge": {},
-        "authCreateAuthChallenge": {},
-        "authVerifyAuthChallengeResponse": {
-          "RECAPTCHASECRET": "tasvat"
-        }
       },
       "hosting": {
         "amplifyhosting": {

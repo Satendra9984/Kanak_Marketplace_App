@@ -25,16 +25,17 @@ class _TasvatState extends State<Tasvat> {
       final auth = AmplifyAuthCognito();
       await Amplify.addPlugins([auth]);
       await Amplify.configure(amplifyconfig).then((value) async {
-        safePrint('😄😄😄 Successfully Configured Amplify!');
+        safePrint('😄😄😄 Successfully Coynfigured Amplify!');
         await Amplify.Auth.getCurrentUser().then((value) {
           safePrint('--> $value');
         });
       });
+      // tasvat52@gmail.com
+      // tasvat@123
     } on Exception catch (e) {
       safePrint(e);
     }
   }
-
   @override
   void initState() {
     super.initState();

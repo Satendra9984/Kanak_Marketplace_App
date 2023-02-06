@@ -31,10 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: PageView(
         physics: const NeverScrollableScrollPhysics(),
         controller: _pageController,
-        children: const [
-          DashboardScreen(),
-          PortfolioHome()
-        ],
+        children: const [DashboardScreen(), PortfolioHome()],
         onPageChanged: (int index) {},
       ),
       floatingActionButton: Container(
@@ -252,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 title: Text(
-                  'Withdraw',
+                  'Convert To Physical Asset',
                   style: TextStyle(
                     color: text500,
                     fontSize: heading2,

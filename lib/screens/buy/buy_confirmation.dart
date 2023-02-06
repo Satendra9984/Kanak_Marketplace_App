@@ -68,16 +68,16 @@ class BuyConfirmationScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 25),
                       RowDetailWidget(
-                          title: 'Tx Type',
+                          title: 'Transaction Type',
                           value: buyOrderDetails.activityName),
                       const SizedBox(height: 25),
                       RowDetailWidget(
                           title: 'Price',
-                          value: '${buyOrderDetails.price} USD/mace'),
+                          value: '${buyOrderDetails.price} INR/gm'),
                       const SizedBox(height: 25),
                       RowDetailWidget(
                           title: 'Amount',
-                          value: '${buyOrderDetails.quantity} mace'),
+                          value: '${buyOrderDetails.quantity} gm'),
                     ],
                   ),
                 ),
@@ -106,7 +106,7 @@ class BuyConfirmationScreen extends StatelessWidget {
                       RowDetailWidget(
                           title: 'Equal',
                           value:
-                              '${buyOrderDetails.quantity * buyOrderDetails.price} USD'),
+                              '${buyOrderDetails.quantity * buyOrderDetails.price} INR'),
                       const SizedBox(height: 25),
                       const RowDetailWidget(
                           title: 'Method', value: 'Cash Wallet'),

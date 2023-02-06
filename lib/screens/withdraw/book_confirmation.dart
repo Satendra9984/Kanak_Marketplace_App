@@ -70,12 +70,12 @@ class BookConfirmationScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 25),
                       RowDetailWidget(
-                          title: 'Tx Type',
+                          title: 'Transaction Type',
                           value: buyOrderDetails.activityName),
                       const SizedBox(height: 25),
                       RowDetailWidget(
                           title: 'Amount',
-                          value: '${buyOrderDetails.quantity} mace'),
+                          value: '${buyOrderDetails.quantity} gm'),
                     ],
                   ),
                 ),

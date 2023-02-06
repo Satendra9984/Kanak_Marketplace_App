@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:tasvat/utils/app_constants.dart';
 import '../../models/withdraw_orders_model.dart';
@@ -81,7 +80,7 @@ class PortfolioWithdrawOrders extends StatelessWidget {
                             ),
                             const SizedBox(width: 2.5),
                             Text(
-                              'mace',
+                              'gm',
                               style: TextStyle(
                                 color: text400,
                                 fontSize: caption,

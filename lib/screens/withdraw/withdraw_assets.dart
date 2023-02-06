@@ -38,7 +38,7 @@ class WithdrawAssets extends StatelessWidget {
 
               /// buy amount
               Text(
-                'Sell Amount',
+                'Convert',
                 style: TextStyle(
                   fontSize: body2,
                   color: text300,
@@ -181,14 +181,13 @@ class WithdrawAssets extends StatelessWidget {
                                   /// proceed to buy
                                   if (_formKey.currentState != null &&
                                       _formKey.currentState!.validate()) {
-                                    // TODO : PROCEED TO CONFIRMATION SCREEN
                                     closeKeyboard(context);
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (ctx) => SelectTimeAndVendor(
                                           buyOrderDetails: Transaction(
-                                            activityName: 'Sell',
+                                            activityName: 'Convert',
                                             quantity: double.parse(
                                                 _textEditingController.text),
                                             date: '28/01/2023',

@@ -13,7 +13,7 @@ class PortfolioHome extends StatefulWidget {
 }
 
 class _PortfolioHomeState extends State<PortfolioHome> {
-  int _currentTabNumber = 0;
+  int _currentTabNumber = 1;
   late PageController _pageController;
 
   @override
@@ -30,7 +30,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
         elevation: 0.0,
         backgroundColor: background,
         title: const Text(
-          'Portfolio',
+          'Wallet',
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
@@ -56,54 +56,73 @@ class _PortfolioHomeState extends State<PortfolioHome> {
                   accent2,
                   greyShade2,
                 ],
-                // stops: const [
-                //   0.7,
-                //   0.50,
-                // ],
               ),
             ),
-            child: Column(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Gold Asset',
-                  style: TextStyle(
-                    color: text400,
-                    fontSize: body1,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '30.0',
+                      'Gold Asset',
                       style: TextStyle(
-                        fontSize: 48,
-                        color: text500,
+                        color: text400,
+                        fontSize: body1,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+                    const SizedBox(height: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '30.0',
+                          style: TextStyle(
+                            fontSize: heading1,
+                            color: text500,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          'GM',
+                          style: TextStyle(
+                            fontSize: caption,
+                            color: text400,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                     Text(
-                      'MACE',
+                      'Cash Available',
                       style: TextStyle(
-                        fontSize: caption,
                         color: text400,
+                        fontSize: body1,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    // const SizedBox(height: 10),
+
+                    const SizedBox(height: 10),
+                    Text(
+                      '9,000.00 INR',
+                      style: TextStyle(
+                        color: text500,
+                        fontSize: heading1,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  '~ 9,000.00USD',
-                  style: TextStyle(
-                    color: text300,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
                 ),
               ],
             ),
@@ -119,39 +138,39 @@ class _PortfolioHomeState extends State<PortfolioHome> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // TabForDashboard(
+                //   currentTabNumber: _currentTabNumber,
+                //   label: 'Assets',
+                //   tabNumber: 0,
+                //   onPressed: () {
+                //     setState(() {
+                //       _currentTabNumber = 0;
+                //     });
+                //     _pageController.jumpToPage(_currentTabNumber);
+                //   },
+                // ),
+                const SizedBox(width: 10),
                 TabForDashboard(
                   currentTabNumber: _currentTabNumber,
-                  label: 'Assets',
+                  label: 'Withdraw Orders',
                   tabNumber: 0,
                   onPressed: () {
                     setState(() {
                       _currentTabNumber = 0;
                     });
-                    _pageController.jumpToPage(_currentTabNumber);
-                  },
-                ),
-                const SizedBox(width: 10),
-                TabForDashboard(
-                  currentTabNumber: _currentTabNumber,
-                  label: 'Withdraw Orders',
-                  tabNumber: 1,
-                  onPressed: () {
-                    setState(() {
-                      _currentTabNumber = 1;
-                    });
-                    _pageController.jumpToPage(_currentTabNumber);
+                    _pageController.jumpToPage(0);
                   },
                 ),
                 const SizedBox(width: 10),
                 TabForDashboard(
                   currentTabNumber: _currentTabNumber,
                   label: 'Transactions',
-                  tabNumber: 2,
+                  tabNumber: 1,
                   onPressed: () {
                     setState(() {
-                      _currentTabNumber = 2;
+                      _currentTabNumber = 1;
                     });
-                    _pageController.jumpToPage(_currentTabNumber);
+                    _pageController.jumpToPage(1);
                   },
                 ),
               ],
@@ -172,7 +191,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
               child: PageView(
                 controller: _pageController,
                 children: [
-                  PortfolioAssets(),
+                  // PortfolioAssets(),
                   PortfolioWithdrawOrders(),
                   PortfolioTransactions(),
                 ],

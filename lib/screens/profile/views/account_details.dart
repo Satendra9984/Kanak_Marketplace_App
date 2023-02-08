@@ -12,6 +12,7 @@ class AccountDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: background,
         elevation: 0.0,
+        title: Text('Account details'),
       ),
       body: Column(),
     );

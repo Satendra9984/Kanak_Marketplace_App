@@ -4,6 +4,7 @@ import 'package:tasvat/screens/portfolio/portfolio_assets.dart';
 import 'package:tasvat/screens/portfolio/portfolio_transactions.dart';
 import 'package:tasvat/screens/portfolio/portfolio_withdraw_orders.dart';
 import '../../widgets/tabs.dart';
+import '../profile/views/profile_home_screen.dart';
 
 class PortfolioHome extends StatefulWidget {
   const PortfolioHome({super.key});
@@ -13,7 +14,7 @@ class PortfolioHome extends StatefulWidget {
 }
 
 class _PortfolioHomeState extends State<PortfolioHome> {
-  int _currentTabNumber = 1;
+  int _currentTabNumber = 0;
   late PageController _pageController;
 
   @override
@@ -36,98 +37,127 @@ class _PortfolioHomeState extends State<PortfolioHome> {
             fontSize: 24,
           ),
         ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 5),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) => ProfileScreen(),
+                  ),
+                );
+              },
+              child: const CircleAvatar(
+                // borderRadius: BorderRadius.circular(100),
+                radius: 16,
+                backgroundImage: AssetImage(
+                  'assets/images/a_man_reading.png',
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          /// for brief account details
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              gradient: RadialGradient(
-                // focal: Alignment.bottomRight,
-                center: Alignment.bottomRight,
-                radius: 1.45,
-                colors: [
-                  accent2,
-                  greyShade2,
-                ],
-              ),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Gold Asset',
-                      style: TextStyle(
-                        color: text400,
-                        fontSize: body1,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '30.0',
-                          style: TextStyle(
-                            fontSize: heading1,
-                            color: text500,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          'GM',
-                          style: TextStyle(
-                            fontSize: caption,
-                            color: text400,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Cash Available',
-                      style: TextStyle(
-                        color: text400,
-                        fontSize: body1,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    // const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
-                    const SizedBox(height: 10),
-                    Text(
-                      '9,000.00 INR',
-                      style: TextStyle(
-                        color: text500,
-                        fontSize: heading1,
-                        fontWeight: FontWeight.w600,
+          /// for brief account details
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: text100,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Gold Asset',
+                        style: TextStyle(
+                          color: text400,
+                          fontSize: body2,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 10),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '30.0',
+                            style: TextStyle(
+                              fontSize: heading2,
+                              color: text500,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            'GM',
+                            style: TextStyle(
+                              fontSize: caption,
+                              color: text400,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
+              ),
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: accentBG,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Cash Available',
+                        style: TextStyle(
+                          color: text400,
+                          fontSize: body2,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      // const SizedBox(height: 10),
+
+                      const SizedBox(height: 10),
+                      Text(
+                        '9,000.00 INR',
+                        style: TextStyle(
+                          color: text500,
+                          fontSize: heading2,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 30),
 
           /// tabs for various pages for portfolio
           SingleChildScrollView(

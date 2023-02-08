@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tasvat/screens/profile/views/profile_home_screen.dart';
 import 'package:tasvat/utils/app_constants.dart';
 
 import '../../widgets/tabs.dart';
@@ -30,11 +31,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
         actions: [
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 5),
-            child: const CircleAvatar(
-              // borderRadius: BorderRadius.circular(100),
-              radius: 16,
-              backgroundImage: AssetImage(
-                'assets/images/a_man_reading.png',
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) => ProfileScreen(),
+                  ),
+                );
+              },
+              child: const CircleAvatar(
+                // borderRadius: BorderRadius.circular(100),
+                radius: 16,
+                backgroundImage: AssetImage(
+                  'assets/images/a_man_reading.png',
+                ),
               ),
             ),
           ),
@@ -102,6 +112,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
           ),
+
           const SizedBox(height: 10),
 
           /// Real-Time gold price data

@@ -242,10 +242,10 @@ class _BuyAssetsState extends State<BuyAssets> {
                           ),
                           Text(
                             formState.isValid
-                                ? '~ ${_getTotal()} USD'
-                                : '~ 0.00 USD',
+                                ? '~ ${_getTotal()} ₹'
+                                : '~ 0.00 ₹',
                             style: TextStyle(
-                              fontSize: body2,
+                              fontSize: body1,
                               color: text400,
                               fontWeight: FontWeight.w500,
                             ),
@@ -255,7 +255,7 @@ class _BuyAssetsState extends State<BuyAssets> {
                             children: [
                               /// CASH BALANCE
                               Text(
-                                'Cash Balance: 12,000.00 USD',
+                                'Cash Balance: 12,000.00 ₹',
                                 style: TextStyle(
                                   fontSize: body2,
                                   color: text300,

@@ -29,3 +29,8 @@ class LoginRestartEvent extends LoginEvent {
   @override
   List<Object?> get props => [];
 }
+
+class LogOutEvent extends LoginEvent {
+  @override
+  List<Object?> get props => [];
+}

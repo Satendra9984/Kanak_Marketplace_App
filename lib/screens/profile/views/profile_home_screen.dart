@@ -235,6 +235,26 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
+
+          /// LogOut
+          ListTile(
+            onTap: () {},
+            leading: CircleAvatar(
+              backgroundColor: background,
+              child: Icon(
+                Icons.logout,
+                color: text400,
+              ),
+            ),
+            title: Text(
+              'Log Out',
+              style: TextStyle(
+                fontSize: heading2,
+                fontWeight: FontWeight.w500,
+                color: text500,
+              ),
+            ),
+          ),
         ],
       ),
     );

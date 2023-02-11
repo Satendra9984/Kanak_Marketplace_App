@@ -9,6 +9,7 @@ import 'package:tasvat/screens/login/view/pages/login_page.dart';
 import 'package:tasvat/screens/login/view/pages/otp_screen.dart';
 import 'package:tasvat/screens/signup/bloc/sign_up_bloc.dart';
 import 'package:tasvat/services/auth_services.dart';
+import 'package:tasvat/widgets/gold_rate_graph.dart';
 
 void main() {
   runApp(const Tasvat());
@@ -38,6 +39,7 @@ class _TasvatState extends State<Tasvat> {
       safePrint(e);
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +64,7 @@ class _TasvatState extends State<Tasvat> {
           ],
           // child: LogInPage(),
           child: const HomeScreen(),
+          // child: GoldRateGraph(),
         ),
       ),
     );

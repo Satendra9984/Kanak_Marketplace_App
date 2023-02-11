@@ -1,13 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tasvat/models/transaction_model.dart';
-import 'package:tasvat/screens/buy/buy_completed.dart';
-import 'package:tasvat/screens/sell/sell_completed_screen.dart';
-
 import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
-import 'book_completed.dart';
 
 class ViewBookingDetailsScreen extends StatelessWidget {
   final Transaction buyOrderDetails;

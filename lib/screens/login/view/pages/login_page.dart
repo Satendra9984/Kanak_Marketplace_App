@@ -5,7 +5,6 @@ import 'package:tasvat/screens/login/bloc/login_bloc.dart';
 import 'package:tasvat/screens/login/view/pages/otp_screen.dart';
 import 'package:tasvat/screens/signup/view/pages/signup_page.dart';
 import 'package:tasvat/utils/ui_functions.dart';
-
 import '../../../../utils/app_constants.dart';
 
 class LogInPage extends StatefulWidget {
@@ -35,22 +34,22 @@ class _LogInPageState extends State<LogInPage> {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('OTP sent to ${state.phone}')));
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => OtpScreen(
-                    phone: state.phone,
-                    type: false,
-                  )));
+            builder: (context) => OtpScreen(
+              phone: state.phone,
+              type: false,
+          )));
         } else if (state.status == LoginStatus.invalid) {
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   const SnackBar(content: Text('Form Invalid'
-          // )));
-          // Navigator.of(context).push(
-          //   MaterialPageRoute(
-          //     builder: (context) => OtpScreen(
-          //       phone: state.phone,
-          //       type: false,
-          //     )
-          //   )
-          // );
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Form Invalid'
+          )));
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => OtpScreen(
+                phone: state.phone,
+                type: false,
+              )
+            )
+          );
         }
       },
       builder: (context, state) {
@@ -122,7 +121,7 @@ class _LogInPageState extends State<LogInPage> {
                             .add(PhoneNumberChangedEvent(phone: value));
                       },
                       validator: (value) {
-                        String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+                        String pattern = r'\d)[A-Za-z\d$@$! %*?&]{8,}$)';
                         RegExp regExp = RegExp(pattern);
                         if (value == null || value.isEmpty) {
                           return 'Please enter mobile number';

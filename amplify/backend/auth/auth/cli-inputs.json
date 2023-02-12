@@ -41,7 +41,9 @@
     "adminQueries": false,
     "triggers": {},
     "hostedUI": false,
-    "userPoolGroupList": [],
+    "userPoolGroupList": [
+      "tasvatusers"
+    ],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
     "useEnabledMfas": true,

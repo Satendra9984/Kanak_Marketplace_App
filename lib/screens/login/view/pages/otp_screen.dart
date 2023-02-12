@@ -1,8 +1,7 @@
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/screens/home_screen.dart';
-
+import 'package:tasvat/screens/login/view/pages/login_page.dart';
 import '../../../../utils/app_constants.dart';
 import '../../../../utils/ui_functions.dart';
 
@@ -20,14 +19,14 @@ class _OtpScreenState extends State<OtpScreen> {
   final TextEditingController _otpCtrl = TextEditingController();
   Future<void> _verifyOtp(String otp) async {
     if (_formKey.currentState!.validate()) {
-      safePrint(otp);
       await Amplify.Auth.confirmSignIn(confirmationValue: otp).then((result) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Successfully Logged In!')),
         );
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (ctx) => const HomeScreen()),
-            (route) => true);
+          MaterialPageRoute(builder: (ctx) => const HomeScreen()),
+          (route) => true
+        );
       });
     }
   }
@@ -108,6 +107,12 @@ class _OtpScreenState extends State<OtpScreen> {
                               .then((value) {
                             if (value.isSignUpComplete) {
                               safePrint('😊😊😊😊😊😊');
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (context) => const LogInPage()
+                                ),
+                                (route) => false
+                              );
                             }
                           });
                         } else {

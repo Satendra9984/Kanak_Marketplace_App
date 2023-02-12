@@ -14,13 +14,17 @@
     },
     "categories": {
       "auth": {
-        "auth": {}
+        "auth": {},
+        "userPoolGroups": {}
       },
       "hosting": {
         "amplifyhosting": {
           "appId": "d1zycmfmjxvur5",
           "type": "manual"
         }
+      },
+      "api": {
+        "Tasvatbackend": {}
       }
     }
   }

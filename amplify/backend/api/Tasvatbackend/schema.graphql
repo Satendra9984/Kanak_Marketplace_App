@@ -1,0 +1,24 @@
+type Transaction @model @auth(rules: [{allow: public}, {allow: private}]) {
+  id: ID!
+  type: String
+  amount: Int
+  userID: ID! @index(name: "byUser")
+  details: AWSJSON
+  datetime: AWSDateTime
+  status: String
+}
+
+type User @model @auth(rules: [{allow: public}, {allow: private}]) {
+  id: ID!
+  sgId: Int
+  phone: AWSPhone
+  email: AWSEmail
+  pincode: String
+  pfp: AWSURL
+  joiningDate: AWSDateTime
+  balance: Float
+  kyc: AWSJSON
+  sgVerified: Boolean
+  transactions: [Transaction] @hasMany(indexName: "byUser", fields: ["id"])
+}
+ 

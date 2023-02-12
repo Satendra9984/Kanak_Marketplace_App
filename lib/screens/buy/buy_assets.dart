@@ -1,7 +1,9 @@
+import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/utils/app_constants.dart';
-import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/buy/buy_confirmation.dart';
+
+import '../../models/Transaction.dart';
 
 class BuyAssets extends StatefulWidget {
   BuyAssets({Key? key}) : super(key: key);
@@ -23,7 +25,7 @@ class _BuyAssetsState extends State<BuyAssets> {
   }
 
   void setBuyType(BuyType buyType) {
-    debugPrint('${buyType}');
+    debugPrint('$buyType');
     if (buyType == BuyType.buyByAmount) {
       setState(() {
         _buyTypeString = 'Buy Amount';
@@ -275,14 +277,16 @@ class _BuyAssetsState extends State<BuyAssets> {
                                       MaterialPageRoute(
                                         builder: (ctx) => BuyConfirmationScreen(
                                           buyOrderDetails: Transaction(
-                                            activityName: 'Buy',
-                                            quantity: double.parse(
+                                            id: '123456789',
+                                            type: 'Buy',
+                                            amount: int.tryParse(
                                                 _textEditingController.text),
-                                            date: '28/01/2023',
-                                            time: '16:00',
-                                            price: 300.00,
+                                            userID: 'userID',
+                                            details: '',
+                                            datetime: TemporalDateTime(
+                                                DateTime.now()),
+                                            status: 'Buy',
                                           ),
-                                          id: '1',
                                         ),
                                       ),
                                     );

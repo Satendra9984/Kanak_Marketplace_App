@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/buy/buy_completed.dart';
-
+import '../../models/Transaction.dart';
 import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
 
 class BuyConfirmationScreen extends StatelessWidget {
   final Transaction buyOrderDetails;
-  final String id;
+  // final String id;
   const BuyConfirmationScreen({
     Key? key,
     required this.buyOrderDetails,
-    required this.id,
+    // required this.id,
   }) : super(key: key);
 
   @override
@@ -69,15 +68,15 @@ class BuyConfirmationScreen extends StatelessWidget {
                       const SizedBox(height: 25),
                       RowDetailWidget(
                           title: 'Transaction Type',
-                          value: buyOrderDetails.activityName),
+                          value: buyOrderDetails.type!),
                       const SizedBox(height: 25),
                       RowDetailWidget(
                           title: 'Price',
-                          value: '${buyOrderDetails.price} INR/gm'),
+                          value: '${buyOrderDetails.amount} INR/gm'),
                       const SizedBox(height: 25),
                       RowDetailWidget(
                           title: 'Amount',
-                          value: '${buyOrderDetails.quantity} gm'),
+                          value: '${buyOrderDetails.amount} gm'),
                     ],
                   ),
                 ),

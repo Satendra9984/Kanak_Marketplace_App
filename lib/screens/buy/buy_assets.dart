@@ -275,19 +275,8 @@ class _BuyAssetsState extends State<BuyAssets> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (ctx) => BuyConfirmationScreen(
-                                          buyOrderDetails: Transaction(
-                                            id: '123456789',
-                                            type: 'Buy',
-                                            amount: int.tryParse(
-                                                _textEditingController.text),
-                                            userID: 'userID',
-                                            details: '',
-                                            datetime: TemporalDateTime(
-                                                DateTime.now()),
-                                            status: 'Buy',
-                                          ),
-                                        ),
+                                        builder: (ctx) =>
+                                            BuyConfirmationScreen(),
                                       ),
                                     );
                                   }

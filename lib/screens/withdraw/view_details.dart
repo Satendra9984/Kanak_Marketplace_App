@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tasvat/models/transaction_model.dart';
+
+import '../../models/Transaction.dart';
 import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
 
 class ViewBookingDetailsScreen extends StatelessWidget {
   final Transaction buyOrderDetails;
-  final String id;
+
   const ViewBookingDetailsScreen({
     Key? key,
     required this.buyOrderDetails,
-    required this.id,
   }) : super(key: key);
 
   @override
@@ -44,7 +44,7 @@ class ViewBookingDetailsScreen extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 15),
                     child: Text(
-                      'Expire On ${buyOrderDetails.date}',
+                      'Expire On ${buyOrderDetails.datetime}',
                       style: TextStyle(
                         fontSize: title,
                         color: text500,
@@ -78,11 +78,11 @@ class ViewBookingDetailsScreen extends StatelessWidget {
                         const SizedBox(height: 25),
                         RowDetailWidget(
                             title: 'Transaction Type',
-                            value: buyOrderDetails.activityName),
+                            value: buyOrderDetails.type!),
                         const SizedBox(height: 25),
                         RowDetailWidget(
                             title: 'Amount',
-                            value: '${buyOrderDetails.quantity} gm'),
+                            value: '${buyOrderDetails.amount} gm'),
                       ],
                     ),
                   ),

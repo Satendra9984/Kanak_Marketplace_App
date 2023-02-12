@@ -1,3 +1,4 @@
+import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/screens/buy/buy_completed.dart';
 import '../../models/Transaction.dart';
@@ -5,13 +6,19 @@ import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
 
 class BuyConfirmationScreen extends StatelessWidget {
-  final Transaction buyOrderDetails;
-  // final String id;
-  const BuyConfirmationScreen({
+  BuyConfirmationScreen({
     Key? key,
-    required this.buyOrderDetails,
-    // required this.id,
   }) : super(key: key);
+
+  final Transaction buyOrderDetails = Transaction(
+    id: '123456789',
+    type: 'Buy',
+    amount: 52,
+    userID: 'userID',
+    details: '',
+    datetime: TemporalDateTime(DateTime.now()),
+    status: 'Buy',
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -104,8 +111,7 @@ class BuyConfirmationScreen extends StatelessWidget {
                       const SizedBox(height: 25),
                       RowDetailWidget(
                           title: 'Equal',
-                          value:
-                              '${buyOrderDetails.quantity * buyOrderDetails.price} INR'),
+                          value: '${buyOrderDetails.amount! * 500} INR'),
                       const SizedBox(height: 25),
                       const RowDetailWidget(
                           title: 'Method', value: 'Cash Wallet'),
@@ -127,7 +133,6 @@ class BuyConfirmationScreen extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (ctx) => BuyCompletedScreen(
                         buyOrderDetails: buyOrderDetails,
-                        id: id,
                         backToHome: true,
                       ),
                     ),

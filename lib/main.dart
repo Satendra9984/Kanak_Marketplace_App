@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/amplifyconfiguration.dart';
+import 'package:tasvat/screens/home_screen.dart';
 import 'package:tasvat/screens/login/bloc/login_bloc.dart';
 import 'package:tasvat/screens/login/view/pages/login_page.dart';
 import 'package:tasvat/screens/onboarding/onboarding_page.dart';
@@ -12,9 +13,7 @@ import 'package:tasvat/services/auth_services.dart';
 import 'package:tasvat/widgets/gold_rate_graph.dart';
 
 void main() {
-  runApp(const ProviderScope(
-    child: Tasvat()
-  ));
+  runApp(const ProviderScope(child: Tasvat()));
 }
 
 class Tasvat extends ConsumerStatefulWidget {
@@ -23,34 +22,7 @@ class Tasvat extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _TasvatState();
 }
 
-<<<<<<< HEAD
-class _TasvatState extends State<Tasvat> {
-  Future<void> _configureAmplify() async {
-    try {
-      final auth = AmplifyAuthCognito();
-      await Amplify.addPlugins([auth]);
-      await Amplify.configure(amplifyconfig).then((value) async {
-        safePrint('😄😄😄 Successfully Coynfigured Amplify!');
-        await Amplify.Auth.getCurrentUser().then((value) {
-          safePrint('--> ${value.username}, ${value.userId}');
-        });
-      });
-      // tasvat52@gmail.com
-      // tasvat@123
-    } on Exception catch (e) {
-      safePrint(e);
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _configureAmplify();
-  }
-
-=======
 class _TasvatState extends ConsumerState<Tasvat> {
->>>>>>> 433fba7b8715d58e2b5c4aa54efe09499367271d
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -67,14 +39,11 @@ class _TasvatState extends ConsumerState<Tasvat> {
               create: (context) => SignUpBloc(),
             ),
           ],
-<<<<<<< HEAD
           // child: LogInPage(),
-          child: const HomeScreen(),
+          // child: const HomeScreen(),
           // child: GoldRateGraph(),
-=======
           child: const OnBoardingPage(),
           // child: const HomeScreen(),
->>>>>>> 433fba7b8715d58e2b5c4aa54efe09499367271d
         ),
       ),
     );

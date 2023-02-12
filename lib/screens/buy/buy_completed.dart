@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tasvat/models/transaction_model.dart';
+import '../../models/Transaction.dart';
 import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
 
 class BuyCompletedScreen extends StatelessWidget {
   final Transaction buyOrderDetails;
-  final String id;
   final bool backToHome;
   const BuyCompletedScreen({
     Key? key,
     required this.buyOrderDetails,
-    required this.id,
     this.backToHome = false,
   }) : super(key: key);
 
@@ -53,7 +51,7 @@ class BuyCompletedScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'ID: $id',
+                    'ID: ${buyOrderDetails.id}',
                     style: TextStyle(
                       color: text300,
                       fontSize: body1,
@@ -98,15 +96,12 @@ class BuyCompletedScreen extends StatelessWidget {
                     const SizedBox(height: 25),
                     RowDetailWidget(
                         title: 'Transaction Type',
-                        value: buyOrderDetails.activityName),
+                        value: buyOrderDetails.type!),
+                    const SizedBox(height: 25),
+                    RowDetailWidget(title: 'Price', value: '${10000} INR/gm'),
                     const SizedBox(height: 25),
                     RowDetailWidget(
-                        title: 'Price',
-                        value: '${buyOrderDetails.price} INR/gm'),
-                    const SizedBox(height: 25),
-                    RowDetailWidget(
-                        title: 'Amount',
-                        value: '${buyOrderDetails.quantity} gm'),
+                        title: 'Amount', value: '${buyOrderDetails.amount} gm'),
                   ],
                 ),
               ),
@@ -134,8 +129,7 @@ class BuyCompletedScreen extends StatelessWidget {
                     const SizedBox(height: 25),
                     RowDetailWidget(
                         title: 'Equal',
-                        value:
-                            '${buyOrderDetails.quantity * buyOrderDetails.price} INR'),
+                        value: '${buyOrderDetails.amount! * 100000} INR'),
                     const SizedBox(height: 25),
                     const RowDetailWidget(
                         title: 'Method', value: 'Cash Wallet'),

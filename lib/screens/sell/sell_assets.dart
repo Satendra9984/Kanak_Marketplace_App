@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tasvat/utils/app_constants.dart';
-import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/sell/sell_confirmation.dart';
 
 class SellAssets extends StatelessWidget {
@@ -184,17 +183,7 @@ class SellAssets extends StatelessWidget {
                                       context,
                                       MaterialPageRoute(
                                         builder: (ctx) =>
-                                            SellConfirmationScreen(
-                                          buyOrderDetails: Transaction(
-                                            activityName: 'Sell',
-                                            quantity: double.parse(
-                                                _textEditingController.text),
-                                            date: '28/01/2023',
-                                            time: '16:00',
-                                            price: 300.00,
-                                          ),
-                                          id: '1',
-                                        ),
+                                            SellConfirmationScreen(),
                                       ),
                                     );
                                   }

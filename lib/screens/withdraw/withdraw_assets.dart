@@ -1,9 +1,11 @@
+import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/utils/app_constants.dart';
-import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/sell/sell_confirmation.dart';
 import 'package:tasvat/screens/withdraw/select_time_&_vendor.dart';
+
+import '../../models/Transaction.dart';
 
 class WithdrawAssets extends StatelessWidget {
   WithdrawAssets({Key? key}) : super(key: key);
@@ -187,14 +189,15 @@ class WithdrawAssets extends StatelessWidget {
                                       MaterialPageRoute(
                                         builder: (ctx) => SelectTimeAndVendor(
                                           buyOrderDetails: Transaction(
-                                            activityName: 'Convert',
-                                            quantity: double.parse(
-                                                _textEditingController.text),
-                                            date: '28/01/2023',
-                                            time: '16:00',
-                                            price: 300.00,
+                                            id: '123456789',
+                                            type: 'Buy',
+                                            amount: 52,
+                                            userID: 'userID',
+                                            details: '',
+                                            datetime: TemporalDateTime(
+                                                DateTime.now()),
+                                            status: 'Buy',
                                           ),
-                                          id: '1',
                                         ),
                                       ),
                                     );

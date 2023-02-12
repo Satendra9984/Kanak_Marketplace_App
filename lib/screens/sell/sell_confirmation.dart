@@ -1,21 +1,29 @@
+import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tasvat/models/transaction_model.dart';
-import 'package:tasvat/screens/buy/buy_completed.dart';
 import 'package:tasvat/screens/sell/sell_completed_screen.dart';
 
+import '../../models/Transaction.dart';
 import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
 
 class SellConfirmationScreen extends StatelessWidget {
-  final Transaction buyOrderDetails;
-  final String id;
-  const SellConfirmationScreen({
+
+  SellConfirmationScreen({
     Key? key,
-    required this.buyOrderDetails,
-    required this.id,
+
   }) : super(key: key);
+
+  final Transaction buyOrderDetails = Transaction(
+    id: '123456789',
+    type: 'Buy',
+    amount: 52,
+    userID: 'userID',
+    details: '',
+    datetime: TemporalDateTime(DateTime.now()),
+    status: 'Buy',
+  );
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,15 +78,15 @@ class SellConfirmationScreen extends StatelessWidget {
                       const SizedBox(height: 25),
                       RowDetailWidget(
                           title: 'Transaction Type',
-                          value: buyOrderDetails.activityName),
+                          value: buyOrderDetails.type!),
                       const SizedBox(height: 25),
                       RowDetailWidget(
                           title: 'Price',
-                          value: '${buyOrderDetails.price} INR/gm'),
+                          value: '${10000} INR/gm'),
                       const SizedBox(height: 25),
                       RowDetailWidget(
                           title: 'Amount',
-                          value: '${buyOrderDetails.quantity} gm'),
+                          value: '${buyOrderDetails.amount} gm'),
                     ],
                   ),
                 ),
@@ -107,7 +115,7 @@ class SellConfirmationScreen extends StatelessWidget {
                       RowDetailWidget(
                           title: 'Equal',
                           value:
-                              '${buyOrderDetails.quantity * buyOrderDetails.price} INR'),
+                              '${buyOrderDetails.amount! * 10000} INR'),
                       const SizedBox(height: 25),
                       const RowDetailWidget(
                           title: 'Method', value: 'Cash Wallet'),
@@ -128,7 +136,6 @@ class SellConfirmationScreen extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (ctx) => SellCompletedScreen(
                         buyOrderDetails: buyOrderDetails,
-                        id: id,
                         backToHome: true,
                       ),
                     ),

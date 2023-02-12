@@ -1,9 +1,10 @@
+import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
-import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/buy/buy_completed.dart';
 import 'package:tasvat/screens/sell/sell_completed_screen.dart';
 import 'package:tasvat/screens/withdraw/withdraw_completed.dart';
 
+import '../../models/Transaction.dart';
 import '../../utils/app_constants.dart';
 
 class PortfolioTransactions extends StatelessWidget {
@@ -11,29 +12,38 @@ class PortfolioTransactions extends StatelessWidget {
 
   final List<Transaction> _transactionList = [
     Transaction(
-        activityName: 'Buy',
-        quantity: 1.0,
-        date: '15/06/2021',
-        time: '18:30',
-        price: 300.00),
+      id: '123456789',
+      type: 'Buy',
+      amount: 52,
+      userID: 'userID',
+      details: '',
+      datetime: TemporalDateTime(DateTime.now()),
+      status: 'Buy',
+    ),
     Transaction(
-        activityName: 'Sell',
-        quantity: -1.0,
-        date: '15/06/2021',
-        time: '18:30',
-        price: 300.00),
+      id: '123456789',
+      type: 'Buy',
+      amount: 52,
+      userID: 'userID',
+      details: '',
+      datetime: TemporalDateTime(DateTime.now()),
+      status: 'Buy',
+    ),
     Transaction(
-        activityName: 'Withdraw',
-        quantity: 1.0,
-        date: '15/06/2021',
-        time: '18:30',
-        price: 300.00),
+      id: '123456789',
+      type: 'Buy',
+      amount: 52,
+      userID: 'userID',
+      details: '',
+      datetime: TemporalDateTime(DateTime.now()),
+      status: 'Buy',
+    )
   ];
 
   IconData _getIcon(int index) {
-    if (_transactionList[index].activityName == 'Buy') {
+    if (_transactionList[index].type == 'Buy') {
       return Icons.add;
-    } else if (_transactionList[index].activityName == 'Sell') {
+    } else if (_transactionList[index].type == 'Sell') {
       return Icons.currency_exchange;
     }
 
@@ -41,9 +51,9 @@ class PortfolioTransactions extends StatelessWidget {
   }
 
   Color _getPriceColor(int index) {
-    if (_transactionList[index].activityName == 'Buy') {
+    if (_transactionList[index].type == 'Buy') {
       return success;
-    } else if (_transactionList[index].activityName == 'Sell') {
+    } else if (_transactionList[index].type == 'Sell') {
       return error;
     }
 
@@ -70,7 +80,7 @@ class PortfolioTransactions extends StatelessWidget {
                   ),
                 ),
                 title: Text(
-                  _transactionList[index].activityName,
+                  _transactionList[index].type!,
                   style: TextStyle(
                     color: text500,
                     fontSize: body1,
@@ -80,7 +90,7 @@ class PortfolioTransactions extends StatelessWidget {
                 subtitle: Row(
                   children: [
                     Text(
-                      _transactionList[index].date,
+                      _transactionList[index].datetime.toString(),
                       style: TextStyle(
                         color: text300,
                         fontSize: caption,
@@ -89,7 +99,7 @@ class PortfolioTransactions extends StatelessWidget {
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      _transactionList[index].time,
+                      _transactionList[index].datetime.toString(),
                       style: TextStyle(
                         color: text300,
                         fontSize: caption,
@@ -109,7 +119,7 @@ class PortfolioTransactions extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              _transactionList[index].quantity.toString(),
+                              _transactionList[index].amount.toString(),
                               style: TextStyle(
                                 color: _getPriceColor(index),
                                 fontSize: heading2,
@@ -129,7 +139,7 @@ class PortfolioTransactions extends StatelessWidget {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          '${_transactionList[index].price} INR',
+                          '${10000} INR',
                           style: TextStyle(
                             color: text300,
                             fontSize: body2,
@@ -161,33 +171,30 @@ class PortfolioTransactions extends StatelessWidget {
 
   void _navigateToCompletedScreen(
       BuildContext context, Transaction transactionDetails, String id) {
-    if (transactionDetails.activityName == 'Buy') {
+    if (transactionDetails.type == 'Buy') {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (ctx) => BuyCompletedScreen(
             buyOrderDetails: transactionDetails,
-            id: id,
           ),
         ),
       );
-    } else if (transactionDetails.activityName == 'Sell') {
+    } else if (transactionDetails.type == 'Sell') {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (ctx) => SellCompletedScreen(
             buyOrderDetails: transactionDetails,
-            id: id,
           ),
         ),
       );
-    } else if (transactionDetails.activityName == 'Withdraw') {
+    } else if (transactionDetails.type == 'Withdraw') {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (ctx) => WithdrawCompletedScreen(
             buyOrderDetails: transactionDetails,
-            id: id,
           ),
         ),
       );

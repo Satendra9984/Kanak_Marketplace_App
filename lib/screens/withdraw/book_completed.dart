@@ -2,16 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/screens/withdraw/view_details.dart';
 
+import '../../models/Transaction.dart';
 import '../../utils/app_constants.dart';
-import '../../models/transaction_model.dart';
+
 
 class BookCompletedScreen extends StatelessWidget {
   final Transaction buyOrderDetails;
-  final String id;
+
   const BookCompletedScreen({
     Key? key,
     required this.buyOrderDetails,
-    required this.id,
+
   }) : super(key: key);
 
   @override
@@ -78,7 +79,7 @@ class BookCompletedScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (ctx) => ViewBookingDetailsScreen(
-                              buyOrderDetails: buyOrderDetails, id: id),
+                              buyOrderDetails: buyOrderDetails),
                         ),
                       );
                     },

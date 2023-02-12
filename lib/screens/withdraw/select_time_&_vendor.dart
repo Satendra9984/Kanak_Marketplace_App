@@ -1,20 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tasvat/models/transaction_model.dart';
+
 import 'package:tasvat/screens/buy/buy_completed.dart';
 import 'package:tasvat/screens/sell/sell_completed_screen.dart';
 import 'package:tasvat/screens/withdraw/book_confirmation.dart';
+import '../../models/Transaction.dart';
 import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
+import 'book_completed.dart';
 
 class SelectTimeAndVendor extends StatelessWidget {
   final Transaction buyOrderDetails;
-  final String id;
+
   const SelectTimeAndVendor({
     Key? key,
     required this.buyOrderDetails,
-    required this.id,
   }) : super(key: key);
 
   @override
@@ -168,9 +169,8 @@ class SelectTimeAndVendor extends StatelessWidget {
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (ctx) => BookConfirmationScreen(
+                      builder: (ctx) => BookCompletedScreen(
                         buyOrderDetails: buyOrderDetails,
-                        id: id,
                       ),
                     ),
                     (route) => route.isFirst,

@@ -1,19 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tasvat/models/transaction_model.dart';
 import 'package:tasvat/screens/home_screen.dart';
+import '../../models/Transaction.dart';
 import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
 
 class SellCompletedScreen extends StatelessWidget {
   final Transaction buyOrderDetails;
-  final String id;
   final bool backToHome;
   const SellCompletedScreen({
     Key? key,
     required this.buyOrderDetails,
-    required this.id,
     this.backToHome = false,
   }) : super(key: key);
 
@@ -55,7 +53,7 @@ class SellCompletedScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'ID: $id',
+                    'ID: ${buyOrderDetails.id}',
                     style: TextStyle(
                       color: text300,
                       fontSize: body1,
@@ -100,15 +98,12 @@ class SellCompletedScreen extends StatelessWidget {
                     const SizedBox(height: 25),
                     RowDetailWidget(
                         title: 'Transaction Type',
-                        value: buyOrderDetails.activityName),
+                        value: buyOrderDetails.type!),
+                    const SizedBox(height: 25),
+                    RowDetailWidget(title: 'Price', value: '${10000} INR/gm'),
                     const SizedBox(height: 25),
                     RowDetailWidget(
-                        title: 'Price',
-                        value: '${buyOrderDetails.price} INR/gm'),
-                    const SizedBox(height: 25),
-                    RowDetailWidget(
-                        title: 'Amount',
-                        value: '${buyOrderDetails.quantity} gm'),
+                        title: 'Amount', value: '${buyOrderDetails.amount} gm'),
                   ],
                 ),
               ),
@@ -136,8 +131,7 @@ class SellCompletedScreen extends StatelessWidget {
                     const SizedBox(height: 25),
                     RowDetailWidget(
                         title: 'Equal',
-                        value:
-                            '${buyOrderDetails.quantity * buyOrderDetails.price} INR'),
+                        value: '${buyOrderDetails.amount! * 10000} INR'),
                     const SizedBox(height: 25),
                     RowDetailWidget(title: 'Method', value: 'Cash Wallet'),
                   ],

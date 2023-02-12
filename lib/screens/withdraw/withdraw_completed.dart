@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tasvat/models/transaction_model.dart';
+import '../../models/Transaction.dart';
 import '../../utils/app_constants.dart';
 import '../../widgets/row_details_widget.dart';
 
 class WithdrawCompletedScreen extends StatelessWidget {
   final Transaction buyOrderDetails;
-  final String id;
+
   const WithdrawCompletedScreen({
     Key? key,
     required this.buyOrderDetails,
-    required this.id,
   }) : super(key: key);
 
   @override
@@ -53,7 +52,7 @@ class WithdrawCompletedScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'ID: $id',
+                        'ID: ${buyOrderDetails.id}',
                         style: TextStyle(
                           color: text300,
                           fontSize: body1,
@@ -138,12 +137,11 @@ class WithdrawCompletedScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 25),
                         RowDetailWidget(
-                            title: 'Tx Type',
-                            value: buyOrderDetails.activityName),
+                            title: 'Tx Type', value: buyOrderDetails.type!),
                         const SizedBox(height: 25),
                         RowDetailWidget(
                             title: 'Withdraw Amount',
-                            value: '${buyOrderDetails.quantity} mace'),
+                            value: '${buyOrderDetails.amount} mace'),
                       ],
                     ),
                   ),

@@ -14,7 +14,7 @@ class PortfolioTransactions extends StatelessWidget {
     Transaction(
       id: '123456789',
       type: 'Buy',
-      amount: 52,
+      amount: 12,
       userID: 'userID',
       details: '',
       datetime: TemporalDateTime(DateTime.now()),
@@ -22,8 +22,8 @@ class PortfolioTransactions extends StatelessWidget {
     ),
     Transaction(
       id: '123456789',
-      type: 'Buy',
-      amount: 52,
+      type: 'Sell',
+      amount: 5,
       userID: 'userID',
       details: '',
       datetime: TemporalDateTime(DateTime.now()),
@@ -31,13 +31,13 @@ class PortfolioTransactions extends StatelessWidget {
     ),
     Transaction(
       id: '123456789',
-      type: 'Buy',
-      amount: 52,
+      type: 'Withdraw',
+      amount: 8,
       userID: 'userID',
       details: '',
       datetime: TemporalDateTime(DateTime.now()),
       status: 'Buy',
-    )
+    ),
   ];
 
   IconData _getIcon(int index) {
@@ -46,7 +46,6 @@ class PortfolioTransactions extends StatelessWidget {
     } else if (_transactionList[index].type == 'Sell') {
       return Icons.currency_exchange;
     }
-
     return Icons.file_download_outlined;
   }
 
@@ -90,7 +89,10 @@ class PortfolioTransactions extends StatelessWidget {
                 subtitle: Row(
                   children: [
                     Text(
-                      _transactionList[index].datetime.toString(),
+                      _transactionList[index]
+                          .datetime
+                          .toString()
+                          .substring(0, 10),
                       style: TextStyle(
                         color: text300,
                         fontSize: caption,
@@ -99,7 +101,10 @@ class PortfolioTransactions extends StatelessWidget {
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      _transactionList[index].datetime.toString(),
+                      _transactionList[index]
+                          .datetime
+                          .toString()
+                          .substring(0, 10),
                       style: TextStyle(
                         color: text300,
                         fontSize: caption,

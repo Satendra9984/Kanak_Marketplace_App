@@ -1,12 +1,9 @@
-import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/utils/app_constants.dart';
 import 'package:tasvat/screens/buy/buy_confirmation.dart';
 
-import '../../models/Transaction.dart';
-
 class BuyAssets extends StatefulWidget {
-  BuyAssets({Key? key}) : super(key: key);
+  const BuyAssets({Key? key}) : super(key: key);
 
   @override
   State<BuyAssets> createState() => _BuyAssetsState();
@@ -275,8 +272,9 @@ class _BuyAssetsState extends State<BuyAssets> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (ctx) =>
-                                            BuyConfirmationScreen(),
+                                        builder: (ctx) => BuyConfirmationScreen(
+                                          quantity: '10',
+                                        ),
                                       ),
                                     );
                                   }

@@ -34,22 +34,18 @@ class _LogInPageState extends State<LogInPage> {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('OTP sent to ${state.phone}')));
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => OtpScreen(
-              phone: state.phone,
-              type: false,
-          )));
-        } else if (state.status == LoginStatus.invalid) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Form Invalid'
-          )));
-          Navigator.of(context).push(
-            MaterialPageRoute(
               builder: (context) => OtpScreen(
-                phone: state.phone,
-                type: false,
-              )
-            )
-          );
+                    phone: state.phone,
+                    type: false,
+                  )));
+        } else if (state.status == LoginStatus.invalid) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Form Invalid')));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => OtpScreen(
+                    phone: state.phone,
+                    type: false,
+                  )));
         }
       },
       builder: (context, state) {
@@ -121,7 +117,7 @@ class _LogInPageState extends State<LogInPage> {
                             .add(PhoneNumberChangedEvent(phone: value));
                       },
                       validator: (value) {
-                        String pattern = r'\d)[A-Za-z\d$@$! %*?&]{8,}$)';
+                        String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
                         RegExp regExp = RegExp(pattern);
                         if (value == null || value.isEmpty) {
                           return 'Please enter mobile number';

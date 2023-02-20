@@ -46,6 +46,21 @@ dependencies:
   fl_chart: ^0.60.0
   http: ^0.13.5
   custom_timer: ^0.2.3
+  firebase_core: ^2.5.0
+  firebase_auth: ^4.2.6
+  cloud_firestore: ^4.4.2
+  firebase_storage: ^11.0.11
+  flutter_local_notifications: ^13.0.0
+  country_code_picker: ^2.0.2
+  #stripe_payment: ^1.1.4
+  autocomplete_textfield: ^2.0.1
+  rxdart: ^0.27.7
+  timezone: ^0.9.1
+  flutter_native_timezone: ^2.0.0
+  image_picker: ^0.8.6+1
+  file_picker: ^5.2.5
+  intl: ^0.17.0
+  flutter_stripe: ^8.0.0+1
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +88,7 @@ flutter:
   assets:
      - assets/images/a_man_reading.png
      - assets/images/gift_box.png
+     - assets/images/coin.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

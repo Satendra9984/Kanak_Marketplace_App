@@ -1,234 +1,78 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:tasvat/screens/buy/buy_asset_body.dart';
+import 'package:tasvat/screens/sell/sell_asset_body.dart';
 import 'package:tasvat/utils/app_constants.dart';
-import 'package:tasvat/screens/sell/sell_confirmation.dart';
+import 'package:tasvat/screens/buy/buy_confirmation.dart';
+import 'package:http/http.dart' as http;
 
-class SellAssets extends StatelessWidget {
-  SellAssets({Key? key}) : super(key: key);
+class SellAssets extends StatefulWidget {
+  const SellAssets({Key? key}) : super(key: key);
 
-  final GlobalKey<FormState> _formKey = GlobalKey();
-  final TextEditingController _textEditingController = TextEditingController();
+  @override
+  State<SellAssets> createState() => _SellAssetsState();
+}
 
-  String _getTotal() {
-    double? tryQuantity = double.tryParse(_textEditingController.text);
-    double quantity = tryQuantity ?? 0.00;
-    return (quantity * 300.00).toString();
+class _SellAssetsState extends State<SellAssets> {
+  Stream<http.Response> _getPriceDataStream() async* {
+    // try {
+    yield* Stream.periodic(const Duration(seconds: 1), (_) {
+      return http.get(
+        Uri.parse('https://partners-staging.safegold.com/v1/buy-price'),
+        headers: {
+          'Authorization': 'Bearer 38778d59d5e17cfadc750e87703eb5e2',
+        },
+      );
+    }).asyncMap((event) async => await event);
+
+    // return http.Response;
+    // }catch(e) {
+    //
+    // }
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: background,
       appBar: AppBar(
         backgroundColor: background,
         elevation: 0.0,
-      ),
-      body: Container(
-        alignment: Alignment.topCenter,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            // mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 25),
-
-              /// buy amount
-              Text(
-                'Sell Amount',
-                style: TextStyle(
-                  fontSize: body2,
-                  color: text300,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 35),
-              FormField(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                initialValue: _textEditingController,
-                validator: (controller) {
-                  if (controller != null && controller.text.isNotEmpty) {
-                    double? isDouble = double.tryParse(controller.text);
-                    if (isDouble != null) {
-                      return null;
-                    }
-                    return 'Invalid Input';
-                  } else if (controller != null && controller.text.isEmpty) {
-                    return 'Enter Quantity';
-                  }
-
-                  return null;
-                },
-                builder: (formState) {
-                  return Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 15),
-                      child: Column(
-                        // mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                // TODO : INPUT FOR BUY AMOUNT
-                                children: [
-                                  Container(
-                                    height: 60,
-                                    width: 120,
-                                    alignment: Alignment.bottomCenter,
-                                    child: TextField(
-                                      onChanged: (value) {
-                                        formState
-                                            .didChange(_textEditingController);
-                                      },
-                                      textAlign: TextAlign.end,
-                                      textAlignVertical:
-                                          TextAlignVertical.bottom,
-                                      controller: _textEditingController,
-                                      style: TextStyle(
-                                        fontSize: 50,
-                                        fontWeight: FontWeight.w600,
-                                        color: accent2,
-                                      ),
-                                      decoration: InputDecoration(
-                                        enabledBorder: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                        contentPadding:
-                                            const EdgeInsets.all(0.0),
-                                        isDense: true,
-                                        alignLabelWithHint: true,
-                                        hintText: '0.0',
-                                        hintStyle: TextStyle(
-                                          fontSize: 50,
-                                          fontWeight: FontWeight.w500,
-                                          color: text200,
-                                        ),
-                                        labelStyle: TextStyle(
-                                          fontSize: 50,
-                                          fontWeight: FontWeight.w500,
-                                          color: text200,
-                                        ),
-                                      ),
-                                      keyboardType: TextInputType.number,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 60,
-                                    child: VerticalDivider(
-                                      thickness: 2.5,
-                                      color: accent2.withOpacity(0.6),
-                                      width: 20,
-                                    ),
-                                  ),
-                                  Text(
-                                    'mace',
-                                    style: TextStyle(
-                                      fontSize: body2,
-                                      color: text400,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              if (formState.hasError)
-                                Container(
-                                  margin: const EdgeInsets.only(top: 10),
-                                  child: Text(
-                                    '${formState.errorText}',
-                                    style: TextStyle(
-                                      fontSize: body2,
-                                      color: error,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          Text(
-                            formState.isValid
-                                ? '~ ${_getTotal()} USD'
-                                : '~ 0.00 USD',
-                            style: TextStyle(
-                              fontSize: body2,
-                              color: text400,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              /// CASH BALANCE
-                              Text(
-                                'Gold Balance: 30.0 mace',
-                                style: TextStyle(
-                                  fontSize: body2,
-                                  color: text300,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 15),
-                              ElevatedButton(
-                                onPressed: () {
-                                  /// proceed to buy
-                                  if (_formKey.currentState != null &&
-                                      _formKey.currentState!.validate()) {
-                                    // TODO : PROCEED TO CONFIRMATION SCREEN
-                                    closeKeyboard(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (ctx) =>
-                                            SellConfirmationScreen(),
-                                      ),
-                                    );
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  minimumSize:
-                                      const Size(double.infinity, 50.0),
-                                  maximumSize:
-                                      const Size(double.infinity, 60.0),
-                                  backgroundColor:
-                                      formState.isValid ? accent1 : text200,
-                                ),
-                                child: Text(
-                                  'Continue',
-                                  style: TextStyle(
-                                    color: formState.isValid
-                                        ? background
-                                        : text300,
-                                    fontSize: heading2,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
+        title: Text(
+          'Sell Gold Assets',
+          style: TextStyle(
+            fontSize: body1,
+            color: text500,
+            fontWeight: FontWeight.w400,
           ),
         ),
       ),
+      body: Container(
+        alignment: Alignment.center,
+        child: StreamBuilder(
+          stream: _getPriceDataStream(),
+          builder: (context, AsyncSnapshot<http.Response> response) {
+            if (response.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (response.hasError) {
+              return const Text('Something went wrong');
+            }
+            // debugPrint(response.data!.body);
+            return SellAssetBody(
+              goldApiRateData: jsonDecode(response.data!.body),
+            );
+          },
+        ),
+      ),
     );
-  }
-
-  closeKeyboard(BuildContext context) {
-    var currentFocus = FocusScope.of(context);
-    if (!currentFocus.hasPrimaryFocus) {
-      currentFocus.unfocus();
-    }
   }
 }

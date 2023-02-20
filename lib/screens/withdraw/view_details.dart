@@ -44,9 +44,9 @@ class ViewBookingDetailsScreen extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 15),
                     child: Text(
-                      'Expire On ${buyOrderDetails.datetime}',
+                      'Expire On ${buyOrderDetails.datetime.toString().substring(0, 10)}',
                       style: TextStyle(
-                        fontSize: title,
+                        fontSize: heading2,
                         color: text500,
                         fontWeight: FontWeight.w600,
                       ),

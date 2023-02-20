@@ -25,25 +25,21 @@ class Tasvat extends ConsumerStatefulWidget {
 class _TasvatState extends ConsumerState<Tasvat> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.dark(),
-      home: RepositoryProvider(
-        create: (_) => AuthRepository(),
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) =>
-                  LoginBloc(authRepository: context.read<AuthRepository>()),
-            ),
-            BlocProvider(
-              create: (context) => SignUpBloc(),
-            ),
-          ],
-          // child: LogInPage(),
-          // child: const HomeScreen(),
-          // child: GoldRateGraph(),
-          child: const OnBoardingPage(),
-          // child: const HomeScreen(),
+    return RepositoryProvider(
+      create: (_) => AuthRepository(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+                LoginBloc(authRepository: context.read<AuthRepository>()),
+          ),
+          BlocProvider(
+            create: (context) => SignUpBloc(),
+          ),
+        ],
+        child: const MaterialApp(
+          // home: OnBoardingPage(),
+          home: HomeScreen(),
         ),
       ),
     );

@@ -100,7 +100,8 @@ class SellCompletedScreen extends StatelessWidget {
                         title: 'Transaction Type',
                         value: buyOrderDetails.type!),
                     const SizedBox(height: 25),
-                    RowDetailWidget(title: 'Price', value: '${10000} INR/gm'),
+                    const RowDetailWidget(
+                        title: 'Price', value: '${5200.39} ₹/gm'),
                     const SizedBox(height: 25),
                     RowDetailWidget(
                         title: 'Amount', value: '${buyOrderDetails.amount} gm'),
@@ -131,7 +132,7 @@ class SellCompletedScreen extends StatelessWidget {
                     const SizedBox(height: 25),
                     RowDetailWidget(
                         title: 'Equal',
-                        value: '${buyOrderDetails.amount! * 10000} INR'),
+                        value: '${buyOrderDetails.amount! * 5200.39} ₹'),
                     const SizedBox(height: 25),
                     RowDetailWidget(title: 'Method', value: 'Cash Wallet'),
                   ],

@@ -17,8 +17,8 @@ class BookConfirmationScreen extends StatelessWidget {
   }) : super(key: key);
   final Transaction buyOrderDetails = Transaction(
     id: '123456789',
-    type: 'Buy',
-    amount: 52,
+    type: 'Withdraw',
+    amount: 5,
     userID: 'userID',
     details: '',
     datetime: TemporalDateTime(DateTime.now()),

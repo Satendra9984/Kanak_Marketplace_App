@@ -1,4 +1,5 @@
 
+import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,8 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
   Future<void> _configureAmplify() async {
     try {
       final auth = AmplifyAuthCognito();
-      await Amplify.addPlugins([auth]);
+      final api = AmplifyAPI();
+      await Amplify.addPlugins([auth, api]);
       await Amplify.configure(amplifyconfig).then((value) async {
         safePrint('😄😄😄 Successfully Coynfigured Amplify!');
         await Amplify.Auth.getCurrentUser().then((value) {

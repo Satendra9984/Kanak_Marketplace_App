@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/screens/buy/buy_assets.dart';
 import 'package:tasvat/screens/dashboard/dashboard.dart';
@@ -16,10 +20,35 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentSelectedBottomNavItem = 0;
   late PageController _pageController;
+  Future<void> callDemoAPI() async {
+    try {
+      final session = await Amplify.Auth.fetchAuthSession(
+        options: CognitoSessionOptions(getAWSCredentials: true)
+      ) as CognitoAuthSession;
+      safePrint(session.userPoolTokens!.accessToken);
+      var restOperation = Amplify.API.post(restOptions: RestOptions(
+        apiName: 'registeruser',
+        body: Uint8List.fromList('{\'name\':\'Subhadeep Chowdhury\'}'.codeUnits),
+        path: '/?user=124',
+        headers: {
+          'Authorization': session.userPoolTokens!.accessToken
+        }
+      ));
+      final response = await restOperation.response;
+      safePrint('GET CALL RESPONSE: ${response.body}');
+    } on ApiException catch (e) {
+      safePrint(e.toString());
+    }
+  }
+
+  Future<void> _initialization() async {
+    await callDemoAPI();
+  }
 
   @override
   void initState() {
     _pageController = PageController();
+    _initialization();
     super.initState();
   }
 

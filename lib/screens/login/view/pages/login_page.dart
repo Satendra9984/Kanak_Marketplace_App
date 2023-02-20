@@ -121,7 +121,7 @@ class _LogInPageState extends State<LogInPage> {
                             .add(PhoneNumberChangedEvent(phone: value));
                       },
                       validator: (value) {
-                        String pattern = r'\d)[A-Za-z\d$@$! %*?&]{8,}$)';
+                        String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
                         RegExp regExp = RegExp(pattern);
                         if (value == null || value.isEmpty) {
                           return 'Please enter mobile number';

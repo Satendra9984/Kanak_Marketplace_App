@@ -2,7 +2,7 @@
   "providers": [
     "awscloudformation"
   ],
-  "projectName": "Tasvatbackend",
+  "projectName": "Tasvat",
   "version": "3.1",
   "frontend": "flutter",
   "flutter": {

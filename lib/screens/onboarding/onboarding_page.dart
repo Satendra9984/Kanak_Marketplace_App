@@ -1,4 +1,3 @@
-
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -20,24 +19,18 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
   Future<void> _decideRoute() async {
     await Amplify.Auth.getCurrentUser().then((user) {
       ref.read(authProvider).copyWith(
-        phone: user.username,
-        id: user.userId,
-        authStatus: AuthStatus.loggedin
-      );
+          phone: user.username,
+          id: user.userId,
+          authStatus: AuthStatus.loggedin);
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen()
-        )
-      );
+          MaterialPageRoute(builder: (context) => const HomeScreen()));
     }).catchError((err) {
       safePrint('No user logged in');
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const LogInPage()
-        )
-      );
+          MaterialPageRoute(builder: (context) => const LogInPage()));
     });
   }
+
   Future<void> _configureAmplify() async {
     try {
       final auth = AmplifyAuthCognito();
@@ -53,24 +46,27 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
       safePrint(e);
     }
   }
+
   void _initialize() async {
     await _configureAmplify().then((value) async {
       await _decideRoute();
     });
   }
+
   @override
   void initState() {
     super.initState();
     _initialize();
   }
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Text('Tasvat', style: TextStyle(
-          fontSize: 45,
-          fontWeight: FontWeight.bold
-        ),),
+        child: Text(
+          'Tasvat',
+          style: TextStyle(fontSize: 45, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

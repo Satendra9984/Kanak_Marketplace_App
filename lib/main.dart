@@ -14,22 +14,14 @@ import 'package:tasvat/widgets/gold_rate_graph.dart';
 
 void main() {
   runApp(ProviderScope(
-    child: RepositoryProvider(
-      create: (context) => AuthRepository(),
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => LoginBloc(
-              authRepository: context.read<AuthRepository>()
-            )
-          ),
-          BlocProvider(
-            create: (context) => SignUpBloc()
-          ),
-        ],
-        child: const Tasvat())
-    )
-  ));
+      child: RepositoryProvider(
+          create: (context) => AuthRepository(),
+          child: MultiBlocProvider(providers: [
+            BlocProvider(
+                create: (context) =>
+                    LoginBloc(authRepository: context.read<AuthRepository>())),
+            BlocProvider(create: (context) => SignUpBloc()),
+          ], child: const Tasvat()))));
 }
 
 class Tasvat extends ConsumerStatefulWidget {
@@ -41,7 +33,6 @@ class Tasvat extends ConsumerStatefulWidget {
 class _TasvatState extends ConsumerState<Tasvat> {
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     return RepositoryProvider(
       create: (_) => AuthRepository(),
       child: MultiBlocProvider(
@@ -56,14 +47,9 @@ class _TasvatState extends ConsumerState<Tasvat> {
         ],
         child: const MaterialApp(
           // home: OnBoardingPage(),
-          home: HomeScreen(),
+          home: OnBoardingPage(),
         ),
       ),
-=======
-    return MaterialApp(
-      theme: ThemeData.dark(),
-      home: const OnBoardingPage(),
->>>>>>> ea1f573de23af681eca3490dc8cc8a37787836c5
     );
   }
 }

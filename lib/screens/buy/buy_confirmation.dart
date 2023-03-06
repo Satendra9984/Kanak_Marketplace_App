@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:custom_timer/custom_timer.dart';
 import 'package:flutter/material.dart';
+import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/screens/buy/buy_completed.dart';
 import '../../models/Transaction.dart';
 import '../../utils/app_constants.dart';
@@ -27,12 +28,10 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
 
   final Transaction buyOrderDetails = Transaction(
     id: '123456789',
-    type: 'Buy',
+    type: TransactionType.BUY,
     amount: 52,
-    userID: 'userID',
-    details: '',
-    datetime: TemporalDateTime(DateTime.now()),
-    status: 'Buy',
+    receiver: Wallet(),
+    status: TransactionStatus.PENDING,
   );
 
   late http.Response reponse;
@@ -172,7 +171,7 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                 const SizedBox(height: 25),
                                 RowDetailWidget(
                                     title: 'Transaction Type',
-                                    value: buyOrderDetails.type!),
+                                    value: buyOrderDetails.type.toString()),
                                 const SizedBox(height: 25),
                                 RowDetailWidget(
                                     title: 'Price/gram',

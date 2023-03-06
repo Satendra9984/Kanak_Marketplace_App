@@ -5,6 +5,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/amplifyconfiguration.dart';
+import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/models/auth_model.dart';
 import 'package:tasvat/providers/auth_provider.dart';
 import 'package:tasvat/screens/home_screen.dart';
@@ -41,7 +42,7 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
   Future<void> _configureAmplify() async {
     try {
       final auth = AmplifyAuthCognito();
-      final api = AmplifyAPI();
+      final api = AmplifyAPI(modelProvider: ModelProvider.instance);
       await Amplify.addPlugins([auth, api]);
       await Amplify.configure(amplifyconfig).then((value) async {
         safePrint('😄😄😄 Successfully Coynfigured Amplify!');

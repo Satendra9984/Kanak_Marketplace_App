@@ -1,6 +1,8 @@
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tasvat/models/TransactionStatus.dart';
+import 'package:tasvat/models/TransactionType.dart';
 import 'package:tasvat/screens/sell/sell_completed_screen.dart';
 
 import '../../models/Transaction.dart';
@@ -16,12 +18,10 @@ class SellConfirmationScreen extends StatelessWidget {
 
   final Transaction buyOrderDetails = Transaction(
     id: '123456789',
-    type: 'Buy',
+    type: TransactionType.ADD,
     amount: 52,
-    userID: 'userID',
-    details: '',
-    datetime: TemporalDateTime(DateTime.now()),
-    status: 'Buy',
+    dateTime: TemporalDateTime(DateTime.now()),
+    status: TransactionStatus.FAILED,
   );
 
 
@@ -78,7 +78,7 @@ class SellConfirmationScreen extends StatelessWidget {
                       const SizedBox(height: 25),
                       RowDetailWidget(
                           title: 'Transaction Type',
-                          value: buyOrderDetails.type!),
+                          value: buyOrderDetails.type.toString()),
                       const SizedBox(height: 25),
                       RowDetailWidget(
                           title: 'Price',

@@ -1,0 +1,7 @@
+Lamda Functions
+
+API Gateway
+1. /register -> User Registration
+2. /user -> User Details
+3. /transaction -> Transaction Details
+4. /

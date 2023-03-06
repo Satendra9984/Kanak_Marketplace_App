@@ -137,7 +137,7 @@ class WithdrawCompletedScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 25),
                         RowDetailWidget(
-                            title: 'Tx Type', value: buyOrderDetails.type!),
+                            title: 'Tx Type', value: buyOrderDetails.type.toString()),
                         const SizedBox(height: 25),
                         RowDetailWidget(
                             title: 'Withdraw Amount',

@@ -1,10 +1,10 @@
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
+import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/screens/buy/buy_completed.dart';
 import 'package:tasvat/screens/sell/sell_completed_screen.dart';
 import 'package:tasvat/screens/withdraw/withdraw_completed.dart';
 
-import '../../models/Transaction.dart';
 import '../../utils/app_constants.dart';
 
 class PortfolioTransactions extends StatelessWidget {
@@ -13,46 +13,39 @@ class PortfolioTransactions extends StatelessWidget {
   final List<Transaction> _transactionList = [
     Transaction(
       id: '123456789',
-      type: 'Buy',
-      amount: 12,
-      userID: 'userID',
-      details: '',
-      datetime: TemporalDateTime(DateTime.now()),
-      status: 'Buy',
+      type: TransactionType.BUY,
+      dateTime: TemporalDateTime.fromString('2023-03-05'),
+      amount: 12
     ),
     Transaction(
       id: '123456789',
-      type: 'Sell',
+      type: TransactionType.SELL,
       amount: 5,
-      userID: 'userID',
-      details: '',
-      datetime: TemporalDateTime(DateTime.now()),
-      status: 'Buy',
+      status: TransactionStatus.PENDING,
+      dateTime: TemporalDateTime.fromString('2023-03-05')
     ),
     Transaction(
       id: '123456789',
-      type: 'Withdraw',
+      type: TransactionType.EXCHANGE,
       amount: 8,
-      userID: 'userID',
-      details: '',
-      datetime: TemporalDateTime(DateTime.now()),
-      status: 'Buy',
+      status: TransactionStatus.PENDING,
+      dateTime: TemporalDateTime.fromString('2023-03-05'),
     ),
   ];
 
   IconData _getIcon(int index) {
-    if (_transactionList[index].type == 'Buy') {
+    if (_transactionList[index].type == TransactionType.BUY) {
       return Icons.add;
-    } else if (_transactionList[index].type == 'Sell') {
+    } else if (_transactionList[index].type == TransactionType.SELL) {
       return Icons.currency_exchange;
     }
     return Icons.file_download_outlined;
   }
 
   Color _getPriceColor(int index) {
-    if (_transactionList[index].type == 'Buy') {
+    if (_transactionList[index].type == TransactionType.BUY) {
       return success;
-    } else if (_transactionList[index].type == 'Sell') {
+    } else if (_transactionList[index].type == TransactionType.SELL) {
       return error;
     }
 
@@ -79,7 +72,7 @@ class PortfolioTransactions extends StatelessWidget {
                   ),
                 ),
                 title: Text(
-                  _transactionList[index].type!,
+                  _transactionList[index].type.toString(),
                   style: TextStyle(
                     color: text500,
                     fontSize: body1,
@@ -90,7 +83,7 @@ class PortfolioTransactions extends StatelessWidget {
                   children: [
                     Text(
                       _transactionList[index]
-                          .datetime
+                          .dateTime
                           .toString()
                           .substring(0, 10),
                       style: TextStyle(
@@ -102,7 +95,7 @@ class PortfolioTransactions extends StatelessWidget {
                     const SizedBox(width: 5),
                     Text(
                       _transactionList[index]
-                          .datetime
+                          .dateTime
                           .toString()
                           .substring(0, 10),
                       style: TextStyle(

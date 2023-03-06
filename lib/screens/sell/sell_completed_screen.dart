@@ -98,7 +98,7 @@ class SellCompletedScreen extends StatelessWidget {
                     const SizedBox(height: 25),
                     RowDetailWidget(
                         title: 'Transaction Type',
-                        value: buyOrderDetails.type!),
+                        value: buyOrderDetails.type.toString()),
                     const SizedBox(height: 25),
                     RowDetailWidget(title: 'Price', value: '${10000} INR/gm'),
                     const SizedBox(height: 25),

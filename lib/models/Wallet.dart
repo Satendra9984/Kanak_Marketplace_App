@@ -21,19 +21,19 @@
 
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 
-/** This is an auto generated class representing the Transaction type in your schema. */
+/** This is an auto generated class representing the Wallet type in your schema. */
 @immutable
-class Transaction extends Model {
-  static const classType = const _TransactionModelType();
+class Wallet extends Model {
+  static const classType = const _WalletModelType();
   final String id;
-  final TransactionType? _type;
-  final double? _amount;
-  final TransactionStatus? _status;
-  final TemporalDateTime? _dateTime;
-  final Wallet? _receiver;
+  final double? _balance;
+  final double? _gold_balance;
+  final String? _address;
+  final List<Transaction>? _transactions;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -44,30 +44,26 @@ class Transaction extends Model {
   @override
   String getId() => id;
   
-  TransactionModelIdentifier get modelIdentifier {
-      return TransactionModelIdentifier(
+  WalletModelIdentifier get modelIdentifier {
+      return WalletModelIdentifier(
         id: id
       );
   }
   
-  TransactionType? get type {
-    return _type;
+  double? get balance {
+    return _balance;
   }
   
-  double? get amount {
-    return _amount;
+  double? get gold_balance {
+    return _gold_balance;
   }
   
-  TransactionStatus? get status {
-    return _status;
+  String? get address {
+    return _address;
   }
   
-  TemporalDateTime? get dateTime {
-    return _dateTime;
-  }
-  
-  Wallet? get receiver {
-    return _receiver;
+  List<Transaction>? get transactions {
+    return _transactions;
   }
   
   TemporalDateTime? get createdAt {
@@ -78,16 +74,15 @@ class Transaction extends Model {
     return _updatedAt;
   }
   
-  const Transaction._internal({required this.id, type, amount, status, dateTime, receiver, createdAt, updatedAt}): _type = type, _amount = amount, _status = status, _dateTime = dateTime, _receiver = receiver, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Wallet._internal({required this.id, balance, gold_balance, address, transactions, createdAt, updatedAt}): _balance = balance, _gold_balance = gold_balance, _address = address, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Transaction({String? id, TransactionType? type, double? amount, TransactionStatus? status, TemporalDateTime? dateTime, Wallet? receiver}) {
-    return Transaction._internal(
+  factory Wallet({String? id, double? balance, double? gold_balance, String? address, List<Transaction>? transactions}) {
+    return Wallet._internal(
       id: id == null ? UUID.getUUID() : id,
-      type: type,
-      amount: amount,
-      status: status,
-      dateTime: dateTime,
-      receiver: receiver);
+      balance: balance,
+      gold_balance: gold_balance,
+      address: address,
+      transactions: transactions != null ? List<Transaction>.unmodifiable(transactions) : transactions);
   }
   
   bool equals(Object other) {
@@ -97,13 +92,12 @@ class Transaction extends Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is Transaction &&
+    return other is Wallet &&
       id == other.id &&
-      _type == other._type &&
-      _amount == other._amount &&
-      _status == other._status &&
-      _dateTime == other._dateTime &&
-      _receiver == other._receiver;
+      _balance == other._balance &&
+      _gold_balance == other._gold_balance &&
+      _address == other._address &&
+      DeepCollectionEquality().equals(_transactions, other._transactions);
   }
   
   @override
@@ -113,13 +107,11 @@ class Transaction extends Model {
   String toString() {
     var buffer = new StringBuffer();
     
-    buffer.write("Transaction {");
+    buffer.write("Wallet {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("type=" + (_type != null ? enumToString(_type)! : "null") + ", ");
-    buffer.write("amount=" + (_amount != null ? _amount!.toString() : "null") + ", ");
-    buffer.write("status=" + (_status != null ? enumToString(_status)! : "null") + ", ");
-    buffer.write("dateTime=" + (_dateTime != null ? _dateTime!.format() : "null") + ", ");
-    buffer.write("receiver=" + (_receiver != null ? _receiver!.toString() : "null") + ", ");
+    buffer.write("balance=" + (_balance != null ? _balance!.toString() : "null") + ", ");
+    buffer.write("gold_balance=" + (_gold_balance != null ? _gold_balance!.toString() : "null") + ", ");
+    buffer.write("address=" + "$_address" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -127,48 +119,48 @@ class Transaction extends Model {
     return buffer.toString();
   }
   
-  Transaction copyWith({TransactionType? type, double? amount, TransactionStatus? status, TemporalDateTime? dateTime, Wallet? receiver}) {
-    return Transaction._internal(
+  Wallet copyWith({double? balance, double? gold_balance, String? address, List<Transaction>? transactions}) {
+    return Wallet._internal(
       id: id,
-      type: type ?? this.type,
-      amount: amount ?? this.amount,
-      status: status ?? this.status,
-      dateTime: dateTime ?? this.dateTime,
-      receiver: receiver ?? this.receiver);
+      balance: balance ?? this.balance,
+      gold_balance: gold_balance ?? this.gold_balance,
+      address: address ?? this.address,
+      transactions: transactions ?? this.transactions);
   }
   
-  Transaction.fromJson(Map<String, dynamic> json)  
+  Wallet.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
-      _type = enumFromString<TransactionType>(json['type'], TransactionType.values),
-      _amount = (json['amount'] as num?)?.toDouble(),
-      _status = enumFromString<TransactionStatus>(json['status'], TransactionStatus.values),
-      _dateTime = json['dateTime'] != null ? TemporalDateTime.fromString(json['dateTime']) : null,
-      _receiver = json['receiver']?['serializedData'] != null
-        ? Wallet.fromJson(new Map<String, dynamic>.from(json['receiver']['serializedData']))
+      _balance = (json['balance'] as num?)?.toDouble(),
+      _gold_balance = (json['gold_balance'] as num?)?.toDouble(),
+      _address = json['address'],
+      _transactions = json['transactions'] is List
+        ? (json['transactions'] as List)
+          .where((e) => e?['serializedData'] != null)
+          .map((e) => Transaction.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
+          .toList()
         : null,
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'type': enumToString(_type), 'amount': _amount, 'status': enumToString(_status), 'dateTime': _dateTime?.format(), 'receiver': _receiver?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'balance': _balance, 'gold_balance': _gold_balance, 'address': _address, 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
-    'id': id, 'type': _type, 'amount': _amount, 'status': _status, 'dateTime': _dateTime, 'receiver': _receiver, 'createdAt': _createdAt, 'updatedAt': _updatedAt
+    'id': id, 'balance': _balance, 'gold_balance': _gold_balance, 'address': _address, 'transactions': _transactions, 'createdAt': _createdAt, 'updatedAt': _updatedAt
   };
 
-  static final QueryModelIdentifier<TransactionModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<TransactionModelIdentifier>();
+  static final QueryModelIdentifier<WalletModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<WalletModelIdentifier>();
   static final QueryField ID = QueryField(fieldName: "id");
-  static final QueryField TYPE = QueryField(fieldName: "type");
-  static final QueryField AMOUNT = QueryField(fieldName: "amount");
-  static final QueryField STATUS = QueryField(fieldName: "status");
-  static final QueryField DATETIME = QueryField(fieldName: "dateTime");
-  static final QueryField RECEIVER = QueryField(
-    fieldName: "receiver",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'Wallet'));
+  static final QueryField BALANCE = QueryField(fieldName: "balance");
+  static final QueryField GOLD_BALANCE = QueryField(fieldName: "gold_balance");
+  static final QueryField ADDRESS = QueryField(fieldName: "address");
+  static final QueryField TRANSACTIONS = QueryField(
+    fieldName: "transactions",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'Transaction'));
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "Transaction";
-    modelSchemaDefinition.pluralName = "Transactions";
+    modelSchemaDefinition.name = "Wallet";
+    modelSchemaDefinition.pluralName = "Wallets";
     
     modelSchemaDefinition.authRules = [
       AuthRule(
@@ -181,41 +173,31 @@ class Transaction extends Model {
         ])
     ];
     
-    modelSchemaDefinition.indexes = [
-      ModelIndex(fields: const ["walletID"], name: "byWallet")
-    ];
-    
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Transaction.TYPE,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Transaction.AMOUNT,
+      key: Wallet.BALANCE,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.double)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Transaction.STATUS,
+      key: Wallet.GOLD_BALANCE,
       isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Transaction.DATETIME,
+      key: Wallet.ADDRESS,
       isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
-    modelSchemaDefinition.addField(ModelFieldDefinition.belongsTo(
-      key: Transaction.RECEIVER,
+    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
+      key: Wallet.TRANSACTIONS,
       isRequired: false,
-      targetNames: ['walletID'],
-      ofModelName: 'Wallet'
+      ofModelName: 'Transaction',
+      associatedKey: Transaction.RECEIVER
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
@@ -234,30 +216,30 @@ class Transaction extends Model {
   });
 }
 
-class _TransactionModelType extends ModelType<Transaction> {
-  const _TransactionModelType();
+class _WalletModelType extends ModelType<Wallet> {
+  const _WalletModelType();
   
   @override
-  Transaction fromJson(Map<String, dynamic> jsonData) {
-    return Transaction.fromJson(jsonData);
+  Wallet fromJson(Map<String, dynamic> jsonData) {
+    return Wallet.fromJson(jsonData);
   }
   
   @override
   String modelName() {
-    return 'Transaction';
+    return 'Wallet';
   }
 }
 
 /**
  * This is an auto generated class representing the model identifier
- * of [Transaction] in your schema.
+ * of [Wallet] in your schema.
  */
 @immutable
-class TransactionModelIdentifier implements ModelIdentifier<Transaction> {
+class WalletModelIdentifier implements ModelIdentifier<Wallet> {
   final String id;
 
-  /** Create an instance of TransactionModelIdentifier using [id] the primary key. */
-  const TransactionModelIdentifier({
+  /** Create an instance of WalletModelIdentifier using [id] the primary key. */
+  const WalletModelIdentifier({
     required this.id});
   
   @override
@@ -275,7 +257,7 @@ class TransactionModelIdentifier implements ModelIdentifier<Transaction> {
   String serializeAsString() => serializeAsMap().values.join('#');
   
   @override
-  String toString() => 'TransactionModelIdentifier(id: $id)';
+  String toString() => 'WalletModelIdentifier(id: $id)';
   
   @override
   bool operator ==(Object other) {
@@ -283,7 +265,7 @@ class TransactionModelIdentifier implements ModelIdentifier<Transaction> {
       return true;
     }
     
-    return other is TransactionModelIdentifier &&
+    return other is WalletModelIdentifier &&
       id == other.id;
   }
   

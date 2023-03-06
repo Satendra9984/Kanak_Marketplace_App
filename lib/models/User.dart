@@ -21,7 +21,6 @@
 
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 
@@ -30,18 +29,16 @@ import 'package:flutter/foundation.dart';
 class User extends Model {
   static const classType = const _UserModelType();
   final String id;
-  final int? _sgId;
-  final String? _phone;
+  final String? _fname;
+  final String? _lname;
   final String? _email;
-  final String? _pincode;
-  final String? _pfp;
-  final TemporalDateTime? _joiningDate;
-  final double? _balance;
-  final String? _kyc;
-  final bool? _sgVerified;
-  final List<Transaction>? _transactions;
+  final String? _phone;
+  final Wallet? _wallet;
+  final int? _pincode;
+  final String? _goldProviderDetails;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
+  final String? _userWalletId;
 
   @override
   getInstanceType() => classType;
@@ -56,44 +53,32 @@ class User extends Model {
       );
   }
   
-  int? get sgId {
-    return _sgId;
+  String? get fname {
+    return _fname;
   }
   
-  String? get phone {
-    return _phone;
+  String? get lname {
+    return _lname;
   }
   
   String? get email {
     return _email;
   }
   
-  String? get pincode {
+  String? get phone {
+    return _phone;
+  }
+  
+  Wallet? get wallet {
+    return _wallet;
+  }
+  
+  int? get pincode {
     return _pincode;
   }
   
-  String? get pfp {
-    return _pfp;
-  }
-  
-  TemporalDateTime? get joiningDate {
-    return _joiningDate;
-  }
-  
-  double? get balance {
-    return _balance;
-  }
-  
-  String? get kyc {
-    return _kyc;
-  }
-  
-  bool? get sgVerified {
-    return _sgVerified;
-  }
-  
-  List<Transaction>? get transactions {
-    return _transactions;
+  String? get goldProviderDetails {
+    return _goldProviderDetails;
   }
   
   TemporalDateTime? get createdAt {
@@ -104,21 +89,23 @@ class User extends Model {
     return _updatedAt;
   }
   
-  const User._internal({required this.id, sgId, phone, email, pincode, pfp, joiningDate, balance, kyc, sgVerified, transactions, createdAt, updatedAt}): _sgId = sgId, _phone = phone, _email = email, _pincode = pincode, _pfp = pfp, _joiningDate = joiningDate, _balance = balance, _kyc = kyc, _sgVerified = sgVerified, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
+  String? get userWalletId {
+    return _userWalletId;
+  }
   
-  factory User({String? id, int? sgId, String? phone, String? email, String? pincode, String? pfp, TemporalDateTime? joiningDate, double? balance, String? kyc, bool? sgVerified, List<Transaction>? transactions}) {
+  const User._internal({required this.id, fname, lname, email, phone, wallet, pincode, goldProviderDetails, createdAt, updatedAt, userWalletId}): _fname = fname, _lname = lname, _email = email, _phone = phone, _wallet = wallet, _pincode = pincode, _goldProviderDetails = goldProviderDetails, _createdAt = createdAt, _updatedAt = updatedAt, _userWalletId = userWalletId;
+  
+  factory User({String? id, String? fname, String? lname, String? email, String? phone, Wallet? wallet, int? pincode, String? goldProviderDetails, String? userWalletId}) {
     return User._internal(
       id: id == null ? UUID.getUUID() : id,
-      sgId: sgId,
-      phone: phone,
+      fname: fname,
+      lname: lname,
       email: email,
+      phone: phone,
+      wallet: wallet,
       pincode: pincode,
-      pfp: pfp,
-      joiningDate: joiningDate,
-      balance: balance,
-      kyc: kyc,
-      sgVerified: sgVerified,
-      transactions: transactions != null ? List<Transaction>.unmodifiable(transactions) : transactions);
+      goldProviderDetails: goldProviderDetails,
+      userWalletId: userWalletId);
   }
   
   bool equals(Object other) {
@@ -130,16 +117,14 @@ class User extends Model {
     if (identical(other, this)) return true;
     return other is User &&
       id == other.id &&
-      _sgId == other._sgId &&
-      _phone == other._phone &&
+      _fname == other._fname &&
+      _lname == other._lname &&
       _email == other._email &&
+      _phone == other._phone &&
+      _wallet == other._wallet &&
       _pincode == other._pincode &&
-      _pfp == other._pfp &&
-      _joiningDate == other._joiningDate &&
-      _balance == other._balance &&
-      _kyc == other._kyc &&
-      _sgVerified == other._sgVerified &&
-      DeepCollectionEquality().equals(_transactions, other._transactions);
+      _goldProviderDetails == other._goldProviderDetails &&
+      _userWalletId == other._userWalletId;
   }
   
   @override
@@ -151,79 +136,68 @@ class User extends Model {
     
     buffer.write("User {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("sgId=" + (_sgId != null ? _sgId!.toString() : "null") + ", ");
-    buffer.write("phone=" + "$_phone" + ", ");
+    buffer.write("fname=" + "$_fname" + ", ");
+    buffer.write("lname=" + "$_lname" + ", ");
     buffer.write("email=" + "$_email" + ", ");
-    buffer.write("pincode=" + "$_pincode" + ", ");
-    buffer.write("pfp=" + "$_pfp" + ", ");
-    buffer.write("joiningDate=" + (_joiningDate != null ? _joiningDate!.format() : "null") + ", ");
-    buffer.write("balance=" + (_balance != null ? _balance!.toString() : "null") + ", ");
-    buffer.write("kyc=" + "$_kyc" + ", ");
-    buffer.write("sgVerified=" + (_sgVerified != null ? _sgVerified!.toString() : "null") + ", ");
+    buffer.write("phone=" + "$_phone" + ", ");
+    buffer.write("pincode=" + (_pincode != null ? _pincode!.toString() : "null") + ", ");
+    buffer.write("goldProviderDetails=" + "$_goldProviderDetails" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
+    buffer.write("userWalletId=" + "$_userWalletId");
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  User copyWith({int? sgId, String? phone, String? email, String? pincode, String? pfp, TemporalDateTime? joiningDate, double? balance, String? kyc, bool? sgVerified, List<Transaction>? transactions}) {
+  User copyWith({String? fname, String? lname, String? email, String? phone, Wallet? wallet, int? pincode, String? goldProviderDetails, String? userWalletId}) {
     return User._internal(
       id: id,
-      sgId: sgId ?? this.sgId,
-      phone: phone ?? this.phone,
+      fname: fname ?? this.fname,
+      lname: lname ?? this.lname,
       email: email ?? this.email,
+      phone: phone ?? this.phone,
+      wallet: wallet ?? this.wallet,
       pincode: pincode ?? this.pincode,
-      pfp: pfp ?? this.pfp,
-      joiningDate: joiningDate ?? this.joiningDate,
-      balance: balance ?? this.balance,
-      kyc: kyc ?? this.kyc,
-      sgVerified: sgVerified ?? this.sgVerified,
-      transactions: transactions ?? this.transactions);
+      goldProviderDetails: goldProviderDetails ?? this.goldProviderDetails,
+      userWalletId: userWalletId ?? this.userWalletId);
   }
   
   User.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
-      _sgId = (json['sgId'] as num?)?.toInt(),
-      _phone = json['phone'],
+      _fname = json['fname'],
+      _lname = json['lname'],
       _email = json['email'],
-      _pincode = json['pincode'],
-      _pfp = json['pfp'],
-      _joiningDate = json['joiningDate'] != null ? TemporalDateTime.fromString(json['joiningDate']) : null,
-      _balance = (json['balance'] as num?)?.toDouble(),
-      _kyc = json['kyc'],
-      _sgVerified = json['sgVerified'],
-      _transactions = json['transactions'] is List
-        ? (json['transactions'] as List)
-          .where((e) => e?['serializedData'] != null)
-          .map((e) => Transaction.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
-          .toList()
+      _phone = json['phone'],
+      _wallet = json['wallet']?['serializedData'] != null
+        ? Wallet.fromJson(new Map<String, dynamic>.from(json['wallet']['serializedData']))
         : null,
+      _pincode = (json['pincode'] as num?)?.toInt(),
+      _goldProviderDetails = json['goldProviderDetails'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
+      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
+      _userWalletId = json['userWalletId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'sgId': _sgId, 'phone': _phone, 'email': _email, 'pincode': _pincode, 'pfp': _pfp, 'joiningDate': _joiningDate?.format(), 'balance': _balance, 'kyc': _kyc, 'sgVerified': _sgVerified, 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'fname': _fname, 'lname': _lname, 'email': _email, 'phone': _phone, 'wallet': _wallet?.toJson(), 'pincode': _pincode, 'goldProviderDetails': _goldProviderDetails, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'userWalletId': _userWalletId
   };
   
   Map<String, Object?> toMap() => {
-    'id': id, 'sgId': _sgId, 'phone': _phone, 'email': _email, 'pincode': _pincode, 'pfp': _pfp, 'joiningDate': _joiningDate, 'balance': _balance, 'kyc': _kyc, 'sgVerified': _sgVerified, 'transactions': _transactions, 'createdAt': _createdAt, 'updatedAt': _updatedAt
+    'id': id, 'fname': _fname, 'lname': _lname, 'email': _email, 'phone': _phone, 'wallet': _wallet, 'pincode': _pincode, 'goldProviderDetails': _goldProviderDetails, 'createdAt': _createdAt, 'updatedAt': _updatedAt, 'userWalletId': _userWalletId
   };
 
   static final QueryModelIdentifier<UserModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<UserModelIdentifier>();
   static final QueryField ID = QueryField(fieldName: "id");
-  static final QueryField SGID = QueryField(fieldName: "sgId");
-  static final QueryField PHONE = QueryField(fieldName: "phone");
+  static final QueryField FNAME = QueryField(fieldName: "fname");
+  static final QueryField LNAME = QueryField(fieldName: "lname");
   static final QueryField EMAIL = QueryField(fieldName: "email");
+  static final QueryField PHONE = QueryField(fieldName: "phone");
+  static final QueryField WALLET = QueryField(
+    fieldName: "wallet",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'Wallet'));
   static final QueryField PINCODE = QueryField(fieldName: "pincode");
-  static final QueryField PFP = QueryField(fieldName: "pfp");
-  static final QueryField JOININGDATE = QueryField(fieldName: "joiningDate");
-  static final QueryField BALANCE = QueryField(fieldName: "balance");
-  static final QueryField KYC = QueryField(fieldName: "kyc");
-  static final QueryField SGVERIFIED = QueryField(fieldName: "sgVerified");
-  static final QueryField TRANSACTIONS = QueryField(
-    fieldName: "transactions",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'Transaction'));
+  static final QueryField GOLDPROVIDERDETAILS = QueryField(fieldName: "goldProviderDetails");
+  static final QueryField USERWALLETID = QueryField(fieldName: "userWalletId");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "User";
     modelSchemaDefinition.pluralName = "Users";
@@ -236,27 +210,19 @@ class User extends Model {
           ModelOperation.UPDATE,
           ModelOperation.DELETE,
           ModelOperation.READ
-        ]),
-      AuthRule(
-        authStrategy: AuthStrategy.PRIVATE,
-        operations: [
-          ModelOperation.CREATE,
-          ModelOperation.UPDATE,
-          ModelOperation.DELETE,
-          ModelOperation.READ
         ])
     ];
     
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: User.SGID,
+      key: User.FNAME,
       isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.int)
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: User.PHONE,
+      key: User.LNAME,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
@@ -268,46 +234,28 @@ class User extends Model {
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: User.PHONE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
+      key: User.WALLET,
+      isRequired: false,
+      ofModelName: 'Wallet',
+      associatedKey: Wallet.ID
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: User.PINCODE,
       isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+      ofType: ModelFieldType(ModelFieldTypeEnum.int)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: User.PFP,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: User.JOININGDATE,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: User.BALANCE,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.double)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: User.KYC,
+      key: User.GOLDPROVIDERDETAILS,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: User.SGVERIFIED,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.bool)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
-      key: User.TRANSACTIONS,
-      isRequired: false,
-      ofModelName: 'Transaction',
-      associatedKey: Transaction.USERID
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
@@ -322,6 +270,12 @@ class User extends Model {
       isRequired: false,
       isReadOnly: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: User.USERWALLETID,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
   });
 }

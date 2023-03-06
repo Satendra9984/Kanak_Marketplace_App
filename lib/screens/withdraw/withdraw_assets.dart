@@ -1,6 +1,7 @@
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/utils/app_constants.dart';
 import 'package:tasvat/screens/sell/sell_confirmation.dart';
 import 'package:tasvat/screens/withdraw/select_time_&_vendor.dart';
@@ -190,13 +191,11 @@ class WithdrawAssets extends StatelessWidget {
                                         builder: (ctx) => SelectTimeAndVendor(
                                           buyOrderDetails: Transaction(
                                             id: '123456789',
-                                            type: 'Buy',
+                                            type: TransactionType.BUY,
                                             amount: 52,
-                                            userID: 'userID',
-                                            details: '',
-                                            datetime: TemporalDateTime(
+                                            dateTime: TemporalDateTime(
                                                 DateTime.now()),
-                                            status: 'Buy',
+                                            status: TransactionStatus.FAILED,
                                           ),
                                         ),
                                       ),

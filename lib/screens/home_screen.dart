@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/screens/buy/buy_assets.dart';
 import 'package:tasvat/screens/dashboard/dashboard.dart';
 import 'package:tasvat/screens/portfolio/portfolio_home.dart';
@@ -12,7 +15,6 @@ import 'package:tasvat/utils/app_constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -22,27 +24,58 @@ class _HomeScreenState extends State<HomeScreen> {
   late PageController _pageController;
   Future<void> callDemoAPI() async {
     try {
-      final session = await Amplify.Auth.fetchAuthSession(
-        options: CognitoSessionOptions(getAWSCredentials: true)
-      ) as CognitoAuthSession;
-      safePrint(session.userPoolTokens!.accessToken);
-      var restOperation = Amplify.API.post(restOptions: RestOptions(
-        apiName: 'registeruser',
-        body: Uint8List.fromList('{\'name\':\'Subhadeep Chowdhury\'}'.codeUnits),
-        path: '/?user=124',
-        headers: {
-          'Authorization': session.userPoolTokens!.accessToken
-        }
-      ));
-      final response = await restOperation.response;
-      safePrint('GET CALL RESPONSE: ${response.body}');
+      // final session = await Amplify.Auth.fetchAuthSession(
+      //   options: CognitoSessionOptions(getAWSCredentials: true)
+      // ) as CognitoAuthSession;
+      // safePrint(session.userPoolTokens!.accessToken);
+      // var restOperation = Amplify.API.post(restOptions: RestOptions(
+      //   apiName: 'registeruser',
+      //   body: Uint8List.fromList('{\'name\':\'Subhadeep Chowdhury\'}'.codeUnits),
+      //   path: '/?user=124',
+      //   headers: {
+      //     'Authorization': session.userPoolTokens!.accessToken
+      //   }
+      // ));
+      // final response = await restOperation.response;
+      // safePrint('GET CALL RESPONSE: ${response.body}');
+
+      Wallet wallet = Wallet(
+        balance: 20,
+        gold_balance: 0,
+        address: "8768715527@tasvat",
+        transactions: const []
+      );
+
+      final request1 = ModelMutations.create(wallet);
+      final response1 = await Amplify.API.mutate(request: request1).response;
+
+      final createdWallet = response1.data;
+      if (createdWallet == null) {
+        safePrint('error creating wallet');
+        return;
+      }
+      User user = User(
+        fname: "Subhadeep", lname: "Chowdhury",
+        email: "subhadeepchowdhury41@gmail.com",
+        phone: "8768715527",
+        pincode: 722150,
+        goldProviderDetails: jsonEncode({}),
+        wallet: wallet,
+        userWalletId: wallet.id
+      );
+      final request2 = ModelMutations.create(user);
+      final response2 = await Amplify.API.mutate(request: request2).response;
+
+      if (response2.data == null) {
+        safePrint('error creating user');
+      }
     } on ApiException catch (e) {
       safePrint(e.toString());
     }
   }
 
   Future<void> _initialization() async {
-    await callDemoAPI();
+    // await callDemoAPI();
   }
 
   @override
@@ -75,6 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+            ElevatedButton(onPressed: () async {
+              await callDemoAPI();
+            }, child: const Text('Add')),
             FloatingActionButton.small(
               heroTag: '0',
               elevation: 5.0,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tasvat/screens/portfolio/gold_asset_details.dart';
 import 'package:tasvat/utils/app_constants.dart';
 import 'package:tasvat/screens/portfolio/portfolio_assets.dart';
 import 'package:tasvat/screens/portfolio/portfolio_transactions.dart';
@@ -71,87 +72,102 @@ class _PortfolioHomeState extends State<PortfolioHome> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                child: Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: text100,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Gold Asset',
-                        style: TextStyle(
-                          color: text400,
-                          fontSize: body2,
-                          fontWeight: FontWeight.w500,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (ctx) {
+                          return const GoldAssetDetailsScreen();
+                        },
+                      ),
+                    );
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: text100,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Gold Asset',
+                          style: TextStyle(
+                            color: text400,
+                            fontSize: body2,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            '30.0',
-                            style: TextStyle(
-                              fontSize: heading2,
-                              color: text500,
-                              fontWeight: FontWeight.w600,
+                        const SizedBox(height: 10),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '30.0',
+                              style: TextStyle(
+                                fontSize: heading2,
+                                color: text500,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          Text(
-                            'GM',
-                            style: TextStyle(
-                              fontSize: caption,
-                              color: text400,
-                              fontWeight: FontWeight.w600,
+                            Text(
+                              'GM',
+                              style: TextStyle(
+                                fontSize: caption,
+                                color: text400,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
               Expanded(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: accentBG,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Cash Available',
-                        style: TextStyle(
-                          color: text400,
-                          fontSize: body2,
-                          fontWeight: FontWeight.w500,
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: accentBG,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Cash Available',
+                          style: TextStyle(
+                            color: text400,
+                            fontSize: body2,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      // const SizedBox(height: 10),
+                        // const SizedBox(height: 10),
 
-                      const SizedBox(height: 10),
-                      Text(
-                        '9,000.00 INR',
-                        style: TextStyle(
-                          color: text500,
-                          fontSize: heading2,
-                          fontWeight: FontWeight.w600,
+                        const SizedBox(height: 10),
+                        Text(
+                          '9,000.00 INR',
+                          style: TextStyle(
+                            color: text500,
+                            fontSize: heading2,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

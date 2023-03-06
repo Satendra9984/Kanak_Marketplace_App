@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/screens/login/bloc/login_bloc.dart';
+import 'package:tasvat/screens/registration/view/aadhar_pan.dart';
 import 'package:tasvat/screens/registration/view/user_address.dart';
 import 'package:tasvat/screens/registration/view/user_bank_details.dart';
 import 'package:tasvat/screens/signup/bloc/sign_up_bloc.dart';
@@ -54,8 +55,9 @@ class _TasvatState extends ConsumerState<Tasvat> {
         child: const MaterialApp(
           // home: OnBoardingPage(),
           // home: OnBoardingPage(),
-          home: UserBankDetailsPage(),
+          // home: UserBankDetailsPage(),
           // home: UserAddressPage(),
+          home: UserKYCPage(),
         ),
       ),
     );

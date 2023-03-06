@@ -57,11 +57,12 @@ dependencies:
   rxdart: ^0.27.7
   timezone: ^0.9.1
   flutter_native_timezone: ^2.0.0
-  image_picker: ^0.8.6+1
+  image_picker: ^0.8.6+4
   file_picker: ^5.2.5
   intl: ^0.17.0
   flutter_stripe: ^8.0.0+1
   amplify_api: ^0.6.12
+  dotted_border: ^2.0.0+3
 
 dev_dependencies:
   flutter_test:

@@ -1,24 +1,26 @@
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:tasvat/screens/login/view/pages/login_page.dart';
-import 'package:tasvat/screens/login/view/pages/otp_screen.dart';
-
+import 'package:image_picker/image_picker.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 
-class KYCPage extends StatefulWidget {
-  const KYCPage({super.key});
+class UserKYCPage extends StatefulWidget {
+  const UserKYCPage({super.key});
 
   @override
-  State<KYCPage> createState() => _KYCPageState();
+  State<UserKYCPage> createState() => _UserKYCPageState();
 }
 
-class _KYCPageState extends State<KYCPage> {
+class _UserKYCPageState extends State<UserKYCPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _showPassword = false;
   final TextEditingController _aadharCtrl = TextEditingController();
   final TextEditingController _panCtrl = TextEditingController();
+
+  Future<void> _pickImages() async {
+    await ImagePicker().pickImage(source: ImageSource.gallery).then(
+          (XFile? pickedImage) {},
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,14 +59,14 @@ class _KYCPageState extends State<KYCPage> {
                 ),
                 Container(
                   margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    // color: text150,
                   ),
                   child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     keyboardType: TextInputType.number,
                     controller: _aadharCtrl,
                     validator: (value) {
@@ -91,6 +93,68 @@ class _KYCPageState extends State<KYCPage> {
 
                 const SizedBox(height: 10),
 
+                /// Aadhar Card Image
+                DottedBorder(
+                  dashPattern: const [10, 1],
+                  strokeCap: StrokeCap.butt,
+                  strokeWidth: 1.0,
+                  radius: const Radius.circular(10),
+                  color: accent2,
+                  child: GestureDetector(
+                    onTap: () async {
+                      await _pickImages();
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.image,
+                            color: accent2,
+                            size: 32,
+                          ),
+                          const SizedBox(width: 15),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(height: 5),
+                              Text(
+                                'Add your Aadhar Card image',
+                                style: TextStyle(
+                                  color: text400,
+                                  fontSize: body2,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                'supports: JPG, JPEG, PNG',
+                                style: TextStyle(
+                                  color: text300,
+                                  fontSize: caption,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
                 /// Pan Number
                 Text(
                   'Pan',
@@ -102,14 +166,15 @@ class _KYCPageState extends State<KYCPage> {
                 ),
                 Container(
                   margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     // color: text150,
                   ),
                   child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     keyboardType: TextInputType.text,
                     controller: _panCtrl,
                     validator: (value) {
@@ -134,6 +199,61 @@ class _KYCPageState extends State<KYCPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
+
+                /// Pan Card image
+                DottedBorder(
+                  dashPattern: const [10, 1],
+                  strokeCap: StrokeCap.butt,
+                  strokeWidth: 1.0,
+                  radius: const Radius.circular(10),
+                  color: accent2,
+                  child: Container(
+                    width: double.infinity,
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.image,
+                          color: accent2,
+                          size: 32,
+                        ),
+                        const SizedBox(width: 15),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 5),
+                            Text(
+                              'Add your Pan Card image',
+                              style: TextStyle(
+                                color: text400,
+                                fontSize: body2,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              'supports: JPG, JPEG, PNG',
+                              style: TextStyle(
+                                color: text300,
+                                fontSize: caption,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -146,7 +266,11 @@ class _KYCPageState extends State<KYCPage> {
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: ElevatedButton(
-              onPressed: () async {},
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  // todo: complete KYC
+                }
+              },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
@@ -165,38 +289,6 @@ class _KYCPageState extends State<KYCPage> {
               ),
             ),
           ),
-
-          /// Already account SignUp button
-          TextButton(
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LogInPage(),
-                ),
-              );
-            },
-            child: RichText(
-              text: TextSpan(
-                text: 'Already have an account? ',
-                style: TextStyle(
-                  color: text400,
-                  fontSize: body2,
-                  fontWeight: FontWeight.w600,
-                ),
-                children: [
-                  TextSpan(
-                    text: 'Login',
-                    style: TextStyle(
-                      color: accent2,
-                      fontSize: body1,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
         ],
       ),
     );

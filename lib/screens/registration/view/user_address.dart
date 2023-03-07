@@ -18,7 +18,7 @@ class _UserAddressPageState extends State<UserAddressPage> {
   final TextEditingController _addressCtrl = TextEditingController();
   final TextEditingController _stateCtrl = TextEditingController();
   final TextEditingController _cityCtrl = TextEditingController();
-  String? _state, _city;
+  String? _state, _city, _dob;
 
   final List<String> _statesList = states;
   final List<String> _cityList = [];
@@ -41,7 +41,7 @@ class _UserAddressPageState extends State<UserAddressPage> {
     _cityList.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
   }
 
-  void fileterCitiesWithState(String state) {
+  void filterCitiesWithState(String state) {
     List<Map<String, dynamic>> list = stateCities.where((element) {
       return element['state'].toString().toLowerCase() == state.toLowerCase();
     }).toList();
@@ -55,10 +55,46 @@ class _UserAddressPageState extends State<UserAddressPage> {
     debugPrint(_cityList.toString());
   }
 
+  DateTime getEndDate() {
+    DateTime today = DateTime.now();
+    DateTime endDate = DateTime(
+      today.year - 18,
+      today.month,
+      today.day,
+      today.hour,
+      today.minute,
+      today.second,
+      today.millisecond,
+      today.microsecond,
+    );
+
+    return endDate;
+  }
+
+  DateTime getFirstDate() {
+    DateTime today = DateTime.now();
+    DateTime endDate = DateTime(
+      today.year - 100,
+      today.month,
+      today.day,
+      today.hour,
+      today.minute,
+      today.second,
+      today.millisecond,
+      today.microsecond,
+    );
+
+    return endDate;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: background,
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: background,
+      ),
       body: Form(
         key: _formKey,
         child: Container(
@@ -168,6 +204,89 @@ class _UserAddressPageState extends State<UserAddressPage> {
                     decoration: getInputDecoration('example123@gmail.com'),
                   ),
                 ),
+                const SizedBox(height: 10),
+
+                /// date of birth
+                Text(
+                  'Date of Birth',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                FormField(
+                  initialValue: _dob,
+                  validator: (dob) {
+                    if (dob == null || dob.isEmpty) {
+                      return 'Please enter Date of Birth';
+                    }
+                    return null;
+                  },
+                  builder: (formState) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: text100,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _dob == null ? 'yyyy-mm-dd' : _dob!,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: _dob == null ? accentBG : accent2,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              showDatePicker(
+                                context: context,
+                                initialDate: getEndDate(),
+                                firstDate: getFirstDate(),
+                                lastDate: getEndDate(),
+                              ).then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    _dob =
+                                        '${value.year}-${value.month}-${value.day}';
+                                  });
+                                  debugPrint(_dob);
+                                  formState.didChange(_dob);
+                                }
+                              });
+                            },
+                            icon: Icon(
+                              Icons.date_range,
+                              color: accent2.withOpacity(0.7),
+                              size: 32,
+                            ),
+                          ),
+                          if (formState.hasError)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: Text(
+                                formState.errorText.toString(),
+                                style: TextStyle(
+                                  color: error,
+                                  fontSize: body2,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+
                 const SizedBox(height: 10),
 
                 /// address
@@ -317,7 +436,7 @@ class _UserAddressPageState extends State<UserAddressPage> {
                                   if (value != null) {
                                     setState(() {
                                       _state = value;
-                                      fileterCitiesWithState(value);
+                                      filterCitiesWithState(value);
                                     });
                                   }
                                   formState.didChange(_state);

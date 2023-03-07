@@ -1,8 +1,13 @@
+import 'dart:typed_data';
+
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
+import '../../../widgets/image_upload_widget.dart';
 
 class UserKYCPage extends StatefulWidget {
   const UserKYCPage({super.key});
@@ -16,10 +21,26 @@ class _UserKYCPageState extends State<UserKYCPage> {
   final TextEditingController _aadharCtrl = TextEditingController();
   final TextEditingController _panCtrl = TextEditingController();
 
-  Future<void> _pickImages() async {
-    await ImagePicker().pickImage(source: ImageSource.gallery).then(
-          (XFile? pickedImage) {},
-        );
+  late AuthUser _user;
+
+  Future<void> _uploadPanCardImage() async {
+    try {} catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future<void> _uploadAadharCardImage() async {
+    try {} catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  @override
+  void initState() {
+    AmplifyAuthCognito().getCurrentUser().then((value) {
+      _user = value;
+    });
+    super.initState();
   }
 
   @override
@@ -94,63 +115,9 @@ class _UserKYCPageState extends State<UserKYCPage> {
                 const SizedBox(height: 10),
 
                 /// Aadhar Card Image
-                DottedBorder(
-                  dashPattern: const [10, 1],
-                  strokeCap: StrokeCap.butt,
-                  strokeWidth: 1.0,
-                  radius: const Radius.circular(10),
-                  color: accent2,
-                  child: GestureDetector(
-                    onTap: () async {
-                      await _pickImages();
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 0),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.image,
-                            color: accent2,
-                            size: 32,
-                          ),
-                          const SizedBox(width: 15),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const SizedBox(height: 5),
-                              Text(
-                                'Add your Aadhar Card image',
-                                style: TextStyle(
-                                  color: text400,
-                                  fontSize: body2,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                'supports: JPG, JPEG, PNG',
-                                style: TextStyle(
-                                  color: text300,
-                                  fontSize: caption,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                ImageUploadButtonWidget(
+                  uploadPath: 'aadhar/{_user.userId}',
+                  title: 'Aadhar',
                 ),
 
                 const SizedBox(height: 20),
@@ -201,58 +168,9 @@ class _UserKYCPageState extends State<UserKYCPage> {
                 const SizedBox(height: 10),
 
                 /// Pan Card image
-                DottedBorder(
-                  dashPattern: const [10, 1],
-                  strokeCap: StrokeCap.butt,
-                  strokeWidth: 1.0,
-                  radius: const Radius.circular(10),
-                  color: accent2,
-                  child: Container(
-                    width: double.infinity,
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.image,
-                          color: accent2,
-                          size: 32,
-                        ),
-                        const SizedBox(width: 15),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const SizedBox(height: 5),
-                            Text(
-                              'Add your Pan Card image',
-                              style: TextStyle(
-                                color: text400,
-                                fontSize: body2,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              'supports: JPG, JPEG, PNG',
-                              style: TextStyle(
-                                color: text300,
-                                fontSize: caption,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                ImageUploadButtonWidget(
+                  uploadPath: 'pan/{_user.userId}',
+                  title: 'Pan',
                 ),
               ],
             ),

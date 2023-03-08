@@ -34,8 +34,11 @@ class Transaction extends Model {
   final TransactionStatus? _status;
   final TemporalDateTime? _dateTime;
   final Wallet? _receiver;
+  final Wallet? _sender;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
+  final String? _transactionReceiverId;
+  final String? _transactionSenderId;
 
   @override
   getInstanceType() => classType;
@@ -70,6 +73,10 @@ class Transaction extends Model {
     return _receiver;
   }
   
+  Wallet? get sender {
+    return _sender;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -78,16 +85,27 @@ class Transaction extends Model {
     return _updatedAt;
   }
   
-  const Transaction._internal({required this.id, type, amount, status, dateTime, receiver, createdAt, updatedAt}): _type = type, _amount = amount, _status = status, _dateTime = dateTime, _receiver = receiver, _createdAt = createdAt, _updatedAt = updatedAt;
+  String? get transactionReceiverId {
+    return _transactionReceiverId;
+  }
   
-  factory Transaction({String? id, TransactionType? type, double? amount, TransactionStatus? status, TemporalDateTime? dateTime, Wallet? receiver}) {
+  String? get transactionSenderId {
+    return _transactionSenderId;
+  }
+  
+  const Transaction._internal({required this.id, type, amount, status, dateTime, receiver, sender, createdAt, updatedAt, transactionReceiverId, transactionSenderId}): _type = type, _amount = amount, _status = status, _dateTime = dateTime, _receiver = receiver, _sender = sender, _createdAt = createdAt, _updatedAt = updatedAt, _transactionReceiverId = transactionReceiverId, _transactionSenderId = transactionSenderId;
+  
+  factory Transaction({String? id, TransactionType? type, double? amount, TransactionStatus? status, TemporalDateTime? dateTime, Wallet? receiver, Wallet? sender, String? transactionReceiverId, String? transactionSenderId}) {
     return Transaction._internal(
       id: id == null ? UUID.getUUID() : id,
       type: type,
       amount: amount,
       status: status,
       dateTime: dateTime,
-      receiver: receiver);
+      receiver: receiver,
+      sender: sender,
+      transactionReceiverId: transactionReceiverId,
+      transactionSenderId: transactionSenderId);
   }
   
   bool equals(Object other) {
@@ -103,7 +121,10 @@ class Transaction extends Model {
       _amount == other._amount &&
       _status == other._status &&
       _dateTime == other._dateTime &&
-      _receiver == other._receiver;
+      _receiver == other._receiver &&
+      _sender == other._sender &&
+      _transactionReceiverId == other._transactionReceiverId &&
+      _transactionSenderId == other._transactionSenderId;
   }
   
   @override
@@ -119,22 +140,26 @@ class Transaction extends Model {
     buffer.write("amount=" + (_amount != null ? _amount!.toString() : "null") + ", ");
     buffer.write("status=" + (_status != null ? enumToString(_status)! : "null") + ", ");
     buffer.write("dateTime=" + (_dateTime != null ? _dateTime!.format() : "null") + ", ");
-    buffer.write("receiver=" + (_receiver != null ? _receiver!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
-    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
+    buffer.write("transactionReceiverId=" + "$_transactionReceiverId" + ", ");
+    buffer.write("transactionSenderId=" + "$_transactionSenderId");
     buffer.write("}");
     
     return buffer.toString();
   }
   
-  Transaction copyWith({TransactionType? type, double? amount, TransactionStatus? status, TemporalDateTime? dateTime, Wallet? receiver}) {
+  Transaction copyWith({TransactionType? type, double? amount, TransactionStatus? status, TemporalDateTime? dateTime, Wallet? receiver, Wallet? sender, String? transactionReceiverId, String? transactionSenderId}) {
     return Transaction._internal(
       id: id,
       type: type ?? this.type,
       amount: amount ?? this.amount,
       status: status ?? this.status,
       dateTime: dateTime ?? this.dateTime,
-      receiver: receiver ?? this.receiver);
+      receiver: receiver ?? this.receiver,
+      sender: sender ?? this.sender,
+      transactionReceiverId: transactionReceiverId ?? this.transactionReceiverId,
+      transactionSenderId: transactionSenderId ?? this.transactionSenderId);
   }
   
   Transaction.fromJson(Map<String, dynamic> json)  
@@ -146,15 +171,20 @@ class Transaction extends Model {
       _receiver = json['receiver']?['serializedData'] != null
         ? Wallet.fromJson(new Map<String, dynamic>.from(json['receiver']['serializedData']))
         : null,
+      _sender = json['sender']?['serializedData'] != null
+        ? Wallet.fromJson(new Map<String, dynamic>.from(json['sender']['serializedData']))
+        : null,
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
+      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
+      _transactionReceiverId = json['transactionReceiverId'],
+      _transactionSenderId = json['transactionSenderId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'type': enumToString(_type), 'amount': _amount, 'status': enumToString(_status), 'dateTime': _dateTime?.format(), 'receiver': _receiver?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'type': enumToString(_type), 'amount': _amount, 'status': enumToString(_status), 'dateTime': _dateTime?.format(), 'receiver': _receiver?.toJson(), 'sender': _sender?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'transactionReceiverId': _transactionReceiverId, 'transactionSenderId': _transactionSenderId
   };
   
   Map<String, Object?> toMap() => {
-    'id': id, 'type': _type, 'amount': _amount, 'status': _status, 'dateTime': _dateTime, 'receiver': _receiver, 'createdAt': _createdAt, 'updatedAt': _updatedAt
+    'id': id, 'type': _type, 'amount': _amount, 'status': _status, 'dateTime': _dateTime, 'receiver': _receiver, 'sender': _sender, 'createdAt': _createdAt, 'updatedAt': _updatedAt, 'transactionReceiverId': _transactionReceiverId, 'transactionSenderId': _transactionSenderId
   };
 
   static final QueryModelIdentifier<TransactionModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<TransactionModelIdentifier>();
@@ -166,6 +196,11 @@ class Transaction extends Model {
   static final QueryField RECEIVER = QueryField(
     fieldName: "receiver",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'Wallet'));
+  static final QueryField SENDER = QueryField(
+    fieldName: "sender",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'Wallet'));
+  static final QueryField TRANSACTIONRECEIVERID = QueryField(fieldName: "transactionReceiverId");
+  static final QueryField TRANSACTIONSENDERID = QueryField(fieldName: "transactionSenderId");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Transaction";
     modelSchemaDefinition.pluralName = "Transactions";
@@ -179,10 +214,6 @@ class Transaction extends Model {
           ModelOperation.DELETE,
           ModelOperation.READ
         ])
-    ];
-    
-    modelSchemaDefinition.indexes = [
-      ModelIndex(fields: const ["walletID"], name: "byWallet")
     ];
     
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
@@ -211,11 +242,18 @@ class Transaction extends Model {
       ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
     ));
     
-    modelSchemaDefinition.addField(ModelFieldDefinition.belongsTo(
+    modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
       key: Transaction.RECEIVER,
       isRequired: false,
-      targetNames: ['walletID'],
-      ofModelName: 'Wallet'
+      ofModelName: 'Wallet',
+      associatedKey: Wallet.ID
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.hasOne(
+      key: Transaction.SENDER,
+      isRequired: false,
+      ofModelName: 'Wallet',
+      associatedKey: Wallet.ID
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
@@ -230,6 +268,18 @@ class Transaction extends Model {
       isRequired: false,
       isReadOnly: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Transaction.TRANSACTIONRECEIVERID,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Transaction.TRANSACTIONSENDERID,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
   });
 }

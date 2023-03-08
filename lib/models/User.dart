@@ -21,6 +21,7 @@
 
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 
@@ -36,6 +37,9 @@ class User extends Model {
   final Wallet? _wallet;
   final int? _pincode;
   final String? _goldProviderDetails;
+  final List<BankAccount>? _bankAccounts;
+  final List<Address>? _address;
+  final String? _kycDetails;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
   final String? _userWalletId;
@@ -81,6 +85,18 @@ class User extends Model {
     return _goldProviderDetails;
   }
   
+  List<BankAccount>? get bankAccounts {
+    return _bankAccounts;
+  }
+  
+  List<Address>? get address {
+    return _address;
+  }
+  
+  String? get kycDetails {
+    return _kycDetails;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -93,9 +109,9 @@ class User extends Model {
     return _userWalletId;
   }
   
-  const User._internal({required this.id, fname, lname, email, phone, wallet, pincode, goldProviderDetails, createdAt, updatedAt, userWalletId}): _fname = fname, _lname = lname, _email = email, _phone = phone, _wallet = wallet, _pincode = pincode, _goldProviderDetails = goldProviderDetails, _createdAt = createdAt, _updatedAt = updatedAt, _userWalletId = userWalletId;
+  const User._internal({required this.id, fname, lname, email, phone, wallet, pincode, goldProviderDetails, bankAccounts, address, kycDetails, createdAt, updatedAt, userWalletId}): _fname = fname, _lname = lname, _email = email, _phone = phone, _wallet = wallet, _pincode = pincode, _goldProviderDetails = goldProviderDetails, _bankAccounts = bankAccounts, _address = address, _kycDetails = kycDetails, _createdAt = createdAt, _updatedAt = updatedAt, _userWalletId = userWalletId;
   
-  factory User({String? id, String? fname, String? lname, String? email, String? phone, Wallet? wallet, int? pincode, String? goldProviderDetails, String? userWalletId}) {
+  factory User({String? id, String? fname, String? lname, String? email, String? phone, Wallet? wallet, int? pincode, String? goldProviderDetails, List<BankAccount>? bankAccounts, List<Address>? address, String? kycDetails, String? userWalletId}) {
     return User._internal(
       id: id == null ? UUID.getUUID() : id,
       fname: fname,
@@ -105,6 +121,9 @@ class User extends Model {
       wallet: wallet,
       pincode: pincode,
       goldProviderDetails: goldProviderDetails,
+      bankAccounts: bankAccounts != null ? List<BankAccount>.unmodifiable(bankAccounts) : bankAccounts,
+      address: address != null ? List<Address>.unmodifiable(address) : address,
+      kycDetails: kycDetails,
       userWalletId: userWalletId);
   }
   
@@ -124,6 +143,9 @@ class User extends Model {
       _wallet == other._wallet &&
       _pincode == other._pincode &&
       _goldProviderDetails == other._goldProviderDetails &&
+      DeepCollectionEquality().equals(_bankAccounts, other._bankAccounts) &&
+      DeepCollectionEquality().equals(_address, other._address) &&
+      _kycDetails == other._kycDetails &&
       _userWalletId == other._userWalletId;
   }
   
@@ -142,6 +164,7 @@ class User extends Model {
     buffer.write("phone=" + "$_phone" + ", ");
     buffer.write("pincode=" + (_pincode != null ? _pincode!.toString() : "null") + ", ");
     buffer.write("goldProviderDetails=" + "$_goldProviderDetails" + ", ");
+    buffer.write("kycDetails=" + "$_kycDetails" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
     buffer.write("userWalletId=" + "$_userWalletId");
@@ -150,7 +173,7 @@ class User extends Model {
     return buffer.toString();
   }
   
-  User copyWith({String? fname, String? lname, String? email, String? phone, Wallet? wallet, int? pincode, String? goldProviderDetails, String? userWalletId}) {
+  User copyWith({String? fname, String? lname, String? email, String? phone, Wallet? wallet, int? pincode, String? goldProviderDetails, List<BankAccount>? bankAccounts, List<Address>? address, String? kycDetails, String? userWalletId}) {
     return User._internal(
       id: id,
       fname: fname ?? this.fname,
@@ -160,6 +183,9 @@ class User extends Model {
       wallet: wallet ?? this.wallet,
       pincode: pincode ?? this.pincode,
       goldProviderDetails: goldProviderDetails ?? this.goldProviderDetails,
+      bankAccounts: bankAccounts ?? this.bankAccounts,
+      address: address ?? this.address,
+      kycDetails: kycDetails ?? this.kycDetails,
       userWalletId: userWalletId ?? this.userWalletId);
   }
   
@@ -174,16 +200,29 @@ class User extends Model {
         : null,
       _pincode = (json['pincode'] as num?)?.toInt(),
       _goldProviderDetails = json['goldProviderDetails'],
+      _bankAccounts = json['bankAccounts'] is List
+        ? (json['bankAccounts'] as List)
+          .where((e) => e?['serializedData'] != null)
+          .map((e) => BankAccount.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
+          .toList()
+        : null,
+      _address = json['address'] is List
+        ? (json['address'] as List)
+          .where((e) => e?['serializedData'] != null)
+          .map((e) => Address.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
+          .toList()
+        : null,
+      _kycDetails = json['kycDetails'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
       _userWalletId = json['userWalletId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'fname': _fname, 'lname': _lname, 'email': _email, 'phone': _phone, 'wallet': _wallet?.toJson(), 'pincode': _pincode, 'goldProviderDetails': _goldProviderDetails, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'userWalletId': _userWalletId
+    'id': id, 'fname': _fname, 'lname': _lname, 'email': _email, 'phone': _phone, 'wallet': _wallet?.toJson(), 'pincode': _pincode, 'goldProviderDetails': _goldProviderDetails, 'bankAccounts': _bankAccounts?.map((BankAccount? e) => e?.toJson()).toList(), 'address': _address?.map((Address? e) => e?.toJson()).toList(), 'kycDetails': _kycDetails, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'userWalletId': _userWalletId
   };
   
   Map<String, Object?> toMap() => {
-    'id': id, 'fname': _fname, 'lname': _lname, 'email': _email, 'phone': _phone, 'wallet': _wallet, 'pincode': _pincode, 'goldProviderDetails': _goldProviderDetails, 'createdAt': _createdAt, 'updatedAt': _updatedAt, 'userWalletId': _userWalletId
+    'id': id, 'fname': _fname, 'lname': _lname, 'email': _email, 'phone': _phone, 'wallet': _wallet, 'pincode': _pincode, 'goldProviderDetails': _goldProviderDetails, 'bankAccounts': _bankAccounts, 'address': _address, 'kycDetails': _kycDetails, 'createdAt': _createdAt, 'updatedAt': _updatedAt, 'userWalletId': _userWalletId
   };
 
   static final QueryModelIdentifier<UserModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<UserModelIdentifier>();
@@ -197,6 +236,13 @@ class User extends Model {
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'Wallet'));
   static final QueryField PINCODE = QueryField(fieldName: "pincode");
   static final QueryField GOLDPROVIDERDETAILS = QueryField(fieldName: "goldProviderDetails");
+  static final QueryField BANKACCOUNTS = QueryField(
+    fieldName: "bankAccounts",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'BankAccount'));
+  static final QueryField ADDRESS = QueryField(
+    fieldName: "address",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'Address'));
+  static final QueryField KYCDETAILS = QueryField(fieldName: "kycDetails");
   static final QueryField USERWALLETID = QueryField(fieldName: "userWalletId");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "User";
@@ -254,6 +300,26 @@ class User extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: User.GOLDPROVIDERDETAILS,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
+      key: User.BANKACCOUNTS,
+      isRequired: false,
+      ofModelName: 'BankAccount',
+      associatedKey: BankAccount.USERID
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
+      key: User.ADDRESS,
+      isRequired: false,
+      ofModelName: 'Address',
+      associatedKey: Address.USERID
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: User.KYCDETAILS,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));

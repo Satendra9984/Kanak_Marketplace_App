@@ -40,11 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
       // safePrint('GET CALL RESPONSE: ${response.body}');
 
       Wallet wallet = Wallet(
-        balance: 20,
-        gold_balance: 0,
-        address: "8768715527@tasvat",
-        transactions: const []
-      );
+          balance: 20,
+          gold_balance: 0,
+          address: "8768715527@tasvat");
 
       final request1 = ModelMutations.create(wallet);
       final response1 = await Amplify.API.mutate(request: request1).response;
@@ -55,14 +53,14 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
       User user = User(
-        fname: "Subhadeep", lname: "Chowdhury",
-        email: "subhadeepchowdhury41@gmail.com",
-        phone: "8768715527",
-        pincode: 722150,
-        goldProviderDetails: jsonEncode({}),
-        wallet: wallet,
-        userWalletId: wallet.id
-      );
+          fname: "Subhadeep",
+          lname: "Chowdhury",
+          email: "subhadeepchowdhury41@gmail.com",
+          phone: "8768715527",
+          pincode: 722150,
+          goldProviderDetails: jsonEncode({}),
+          wallet: wallet,
+          userWalletId: wallet.id);
       final request2 = ModelMutations.create(user);
       final response2 = await Amplify.API.mutate(request: request2).response;
 
@@ -108,9 +106,11 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            ElevatedButton(onPressed: () async {
-              await callDemoAPI();
-            }, child: const Text('Add')),
+            ElevatedButton(
+                onPressed: () async {
+                  await callDemoAPI();
+                },
+                child: const Text('Add')),
             FloatingActionButton.small(
               heroTag: '0',
               elevation: 5.0,

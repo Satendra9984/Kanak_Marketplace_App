@@ -1,18 +1,21 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:tasvat/models/ModelProvider.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UserAddressPage extends StatefulWidget {
+class UserAddressPage extends ConsumerStatefulWidget {
   const UserAddressPage({super.key});
 
   @override
-  State<UserAddressPage> createState() => _UserAddressPageState();
+  ConsumerState<UserAddressPage> createState() => _UserAddressPageState();
 }
 
-class _UserAddressPageState extends State<UserAddressPage> {
+class _UserAddressPageState extends ConsumerState<UserAddressPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  // bool _showPassword = false;
-  final TextEditingController _nameCtrl = TextEditingController();
+  final TextEditingController _fNameCtrl = TextEditingController();
+  final TextEditingController _lNameCtrl = TextEditingController();
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _pinCodeCtrl = TextEditingController();
   final TextEditingController _addressCtrl = TextEditingController();
@@ -25,10 +28,7 @@ class _UserAddressPageState extends State<UserAddressPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
-
     _setList();
-
     super.initState();
   }
 
@@ -50,6 +50,16 @@ class _UserAddressPageState extends State<UserAddressPage> {
     _cityList.addAll(list.map((e) => e['name']));
     _cityList.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
     debugPrint(_cityList.toString());
+  }
+
+  Future<void> _createUserAccount() async {
+    final authData = await Amplify.Auth.getCurrentUser();
+    final User user = User(
+        fname: _fNameCtrl.text,
+        lname: _lNameCtrl.text,
+        email: _emailCtrl.text,
+        pincode: int.parse(_pinCodeCtrl.text),
+        bankAccounts: const []);
   }
 
   @override
@@ -79,44 +89,93 @@ class _UserAddressPageState extends State<UserAddressPage> {
                 const SizedBox(height: 25),
 
                 /// Name
-                Text(
-                  'Name',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    // color: text150,
-                  ),
-                  child: TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.name,
-                    controller: _nameCtrl,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your Name';
-                      } else if (value.length > 50) {
-                        return 'Name should be less than 50 characters';
-                      } else if (value.length < 2) {
-                        return 'Name should be greater than 2 characters';
-                      }
-                      return null;
-                    },
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: accent2,
+                Row(
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          'First Name',
+                          style: TextStyle(
+                            color: text500,
+                            fontSize: body2,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            // color: text150,
+                          ),
+                          child: TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            keyboardType: TextInputType.name,
+                            controller: _fNameCtrl,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your Name';
+                              } else if (value.length > 50) {
+                                return 'Name should be less than 50 characters';
+                              } else if (value.length < 2) {
+                                return 'Name should be greater than 2 characters';
+                              }
+                              return null;
+                            },
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: accent2,
+                            ),
+                            decoration: getInputDecoration('First Name'),
+                          ),
+                        ),
+                        Text(
+                          'Last Name',
+                          style: TextStyle(
+                            color: text500,
+                            fontSize: body2,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            // color: text150,
+                          ),
+                          child: TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            keyboardType: TextInputType.name,
+                            controller: _lNameCtrl,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your Name';
+                              } else if (value.length > 50) {
+                                return 'Name should be less than 50 characters';
+                              } else if (value.length < 2) {
+                                return 'Name should be greater than 2 characters';
+                              }
+                              return null;
+                            },
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: accent2,
+                            ),
+                            decoration: getInputDecoration('Last Name'),
+                          ),
+                        ),
+                      ],
                     ),
-                    decoration: getInputDecoration('Name'),
-                  ),
+                  ],
                 ),
 
                 const SizedBox(height: 10),

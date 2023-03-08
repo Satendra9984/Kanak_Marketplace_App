@@ -95,9 +95,10 @@ class PaymentScreen extends StatelessWidget {
                     const SizedBox(height: 25),
                     RowDetailWidget(
                         title: 'Transaction Type',
-                        value: buyOrderDetails.type.toString()!),
+                        value: buyOrderDetails.type.toString()),
                     const SizedBox(height: 25),
-                    const RowDetailWidget(title: 'Price', value: '${10000} INR/gm'),
+                    const RowDetailWidget(
+                        title: 'Price', value: '${10000} INR/gm'),
                     const SizedBox(height: 25),
                     RowDetailWidget(
                         title: 'Amount', value: '${buyOrderDetails.amount} gm'),

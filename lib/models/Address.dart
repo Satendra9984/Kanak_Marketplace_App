@@ -23,14 +23,16 @@ import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
 
 
-/** This is an auto generated class representing the Wallet type in your schema. */
+/** This is an auto generated class representing the Address type in your schema. */
 @immutable
-class Wallet extends Model {
-  static const classType = const _WalletModelType();
+class Address extends Model {
+  static const classType = const _AddressModelType();
   final String id;
-  final double? _balance;
-  final double? _gold_balance;
-  final String? _address;
+  final String? _name;
+  final String? _pincode;
+  final String? _state;
+  final String? _city;
+  final String? _userID;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -41,22 +43,39 @@ class Wallet extends Model {
   @override
   String getId() => id;
   
-  WalletModelIdentifier get modelIdentifier {
-      return WalletModelIdentifier(
+  AddressModelIdentifier get modelIdentifier {
+      return AddressModelIdentifier(
         id: id
       );
   }
   
-  double? get balance {
-    return _balance;
+  String? get name {
+    return _name;
   }
   
-  double? get gold_balance {
-    return _gold_balance;
+  String? get pincode {
+    return _pincode;
   }
   
-  String? get address {
-    return _address;
+  String? get state {
+    return _state;
+  }
+  
+  String? get city {
+    return _city;
+  }
+  
+  String get userID {
+    try {
+      return _userID!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
   TemporalDateTime? get createdAt {
@@ -67,14 +86,16 @@ class Wallet extends Model {
     return _updatedAt;
   }
   
-  const Wallet._internal({required this.id, balance, gold_balance, address, createdAt, updatedAt}): _balance = balance, _gold_balance = gold_balance, _address = address, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Address._internal({required this.id, name, pincode, state, city, required userID, createdAt, updatedAt}): _name = name, _pincode = pincode, _state = state, _city = city, _userID = userID, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Wallet({String? id, double? balance, double? gold_balance, String? address}) {
-    return Wallet._internal(
+  factory Address({String? id, String? name, String? pincode, String? state, String? city, required String userID}) {
+    return Address._internal(
       id: id == null ? UUID.getUUID() : id,
-      balance: balance,
-      gold_balance: gold_balance,
-      address: address);
+      name: name,
+      pincode: pincode,
+      state: state,
+      city: city,
+      userID: userID);
   }
   
   bool equals(Object other) {
@@ -84,11 +105,13 @@ class Wallet extends Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is Wallet &&
+    return other is Address &&
       id == other.id &&
-      _balance == other._balance &&
-      _gold_balance == other._gold_balance &&
-      _address == other._address;
+      _name == other._name &&
+      _pincode == other._pincode &&
+      _state == other._state &&
+      _city == other._city &&
+      _userID == other._userID;
   }
   
   @override
@@ -98,11 +121,13 @@ class Wallet extends Model {
   String toString() {
     var buffer = new StringBuffer();
     
-    buffer.write("Wallet {");
+    buffer.write("Address {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("balance=" + (_balance != null ? _balance!.toString() : "null") + ", ");
-    buffer.write("gold_balance=" + (_gold_balance != null ? _gold_balance!.toString() : "null") + ", ");
-    buffer.write("address=" + "$_address" + ", ");
+    buffer.write("name=" + "$_name" + ", ");
+    buffer.write("pincode=" + "$_pincode" + ", ");
+    buffer.write("state=" + "$_state" + ", ");
+    buffer.write("city=" + "$_city" + ", ");
+    buffer.write("userID=" + "$_userID" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -110,38 +135,44 @@ class Wallet extends Model {
     return buffer.toString();
   }
   
-  Wallet copyWith({double? balance, double? gold_balance, String? address}) {
-    return Wallet._internal(
+  Address copyWith({String? name, String? pincode, String? state, String? city, String? userID}) {
+    return Address._internal(
       id: id,
-      balance: balance ?? this.balance,
-      gold_balance: gold_balance ?? this.gold_balance,
-      address: address ?? this.address);
+      name: name ?? this.name,
+      pincode: pincode ?? this.pincode,
+      state: state ?? this.state,
+      city: city ?? this.city,
+      userID: userID ?? this.userID);
   }
   
-  Wallet.fromJson(Map<String, dynamic> json)  
+  Address.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
-      _balance = (json['balance'] as num?)?.toDouble(),
-      _gold_balance = (json['gold_balance'] as num?)?.toDouble(),
-      _address = json['address'],
+      _name = json['name'],
+      _pincode = json['pincode'],
+      _state = json['state'],
+      _city = json['city'],
+      _userID = json['userID'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'balance': _balance, 'gold_balance': _gold_balance, 'address': _address, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'pincode': _pincode, 'state': _state, 'city': _city, 'userID': _userID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
-    'id': id, 'balance': _balance, 'gold_balance': _gold_balance, 'address': _address, 'createdAt': _createdAt, 'updatedAt': _updatedAt
+    'id': id, 'name': _name, 'pincode': _pincode, 'state': _state, 'city': _city, 'userID': _userID, 'createdAt': _createdAt, 'updatedAt': _updatedAt
   };
 
-  static final QueryModelIdentifier<WalletModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<WalletModelIdentifier>();
+  static final QueryModelIdentifier<AddressModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<AddressModelIdentifier>();
   static final QueryField ID = QueryField(fieldName: "id");
-  static final QueryField BALANCE = QueryField(fieldName: "balance");
-  static final QueryField GOLD_BALANCE = QueryField(fieldName: "gold_balance");
-  static final QueryField ADDRESS = QueryField(fieldName: "address");
+  static final QueryField NAME = QueryField(fieldName: "name");
+  static final QueryField PINCODE = QueryField(fieldName: "pincode");
+  static final QueryField STATE = QueryField(fieldName: "state");
+  static final QueryField CITY = QueryField(fieldName: "city");
+  static final QueryField USERID = QueryField(fieldName: "userID");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "Wallet";
-    modelSchemaDefinition.pluralName = "Wallets";
+    modelSchemaDefinition.name = "Address";
+    modelSchemaDefinition.pluralName = "Addresses";
     
     modelSchemaDefinition.authRules = [
       AuthRule(
@@ -154,23 +185,39 @@ class Wallet extends Model {
         ])
     ];
     
+    modelSchemaDefinition.indexes = [
+      ModelIndex(fields: const ["userID"], name: "byUser")
+    ];
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Wallet.BALANCE,
+      key: Address.NAME,
       isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.double)
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Wallet.GOLD_BALANCE,
+      key: Address.PINCODE,
       isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.double)
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Wallet.ADDRESS,
+      key: Address.STATE,
       isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Address.CITY,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Address.USERID,
+      isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
@@ -190,30 +237,30 @@ class Wallet extends Model {
   });
 }
 
-class _WalletModelType extends ModelType<Wallet> {
-  const _WalletModelType();
+class _AddressModelType extends ModelType<Address> {
+  const _AddressModelType();
   
   @override
-  Wallet fromJson(Map<String, dynamic> jsonData) {
-    return Wallet.fromJson(jsonData);
+  Address fromJson(Map<String, dynamic> jsonData) {
+    return Address.fromJson(jsonData);
   }
   
   @override
   String modelName() {
-    return 'Wallet';
+    return 'Address';
   }
 }
 
 /**
  * This is an auto generated class representing the model identifier
- * of [Wallet] in your schema.
+ * of [Address] in your schema.
  */
 @immutable
-class WalletModelIdentifier implements ModelIdentifier<Wallet> {
+class AddressModelIdentifier implements ModelIdentifier<Address> {
   final String id;
 
-  /** Create an instance of WalletModelIdentifier using [id] the primary key. */
-  const WalletModelIdentifier({
+  /** Create an instance of AddressModelIdentifier using [id] the primary key. */
+  const AddressModelIdentifier({
     required this.id});
   
   @override
@@ -231,7 +278,7 @@ class WalletModelIdentifier implements ModelIdentifier<Wallet> {
   String serializeAsString() => serializeAsMap().values.join('#');
   
   @override
-  String toString() => 'WalletModelIdentifier(id: $id)';
+  String toString() => 'AddressModelIdentifier(id: $id)';
   
   @override
   bool operator ==(Object other) {
@@ -239,7 +286,7 @@ class WalletModelIdentifier implements ModelIdentifier<Wallet> {
       return true;
     }
     
-    return other is WalletModelIdentifier &&
+    return other is AddressModelIdentifier &&
       id == other.id;
   }
   

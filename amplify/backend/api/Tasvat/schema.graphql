@@ -1,3 +1,22 @@
+type Address @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  pincode: String
+  state: String
+  city: String
+  userID: ID! @index(name: "byUser")
+}
+
+type BankAccount @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  bankId: String
+  accNo: String
+  ifsc: String
+  addressId: String
+  accName: String
+  userID: ID! @index(name: "byUser")
+}
+
 enum TransactionStatus {
   PENDING
   FAILED
@@ -14,12 +33,12 @@ enum TransactionType {
 
 type Transaction @model @auth(rules: [{allow: public}]) {
   id: ID!
-  walletID: ID! @index(name: "byWallet")
   type: TransactionType
   amount: Float
   status: TransactionStatus
   dateTime: AWSDateTime
-  receiver: Wallet @belongsTo(fields: ["walletID"])
+  receiver: Wallet @hasOne
+  sender: Wallet @hasOne
 }
 
 type Wallet @model @auth(rules: [{allow: public}]) {
@@ -27,7 +46,6 @@ type Wallet @model @auth(rules: [{allow: public}]) {
   balance: Float
   gold_balance: Float
   address: String
-  transactions: [Transaction] @hasMany(indexName: "byWallet", fields: ["id"])
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -39,5 +57,8 @@ type User @model @auth(rules: [{allow: public}]) {
   wallet: Wallet @hasOne
   pincode: Int
   goldProviderDetails: AWSJSON
+  bankAccounts: [BankAccount] @hasMany(indexName: "byUser", fields: ["id"])
+  address: [Address] @hasMany(indexName: "byUser", fields: ["id"])
+  kycDetails: AWSJSON
 }
  

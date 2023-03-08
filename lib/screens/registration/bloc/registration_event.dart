@@ -1,19 +1,78 @@
 part of 'registration_bloc.dart';
 
-abstract class RegistrationEvents {}
+abstract class RegistrationEvent extends Equatable {}
 
-class RegistrationInitial extends RegistrationEvents {}
+class RegistrationInitial extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
 
-class AlreadyRegisteres extends RegistrationEvents {}
+class UploadDetailsPressed extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
 
-class CheckingBankDetails extends RegistrationEvents {}
+class UploadedDetailsSuccess extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
 
-class AddingBankDetails extends RegistrationEvents {}
+class UploadedDetailsFail extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
 
-class CheckingAddressDetails extends RegistrationEvents {}
+class AadharUploadStart extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
 
-class AddingAddressDetails extends RegistrationEvents {}
+class AadharUploadEnd extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
 
-class CheckingKYCDetails extends RegistrationEvents {}
+class PanUploadStart extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
 
-class AddingKYCDetails extends RegistrationEvents {}
+class PanUploadEnd extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class AddKycPressed extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class KycUploadSuccess extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class KycUploadFail extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class AddBankAccount extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class BankAccountUploadPressed extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class BankAccountUploaSuccess extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class BankAccountUploadFail extends RegistrationEvent {
+  @override
+  List<Object?> get props => [];
+}

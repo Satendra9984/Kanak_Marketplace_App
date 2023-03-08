@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/screens/login/bloc/login_bloc.dart';
+import 'package:tasvat/screens/onboarding/onboarding_page.dart';
 import 'package:tasvat/screens/registration/view/aadhar_pan.dart';
 import 'package:tasvat/screens/registration/view/user_address.dart';
 import 'package:tasvat/screens/registration/view/user_bank_details.dart';
@@ -40,8 +41,12 @@ class Tasvat extends ConsumerStatefulWidget {
 class _TasvatState extends ConsumerState<Tasvat> {
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (_) => AuthRepository(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (_) => AuthRepository(),
+        ),
+      ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
@@ -54,10 +59,10 @@ class _TasvatState extends ConsumerState<Tasvat> {
         ],
         child: const MaterialApp(
           // home: OnBoardingPage(),
-          // home: OnBoardingPage(),
+          home: OnBoardingPage(),
           // home: UserBankDetailsPage(),
           // home: UserAddressPage(),
-          home: UserKYCPage(),
+          // home: UserKYCPage(),
         ),
       ),
     );

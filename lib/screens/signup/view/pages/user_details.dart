@@ -31,6 +31,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
           margin: const EdgeInsets.symmetric(horizontal: 15),
           alignment: Alignment.center,
           child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

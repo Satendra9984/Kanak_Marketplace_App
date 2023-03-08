@@ -10,7 +10,7 @@ import 'package:tasvat/providers/auth_provider.dart';
 import 'package:tasvat/screens/home_screen.dart';
 import 'package:tasvat/screens/login/view/pages/login_page.dart';
 import 'package:tasvat/screens/registration/view/aadhar_pan.dart';
-import 'package:tasvat/screens/registration/view/user_address.dart';
+import 'package:tasvat/screens/registration/view/add_user_details.dart';
 import 'package:tasvat/screens/registration/view/user_bank_details.dart';
 import 'package:tasvat/services/datastore_services.dart';
 
@@ -30,35 +30,23 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
       await DatastoreServices.checkRequiredData(user.userId).then((value) {
         if (value == null) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const HomeScreen()
-          ));
+              MaterialPageRoute(builder: (context) => const HomeScreen()));
         } else if (value == 'UserDetails') {
-          Navigator.pushReplacement(
-            context, MaterialPageRoute(
-              builder: (context) => const UserAddressPage()
-            )
-          );
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const UserAddressPage()));
         } else if (value == 'Address') {
-          Navigator.pushReplacement(
-            context, MaterialPageRoute(
-              builder: (context) => const UserAddressPage()
-            )
-          );
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const UserAddressPage()));
         } else if (value == 'KycDetails') {
-          Navigator.pushReplacement(
-            context, MaterialPageRoute(
-              builder: (context) => const UserKYCPage()
-            )
-          );
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const UserKYCPage()));
         } else if (value == 'BankAccount') {
           Navigator.pushReplacement(
-            context, MaterialPageRoute(
-              builder: (context) => const UserBankDetailsPage()
-            )
-          );
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const UserBankDetailsPage()));
         }
       });
-      
     }).catchError((err) {
       safePrint('No user logged in');
       Navigator.of(context).pushReplacement(

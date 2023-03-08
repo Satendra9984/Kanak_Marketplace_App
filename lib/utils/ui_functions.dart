@@ -13,9 +13,10 @@ InputDecoration getInputDecoration(String hintText) {
       borderRadius: const BorderRadius.all(Radius.circular(10.0)),
       borderSide: BorderSide(color: accent1),
     ),
-    errorStyle: const TextStyle(
-      fontWeight: FontWeight.w600,
+    errorStyle: TextStyle(
+      fontWeight: FontWeight.w500,
       fontSize: 14,
+      color: error,
     ),
     hintStyle: TextStyle(
       fontWeight: FontWeight.w600,

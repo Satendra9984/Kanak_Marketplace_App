@@ -65,6 +65,36 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
         bankAccounts: const []);
   }
 
+  DateTime getEndDate() {
+    DateTime today = DateTime.now();
+    DateTime endDate = DateTime(
+      today.year - 18,
+      today.month,
+      today.day,
+      today.hour,
+      today.minute,
+      today.second,
+      today.millisecond,
+      today.microsecond,
+    );
+    return endDate;
+  }
+
+  DateTime getFirstDate() {
+    DateTime today = DateTime.now();
+    DateTime endDate = DateTime(
+      today.year - 130,
+      today.month,
+      today.day,
+      today.hour,
+      today.minute,
+      today.second,
+      today.millisecond,
+      today.microsecond,
+    );
+    return endDate;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,12 +103,17 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
         elevation: 0.0,
         backgroundColor: background,
       ),
-      body: Form(
-        key: _formKey,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 15),
-          alignment: Alignment.center,
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          // color: Colors.green,
+        ),
+        alignment: Alignment.center,
+        child: Form(
+          key: _formKey,
           child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -97,90 +132,118 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
 
                 /// Name
                 Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Column(
-                      children: [
-                        Text(
-                          'First Name',
-                          style: TextStyle(
-                            color: text500,
-                            fontSize: body2,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 0),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: 5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            // color: text150,
-                          ),
-                          child: TextFormField(
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            keyboardType: TextInputType.name,
-                            controller: _fNameCtrl,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your Name';
-                              } else if (value.length > 50) {
-                                return 'Name should be less than 50 characters';
-                              } else if (value.length < 2) {
-                                return 'Name should be greater than 2 characters';
-                              }
-                              return null;
-                            },
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'First Name',
                             style: TextStyle(
-                              fontSize: 16,
+                              color: text500,
+                              fontSize: body2,
                               fontWeight: FontWeight.w500,
-                              color: accent2,
                             ),
-                            decoration: getInputDecoration('First Name'),
                           ),
-                        ),
-                        Text(
-                          'Last Name',
-                          style: TextStyle(
-                            color: text500,
-                            fontSize: body2,
-                            fontWeight: FontWeight.w500,
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 0),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              // color: text150,
+                            ),
+                            child: TextFormField(
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              keyboardType: TextInputType.name,
+                              controller: _fNameCtrl,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Enter your First Name';
+                                } else if (value.length > 30) {
+                                  return 'Less than 30 letters';
+                                } else if (value.length < 2) {
+                                  return 'Greater than 2 letters';
+                                }
+                                return null;
+                              },
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: accent2,
+                              ),
+                              decoration:
+                                  getInputDecoration('First Name').copyWith(
+                                errorStyle: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                  color: error,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 0),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: 5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            // color: text150,
-                          ),
-                          child: TextFormField(
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            keyboardType: TextInputType.name,
-                            controller: _lNameCtrl,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your Name';
-                              } else if (value.length > 50) {
-                                return 'Name should be less than 50 characters';
-                              } else if (value.length < 2) {
-                                return 'Name should be greater than 2 characters';
-                              }
-                              return null;
-                            },
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Last Name',
                             style: TextStyle(
-                              fontSize: 16,
+                              color: text500,
+                              fontSize: body2,
                               fontWeight: FontWeight.w500,
-                              color: accent2,
                             ),
-                            decoration: getInputDecoration('Last Name'),
                           ),
-                        ),
-                      ],
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 0),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 5),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              // color: text150,
+                            ),
+                            child: TextFormField(
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              keyboardType: TextInputType.name,
+                              controller: _lNameCtrl,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Enter your Last Name';
+                                } else if (value.length > 20) {
+                                  return 'Less than 20 letters';
+                                } else if (value.length < 2) {
+                                  return 'Greater than 2 letters';
+                                }
+                                return null;
+                              },
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: accent2,
+                              ),
+                              decoration:
+                                  getInputDecoration('Last Name').copyWith(
+                                errorStyle: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
+                                  color: error,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -243,73 +306,79 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                   ),
                 ),
                 FormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   initialValue: _dob,
                   validator: (dob) {
+                    debugPrint(dob);
                     if (dob == null || dob.isEmpty) {
                       return 'Please enter Date of Birth';
                     }
                     return null;
                   },
                   builder: (formState) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 0),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: text100,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _dob == null ? 'yyyy-mm-dd' : _dob!,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                              color: _dob == null ? accentBG : accent2,
-                            ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: text100,
                           ),
-                          IconButton(
-                            onPressed: () {
-                              showDatePicker(
-                                context: context,
-                                initialDate: getEndDate(),
-                                firstDate: getFirstDate(),
-                                lastDate: getEndDate(),
-                              ).then((value) {
-                                if (value != null) {
-                                  setState(() {
-                                    _dob =
-                                        '${value.year}-${value.month}-${value.day}';
-                                  });
-                                  debugPrint(_dob);
-                                  formState.didChange(_dob);
-                                }
-                              });
-                            },
-                            icon: Icon(
-                              Icons.date_range,
-                              color: accent2.withOpacity(0.7),
-                              size: 32,
-                            ),
-                          ),
-                          if (formState.hasError)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              child: Text(
-                                formState.errorText.toString(),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                _dob == null ? 'yyyy-mm-dd' : _dob!,
                                 style: TextStyle(
-                                  color: error,
-                                  fontSize: body2,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: _dob == null ? accentBG : accent2,
                                 ),
                               ),
+                              IconButton(
+                                onPressed: () async {
+                                  await showDatePicker(
+                                    context: context,
+                                    initialDate: getEndDate(),
+                                    firstDate: getFirstDate(),
+                                    lastDate: getEndDate(),
+                                  ).then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        _dob =
+                                            '${value.year}-${value.month}-${value.day}';
+                                      });
+                                      // debugPrint(_dob);
+                                      formState.didChange(_dob);
+                                    }
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.date_range,
+                                  color: accent2.withOpacity(0.7),
+                                  size: 32,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (formState.hasError)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: Text(
+                              formState.errorText.toString(),
+                              style: TextStyle(
+                                color: error,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                        ],
-                      ),
+                          ),
+                      ],
                     );
                   },
                 ),
@@ -463,6 +532,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                                   if (value != null) {
                                     setState(() {
                                       _state = value;
+                                      _city = null;
                                       filterCitiesWithState(value);
                                     });
                                   }
@@ -475,7 +545,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                                   fontWeight: FontWeight.w500,
                                   color: accent2,
                                 ),
-                                dropdownColor: text100,
+                                dropdownColor: text150,
                                 menuMaxHeight: 500,
                                 iconSize: 32,
                                 borderRadius: BorderRadius.circular(10),
@@ -501,7 +571,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                       },
                     ),
                     const SizedBox(width: 10),
-                    // TODO: CITY SELECTION
+                    //  CITY SELECTION
                     Expanded(
                       child: FormField(
                         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -569,7 +639,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                                     fontWeight: FontWeight.w500,
                                     color: accent2,
                                   ),
-                                  dropdownColor: text100,
+                                  dropdownColor: text150,
                                   menuMaxHeight: 500,
                                   iconSize: 32,
                                   borderRadius: BorderRadius.circular(10),
@@ -596,42 +666,41 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 25),
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          /// Bank Details Submit Button
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: ElevatedButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  await submitUserAddressDetails();
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                minimumSize: const Size(double.infinity, 50.0),
-                maximumSize: const Size(double.infinity, 60.0),
-                backgroundColor: accent1,
+      bottomNavigationBar: Container(
+        color: background,
+        child: Container(
+          // color: success,
+          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          child: ElevatedButton(
+            onPressed: () async {
+              if (_formKey.currentState!.validate()) {
+                await submitUserAddressDetails();
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
               ),
-              child: Text(
-                'Submit',
-                style: TextStyle(
-                  color: background,
-                  fontSize: heading2,
-                  fontWeight: FontWeight.w600,
-                ),
+              minimumSize: const Size(double.infinity, 50.0),
+              maximumSize: const Size(double.infinity, 60.0),
+              backgroundColor: accent1,
+            ),
+            child: Text(
+              'Submit',
+              style: TextStyle(
+                color: background,
+                fontSize: heading2,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

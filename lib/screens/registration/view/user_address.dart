@@ -21,7 +21,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
   final TextEditingController _addressCtrl = TextEditingController();
   final TextEditingController _stateCtrl = TextEditingController();
   final TextEditingController _cityCtrl = TextEditingController();
-  String? _state, _city;
+  String? _state, _city, _dob;
 
   final List<String> _statesList = states;
   final List<String> _cityList = [];
@@ -41,7 +41,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
     _cityList.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
   }
 
-  void fileterCitiesWithState(String state) {
+  void filterCitiesWithState(String state) {
     List<Map<String, dynamic>> list = stateCities.where((element) {
       return element['state'].toString().toLowerCase() == state.toLowerCase();
     }).toList();
@@ -49,6 +49,9 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
     _cityList.clear();
     _cityList.addAll(list.map((e) => e['name']));
     _cityList.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    if (_cityList.isEmpty) {
+      _cityList.add(state);
+    }
     debugPrint(_cityList.toString());
   }
 
@@ -66,6 +69,10 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: background,
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: background,
+      ),
       body: Form(
         key: _formKey,
         child: Container(
@@ -226,6 +233,89 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                 ),
                 const SizedBox(height: 10),
 
+                /// date of birth
+                Text(
+                  'Date of Birth',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                FormField(
+                  initialValue: _dob,
+                  validator: (dob) {
+                    if (dob == null || dob.isEmpty) {
+                      return 'Please enter Date of Birth';
+                    }
+                    return null;
+                  },
+                  builder: (formState) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: text100,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            _dob == null ? 'yyyy-mm-dd' : _dob!,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              color: _dob == null ? accentBG : accent2,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              showDatePicker(
+                                context: context,
+                                initialDate: getEndDate(),
+                                firstDate: getFirstDate(),
+                                lastDate: getEndDate(),
+                              ).then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    _dob =
+                                        '${value.year}-${value.month}-${value.day}';
+                                  });
+                                  debugPrint(_dob);
+                                  formState.didChange(_dob);
+                                }
+                              });
+                            },
+                            icon: Icon(
+                              Icons.date_range,
+                              color: accent2.withOpacity(0.7),
+                              size: 32,
+                            ),
+                          ),
+                          if (formState.hasError)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: Text(
+                                formState.errorText.toString(),
+                                style: TextStyle(
+                                  color: error,
+                                  fontSize: body2,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 10),
+
                 /// address
                 Text(
                   'Address',
@@ -311,12 +401,12 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                 ),
                 const SizedBox(height: 10),
 
-                /// state
+                /// state and city
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // TODO: STATE SELECTION
+                    // STATE SELECTION
                     FormField(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       initialValue: _state,
@@ -327,19 +417,116 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                         return null;
                       },
                       builder: (formState) {
-                        return Expanded(
-                          child: Column(
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'State',
+                              style: TextStyle(
+                                color: text500,
+                                fontSize: body2,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.45,
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: text100,
+                              ),
+                              child: DropdownButton(
+                                value: _state != '' ? _state : null,
+                                hint: Text(
+                                  'Delhi',
+                                  style: TextStyle(
+                                    color: accentBG,
+                                    fontSize: body1,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                items: _statesList
+                                    .map<DropdownMenuItem<String>>((state) {
+                                  return DropdownMenuItem(
+                                    value: state,
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      state,
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      _state = value;
+                                      filterCitiesWithState(value);
+                                    });
+                                  }
+                                  formState.didChange(_state);
+                                },
+                                // isDense: true,
+                                isExpanded: true,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: accent2,
+                                ),
+                                dropdownColor: text100,
+                                menuMaxHeight: 500,
+                                iconSize: 32,
+                                borderRadius: BorderRadius.circular(10),
+                                underline: Container(),
+                                alignment: AlignmentDirectional.centerStart,
+                              ),
+                            ),
+                            if (formState.hasError)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 15),
+                                child: Text(
+                                  formState.errorText.toString(),
+                                  style: TextStyle(
+                                    color: error,
+                                    fontSize: body2,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 10),
+                    // TODO: CITY SELECTION
+                    Expanded(
+                      child: FormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        initialValue: _city,
+                        validator: (city) {
+                          if (city == null || city.isEmpty) {
+                            return 'Please select your city';
+                          } else if (_state == null) {
+                            return 'Select your state first';
+                          }
+                          return null;
+                        },
+                        builder: (formState) {
+                          return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'State',
+                                'City',
                                 style: TextStyle(
                                   color: text500,
                                   fontSize: body2,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 5),
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.45,
                                 margin: const EdgeInsets.symmetric(
@@ -351,35 +538,31 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                                   color: text100,
                                 ),
                                 child: DropdownButton(
-                                  value: _state != '' ? _state : null,
+                                  value: _city != '' ? _city : null,
                                   hint: Text(
-                                    'Delhi',
+                                    'New Delhi',
                                     style: TextStyle(
                                       color: accentBG,
                                       fontSize: body1,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                  items: _statesList
-                                      .map<DropdownMenuItem<String>>((state) {
+                                  items: _cityList
+                                      .map<DropdownMenuItem<String>>((city) {
                                     return DropdownMenuItem(
-                                      value: state,
+                                      value: city,
                                       alignment: Alignment.centerRight,
-                                      child: Text(
-                                        state,
-                                      ),
+                                      child: Text(city),
                                     );
                                   }).toList(),
                                   onChanged: (value) {
-                                    if (value != null) {
+                                    if (value != null && _state != null) {
                                       setState(() {
-                                        _state = value;
-                                        fileterCitiesWithState(value);
+                                        _city = value;
                                       });
-                                      formState.didChange(_city);
                                     }
+                                    formState.didChange(_city);
                                   },
-                                  // isDense: true,
                                   isExpanded: true,
                                   style: TextStyle(
                                     fontSize: 15,
@@ -391,7 +574,6 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                                   iconSize: 32,
                                   borderRadius: BorderRadius.circular(10),
                                   underline: Container(),
-                                  alignment: AlignmentDirectional.centerStart,
                                 ),
                               ),
                               if (formState.hasError)
@@ -408,102 +590,10 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                                   ),
                                 ),
                             ],
-                          ),
-                        );
-                      },
-                    ),
-                    // const SizedBox(w)
-                    // TODO: CITY SELECTION
-                    FormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        initialValue: _city,
-                        validator: (city) {
-                          if (city == null || city.isEmpty) {
-                            return 'Please select your city';
-                          }
-                          return null;
-                        },
-                        builder: (formState) {
-                          return Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'City',
-                                  style: TextStyle(
-                                    color: text500,
-                                    fontSize: body2,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.45,
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 5, horizontal: 0),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: text100,
-                                  ),
-                                  child: DropdownButton(
-                                    value: _city != '' ? _city : null,
-                                    hint: Text(
-                                      'New Delhi',
-                                      style: TextStyle(
-                                        color: accentBG,
-                                        fontSize: body1,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    items: _cityList
-                                        .map<DropdownMenuItem<String>>((city) {
-                                      return DropdownMenuItem(
-                                        value: city,
-                                        alignment: Alignment.centerRight,
-                                        child: Text(city),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          _city = value;
-                                        });
-                                        formState.didChange(_city);
-                                      }
-                                    },
-                                    isExpanded: true,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: accent2,
-                                    ),
-                                    dropdownColor: text100,
-                                    menuMaxHeight: 500,
-                                    iconSize: 32,
-                                    borderRadius: BorderRadius.circular(10),
-                                    underline: Container(),
-                                  ),
-                                ),
-                                if (formState.hasError)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15),
-                                    child: Text(
-                                      formState.errorText.toString(),
-                                      style: TextStyle(
-                                        color: error,
-                                        fontSize: body2,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
                           );
-                        }),
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ],

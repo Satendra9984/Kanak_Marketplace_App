@@ -25,7 +25,45 @@ class DatastoreServices {
         nextRequiredDetails = 'BankAccount';
       }
     });
-    print(nextRequiredDetails);
+    safePrint(nextRequiredDetails);
     return nextRequiredDetails;
+  }
+
+  static Future<User?> addUserDetails({
+    required String email,
+    required String phone,
+    required String fname,
+    required String lname,
+    required int pincode,
+    required String dob,
+    required String userId
+  }) async {
+    User? createdUser;
+    final wallet = Wallet(
+      balance: 0,
+      gold_balance: 0,
+      address: '$phone@tasvat'
+    );
+    final walletAddReq = _instance.mutate(request: ModelMutations.create(wallet));
+    await walletAddReq.response.then((walRes) async {
+      final user = User(
+        id: userId,
+        email: email,
+        phone: phone,
+        pincode: pincode,
+        wallet: wallet,
+        fname: fname,
+        lname: lname,
+        dob: TemporalDate.fromString(dob)
+      );
+      final userAddReq = _instance.mutate(request: ModelMutations.create(user));
+      await userAddReq.response.then((userRes) {
+        if (userRes.data == null) {
+          return;
+        }
+        createdUser = userRes.data;
+      });
+    });
+    return createdUser;
   }
 }

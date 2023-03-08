@@ -60,5 +60,8 @@ type User @model @auth(rules: [{allow: public}]) {
   bankAccounts: [BankAccount] @hasMany(indexName: "byUser", fields: ["id"])
   address: [Address] @hasMany(indexName: "byUser", fields: ["id"])
   kycDetails: AWSJSON
+  dob: AWSDate
+  state: String
+  city: String
 }
  

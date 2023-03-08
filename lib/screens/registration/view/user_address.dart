@@ -1,12 +1,14 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/models/ModelProvider.dart';
+import 'package:tasvat/services/datastore_services.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UserAddressPage extends ConsumerStatefulWidget {
-  const UserAddressPage({super.key});
+  final String? email;
+  const UserAddressPage({super.key, this.email});
 
   @override
   ConsumerState<UserAddressPage> createState() => _UserAddressPageState();
@@ -19,15 +21,17 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
   final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _pinCodeCtrl = TextEditingController();
   final TextEditingController _addressCtrl = TextEditingController();
-  final TextEditingController _stateCtrl = TextEditingController();
-  final TextEditingController _cityCtrl = TextEditingController();
-  String? _state, _city, _dob;
+  DateTime? _dob;
 
   final List<String> _statesList = states;
   final List<String> _cityList = [];
 
   @override
   void initState() {
+    _dob = getEndDate();
+    if (widget.email != null) {
+      _emailCtrl.text = widget.email!;
+    }
     _setList();
     super.initState();
   }
@@ -57,12 +61,24 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
 
   Future<void> _createUserAccount() async {
     final authData = await Amplify.Auth.getCurrentUser();
-    final User user = User(
-        fname: _fNameCtrl.text,
-        lname: _lNameCtrl.text,
-        email: _emailCtrl.text,
-        pincode: int.parse(_pinCodeCtrl.text),
-        bankAccounts: const []);
+    await DatastoreServices.addUserDetails(
+      email: _emailCtrl.text,
+      phone: authData.username,
+      pincode: int.parse(_pinCodeCtrl.text),
+      dob: _dob!.toIso8601String().split('T')[0],
+      userId: authData.userId,
+      fname: _fNameCtrl.text,
+      lname: _lNameCtrl.text
+    ).then((value) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Successfully added your details!'))
+      );
+    }).catchError((err) {
+      print(err);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(err.toString()))
+      );
+    });
   }
 
   DateTime getEndDate() {
@@ -120,7 +136,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                 /// use details text
                 Align(
                   child: Text(
-                    'User Details',
+                    'User Address',
                     style: TextStyle(
                       color: text500,
                       fontSize: title,
@@ -129,262 +145,6 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                   ),
                 ),
                 const SizedBox(height: 25),
-
-                /// Name
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'First Name',
-                            style: TextStyle(
-                              color: text500,
-                              fontSize: body2,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 0),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 0, vertical: 5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              // color: text150,
-                            ),
-                            child: TextFormField(
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              keyboardType: TextInputType.name,
-                              controller: _fNameCtrl,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Enter your First Name';
-                                } else if (value.length > 30) {
-                                  return 'Less than 30 letters';
-                                } else if (value.length < 2) {
-                                  return 'Greater than 2 letters';
-                                }
-                                return null;
-                              },
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: accent2,
-                              ),
-                              decoration:
-                                  getInputDecoration('First Name').copyWith(
-                                errorStyle: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
-                                  color: error,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Last Name',
-                            style: TextStyle(
-                              color: text500,
-                              fontSize: body2,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 0),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 0, vertical: 5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              // color: text150,
-                            ),
-                            child: TextFormField(
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              keyboardType: TextInputType.name,
-                              controller: _lNameCtrl,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Enter your Last Name';
-                                } else if (value.length > 20) {
-                                  return 'Less than 20 letters';
-                                } else if (value.length < 2) {
-                                  return 'Greater than 2 letters';
-                                }
-                                return null;
-                              },
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: accent2,
-                              ),
-                              decoration:
-                                  getInputDecoration('Last Name').copyWith(
-                                errorStyle: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                  color: error,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 10),
-
-                /// email
-                Text(
-                  'Email',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    // color: text150,
-                  ),
-                  child: TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.emailAddress,
-                    controller: _emailCtrl,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an email';
-                      } else {
-                        bool emailValid = RegExp(
-                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                            .hasMatch(value);
-                        if (!emailValid) {
-                          return 'Please Enter a valid email';
-                        }
-                      }
-
-                      return null;
-                    },
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: accent2,
-                    ),
-                    decoration: getInputDecoration('example123@gmail.com'),
-                  ),
-                ),
-                const SizedBox(height: 10),
-
-                /// date of birth
-                Text(
-                  'Date of Birth',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                FormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  initialValue: _dob,
-                  validator: (dob) {
-                    debugPrint(dob);
-                    if (dob == null || dob.isEmpty) {
-                      return 'Please enter Date of Birth';
-                    }
-                    return null;
-                  },
-                  builder: (formState) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 0),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: text100,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                _dob == null ? 'yyyy-mm-dd' : _dob!,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                  color: _dob == null ? accentBG : accent2,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () async {
-                                  await showDatePicker(
-                                    context: context,
-                                    initialDate: getEndDate(),
-                                    firstDate: getFirstDate(),
-                                    lastDate: getEndDate(),
-                                  ).then((value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        _dob =
-                                            '${value.year}-${value.month}-${value.day}';
-                                      });
-                                      // debugPrint(_dob);
-                                      formState.didChange(_dob);
-                                    }
-                                  });
-                                },
-                                icon: Icon(
-                                  Icons.date_range,
-                                  color: accent2.withOpacity(0.7),
-                                  size: 32,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (formState.hasError)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: Text(
-                              formState.errorText.toString(),
-                              style: TextStyle(
-                                color: error,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                      ],
-                    );
-                  },
-                ),
-
-                const SizedBox(height: 10),
-
                 /// address
                 Text(
                   'Address',
@@ -471,201 +231,6 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                 const SizedBox(height: 10),
 
                 /// state and city
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // STATE SELECTION
-                    FormField(
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      initialValue: _state,
-                      validator: (state) {
-                        if (state == null || state.isEmpty) {
-                          return 'Please select your state';
-                        }
-                        return null;
-                      },
-                      builder: (formState) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'State',
-                              style: TextStyle(
-                                color: text500,
-                                fontSize: body2,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.45,
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 0),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: text100,
-                              ),
-                              child: DropdownButton(
-                                value: _state != '' ? _state : null,
-                                hint: Text(
-                                  'Delhi',
-                                  style: TextStyle(
-                                    color: accentBG,
-                                    fontSize: body1,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                items: _statesList
-                                    .map<DropdownMenuItem<String>>((state) {
-                                  return DropdownMenuItem(
-                                    value: state,
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      state,
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    setState(() {
-                                      _state = value;
-                                      _city = null;
-                                      filterCitiesWithState(value);
-                                    });
-                                  }
-                                  formState.didChange(_state);
-                                },
-                                // isDense: true,
-                                isExpanded: true,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                  color: accent2,
-                                ),
-                                dropdownColor: text150,
-                                menuMaxHeight: 500,
-                                iconSize: 32,
-                                borderRadius: BorderRadius.circular(10),
-                                underline: Container(),
-                                alignment: AlignmentDirectional.centerStart,
-                              ),
-                            ),
-                            if (formState.hasError)
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 15),
-                                child: Text(
-                                  formState.errorText.toString(),
-                                  style: TextStyle(
-                                    color: error,
-                                    fontSize: body2,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-                    const SizedBox(width: 10),
-                    //  CITY SELECTION
-                    Expanded(
-                      child: FormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        initialValue: _city,
-                        validator: (city) {
-                          if (city == null || city.isEmpty) {
-                            return 'Please select your city';
-                          } else if (_state == null) {
-                            return 'Select your state first';
-                          }
-                          return null;
-                        },
-                        builder: (formState) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'City',
-                                style: TextStyle(
-                                  color: text500,
-                                  fontSize: body2,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.45,
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 0),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 5),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: text100,
-                                ),
-                                child: DropdownButton(
-                                  value: _city != '' ? _city : null,
-                                  hint: Text(
-                                    'New Delhi',
-                                    style: TextStyle(
-                                      color: accentBG,
-                                      fontSize: body1,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  items: _cityList
-                                      .map<DropdownMenuItem<String>>((city) {
-                                    return DropdownMenuItem(
-                                      value: city,
-                                      alignment: Alignment.centerRight,
-                                      child: Text(city),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    if (value != null && _state != null) {
-                                      setState(() {
-                                        _city = value;
-                                      });
-                                    }
-                                    formState.didChange(_city);
-                                  },
-                                  isExpanded: true,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                    color: accent2,
-                                  ),
-                                  dropdownColor: text150,
-                                  menuMaxHeight: 500,
-                                  iconSize: 32,
-                                  borderRadius: BorderRadius.circular(10),
-                                  underline: Container(),
-                                ),
-                              ),
-                              if (formState.hasError)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15),
-                                  child: Text(
-                                    formState.errorText.toString(),
-                                    style: TextStyle(
-                                      color: error,
-                                      fontSize: body2,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 25),
               ],
             ),
@@ -680,7 +245,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
           child: ElevatedButton(
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                await submitUserAddressDetails();
+                await _createUserAccount();
               }
             },
             style: ElevatedButton.styleFrom(
@@ -703,9 +268,5 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
         ),
       ),
     );
-  }
-
-  Future<void> submitUserAddressDetails() async {
-    // TODO: SUBMIT USER ADDRESS DETAILS
   }
 }

@@ -12,6 +12,7 @@ import 'package:tasvat/screens/login/view/pages/login_page.dart';
 import 'package:tasvat/screens/registration/view/aadhar_pan.dart';
 import 'package:tasvat/screens/registration/view/user_address.dart';
 import 'package:tasvat/screens/registration/view/user_bank_details.dart';
+import 'package:tasvat/screens/registration/view/user_details.dart';
 import 'package:tasvat/services/datastore_services.dart';
 
 class OnBoardingPage extends ConsumerStatefulWidget {
@@ -35,7 +36,7 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
         } else if (value == 'UserDetails') {
           Navigator.pushReplacement(
             context, MaterialPageRoute(
-              builder: (context) => const UserAddressPage()
+              builder: (context) => const UserDetailsPage()
             )
           );
         } else if (value == 'Address') {

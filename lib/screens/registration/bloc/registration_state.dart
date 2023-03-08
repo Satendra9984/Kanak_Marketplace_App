@@ -1,10 +1,5 @@
 part of 'registration_bloc.dart';
 
-abstract class RegistrationState extends Equatable {
-  const RegistrationState();
-  
-  @override
-  List<Object> get props => [];
-}
+abstract class RegistrationStates {}
 
-class RegistrationInitial extends RegistrationState {}
+class RegistrationInitialState extends RegistrationStates {}

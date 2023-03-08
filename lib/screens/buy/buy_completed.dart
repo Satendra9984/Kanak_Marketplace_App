@@ -26,7 +26,6 @@ class BuyCompletedScreen extends StatelessWidget {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 10),
               CircleAvatar(

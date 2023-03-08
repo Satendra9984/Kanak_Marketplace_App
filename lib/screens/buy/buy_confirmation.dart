@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:amplify_core/amplify_core.dart';
 import 'package:custom_timer/custom_timer.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,7 @@ class BuyConfirmationScreen extends StatefulWidget {
 }
 
 class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late CustomTimerController _timerController;
 
   final Transaction buyOrderDetails = Transaction(
@@ -343,6 +342,6 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
 
     double total = ratei * quan * 1.03;
     // total.roundToDouble();
-    return total.toString();
+    return total.toStringAsFixed(4);
   }
 }

@@ -17,6 +17,11 @@ InputDecoration getInputDecoration(String hintText) {
       fontWeight: FontWeight.w600,
       fontSize: 14,
     ),
+    hintStyle: TextStyle(
+      fontWeight: FontWeight.w600,
+      fontSize: 16,
+      color: accentBG,
+    ),
     filled: true,
     fillColor: text100,
   );

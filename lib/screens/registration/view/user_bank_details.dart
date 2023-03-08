@@ -7,19 +7,20 @@ import 'package:tasvat/screens/login/view/pages/otp_screen.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 
-class UserDetailsPage extends StatefulWidget {
-  const UserDetailsPage({super.key});
+class UserBankDetailsPage extends StatefulWidget {
+  const UserBankDetailsPage({super.key});
 
   @override
-  State<UserDetailsPage> createState() => _UserDetailsPageState();
+  State<UserBankDetailsPage> createState() => _UserBankDetailsPageState();
 }
 
-class _UserDetailsPageState extends State<UserDetailsPage> {
+class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   // bool _showPassword = false;
-  final TextEditingController _emailCtrl = TextEditingController();
-  final TextEditingController _nameCtrl = TextEditingController();
-  final TextEditingController _pinCodeCtrl = TextEditingController();
+  final TextEditingController _bankIdCtrl = TextEditingController();
+  final TextEditingController _accountNameCtrl = TextEditingController();
+  final TextEditingController _accountNumberCtrl = TextEditingController();
+  final TextEditingController _ifscCodeCtrl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                 /// login text
                 Align(
                   child: Text(
-                    'Register',
+                    'Bank Details',
                     style: TextStyle(
                       color: text500,
                       fontSize: title,
@@ -45,32 +46,11 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-
-                /// lets started
-                Text(
-                  'Let\'s get Started',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: heading1,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Create an account',
-                  style: TextStyle(
-                    color: text300,
-                    fontSize: body1,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-
                 const SizedBox(height: 25),
 
-                /// Name number
+                /// Bank Id
                 Text(
-                  'Name',
+                  'Bank Id',
                   style: TextStyle(
                     color: text500,
                     fontSize: body2,
@@ -79,21 +59,66 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                 ),
                 Container(
                   margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     // color: text150,
                   ),
                   child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     keyboardType: TextInputType.name,
-                    controller: _nameCtrl,
+                    controller: _bankIdCtrl,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'BankId field is required';
+                      } else if (value.length > 18) {
+                        return 'Bank Id should not be greater than 18 characters';
+                      } else if (value.length < 9) {
+                        return 'Bank Id should not be lesser than 9 characters';
+                      }
+                      return null;
+                    },
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: accent2,
+                    ),
+                    decoration: getInputDecoration('bank id'),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                /// Account Name
+                Text(
+                  'Account Name',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    // color: text150,
+                  ),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: TextInputType.name,
+                    controller: _accountNameCtrl,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your Name';
-                      } else if (value.length > 100) {
-                        return 'Name should be less than 100 characters';
+                      } else if (value.length < 2) {
+                        return 'Name should be greater than 2 characters';
+                      } else if (value.length >= 50) {
+                        return 'Name shouldn\'t be greater than 50 characters';
                       }
                       return null;
                     },
@@ -105,12 +130,11 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                     decoration: getInputDecoration('Name'),
                   ),
                 ),
-
                 const SizedBox(height: 10),
 
-                /// email
+                /// Account number
                 Text(
-                  'Email',
+                  'Account Number',
                   style: TextStyle(
                     color: text500,
                     fontSize: body2,
@@ -119,66 +143,30 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                 ),
                 Container(
                   margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     // color: text150,
                   ),
                   child: TextFormField(
-                    keyboardType: TextInputType.emailAddress,
-                    controller: _emailCtrl,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an email';
-                      } else {
-                        bool emailValid = RegExp(
-                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                            .hasMatch(value);
-                        if (!emailValid) {
-                          return 'Please Enter a valid email';
-                        }
-                      }
-
-                      return null;
-                    },
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: accent2,
-                    ),
-                    decoration: getInputDecoration('Email'),
-                  ),
-                ),
-                const SizedBox(height: 10),
-
-                /// pincode
-                Text(
-                  'Pin Code',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    // color: text150,
-                  ),
-                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     keyboardType: TextInputType.number,
-                    controller: _pinCodeCtrl,
+                    controller: _accountNumberCtrl,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter a pin code';
-                      } else if (value.length > 6) {
-                        return 'Please enter a valid pin number';
+                        return 'Please enter account number';
+                      } else if (value.length > 18) {
+                        return 'Bank Id should not be greater than 18 characters';
+                      } else if (value.length < 9) {
+                        return 'Bank Id should not be lesser than 9 characters';
+                      }
+
+                      bool accountNoValid =
+                          RegExp(r'^\d{9,18}$').hasMatch(value);
+                      if (accountNoValid == false) {
+                        return 'Please enter a valid Account Number';
                       }
 
                       return null;
@@ -188,7 +176,52 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                       fontWeight: FontWeight.w500,
                       color: accent2,
                     ),
-                    decoration: getInputDecoration('123455'),
+                    decoration: getInputDecoration('0112345678'),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                /// ifsc code
+                Text(
+                  'IFSC Code',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    // color: text150,
+                  ),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: TextInputType.number,
+                    controller: _ifscCodeCtrl,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the IFSC Code';
+                      } else if (value.length < 11 || value.length < 11) {
+                        return 'IFSC Code must be equal 11 character';
+                      }
+                      bool ifscValid =
+                          RegExp(r'/^[A-Za-z]{4}[0-9]{6,7}$/').hasMatch(value);
+                      if (ifscValid == false) {
+                        return 'Please enter a valid IFSC Code';
+                      }
+                      return null;
+                    },
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: accent2,
+                    ),
+                    decoration: getInputDecoration('SBIN0005943'),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -200,11 +233,15 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          /// LOGIN BUTTON
+          /// Bank Details Submit Button
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: ElevatedButton(
-              onPressed: () async {},
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  await submitUserBankDetails();
+                }
+              },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
@@ -214,7 +251,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                 backgroundColor: accent1,
               ),
               child: Text(
-                'Login',
+                'Submit',
                 style: TextStyle(
                   color: background,
                   fontSize: heading2,
@@ -223,36 +260,12 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
               ),
             ),
           ),
-
-          /// Already account SignUp button
-          TextButton(
-            onPressed: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const LogInPage()));
-            },
-            child: RichText(
-              text: TextSpan(
-                text: 'Already have an account? ',
-                style: TextStyle(
-                  color: text400,
-                  fontSize: body2,
-                  fontWeight: FontWeight.w600,
-                ),
-                children: [
-                  TextSpan(
-                    text: 'Login',
-                    style: TextStyle(
-                      color: accent2,
-                      fontSize: body1,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
         ],
       ),
     );
+  }
+
+  Future<void> submitUserBankDetails() async {
+    // TODO: SUBMIT USER ADDRESS DETAILS
   }
 }

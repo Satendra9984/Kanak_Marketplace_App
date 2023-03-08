@@ -34,22 +34,18 @@ class _LogInPageState extends State<LogInPage> {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('OTP sent to ${state.phone}')));
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => OtpScreen(
-              phone: state.phone,
-              type: false,
-          )));
-        } else if (state.status == LoginStatus.invalid) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Form Invalid'
-          )));
-          Navigator.of(context).push(
-            MaterialPageRoute(
               builder: (context) => OtpScreen(
-                phone: state.phone,
-                type: false,
-              )
-            )
-          );
+                    phone: state.phone,
+                    type: false,
+                  )));
+        } else if (state.status == LoginStatus.invalid) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Form Invalid')));
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => OtpScreen(
+                    phone: state.phone,
+                    type: false,
+                  )));
         }
       },
       builder: (context, state) {

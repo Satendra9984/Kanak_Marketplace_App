@@ -30,9 +30,9 @@ class Address extends Model {
   final String id;
   final String? _name;
   final String? _pincode;
-  final String? _state;
-  final String? _city;
   final String? _userID;
+  final String? _phone;
+  final String? _email;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -57,14 +57,6 @@ class Address extends Model {
     return _pincode;
   }
   
-  String? get state {
-    return _state;
-  }
-  
-  String? get city {
-    return _city;
-  }
-  
   String get userID {
     try {
       return _userID!;
@@ -78,6 +70,14 @@ class Address extends Model {
     }
   }
   
+  String? get phone {
+    return _phone;
+  }
+  
+  String? get email {
+    return _email;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -86,16 +86,16 @@ class Address extends Model {
     return _updatedAt;
   }
   
-  const Address._internal({required this.id, name, pincode, state, city, required userID, createdAt, updatedAt}): _name = name, _pincode = pincode, _state = state, _city = city, _userID = userID, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Address._internal({required this.id, name, pincode, required userID, phone, email, createdAt, updatedAt}): _name = name, _pincode = pincode, _userID = userID, _phone = phone, _email = email, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Address({String? id, String? name, String? pincode, String? state, String? city, required String userID}) {
+  factory Address({String? id, String? name, String? pincode, required String userID, String? phone, String? email}) {
     return Address._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
       pincode: pincode,
-      state: state,
-      city: city,
-      userID: userID);
+      userID: userID,
+      phone: phone,
+      email: email);
   }
   
   bool equals(Object other) {
@@ -109,9 +109,9 @@ class Address extends Model {
       id == other.id &&
       _name == other._name &&
       _pincode == other._pincode &&
-      _state == other._state &&
-      _city == other._city &&
-      _userID == other._userID;
+      _userID == other._userID &&
+      _phone == other._phone &&
+      _email == other._email;
   }
   
   @override
@@ -125,9 +125,9 @@ class Address extends Model {
     buffer.write("id=" + "$id" + ", ");
     buffer.write("name=" + "$_name" + ", ");
     buffer.write("pincode=" + "$_pincode" + ", ");
-    buffer.write("state=" + "$_state" + ", ");
-    buffer.write("city=" + "$_city" + ", ");
     buffer.write("userID=" + "$_userID" + ", ");
+    buffer.write("phone=" + "$_phone" + ", ");
+    buffer.write("email=" + "$_email" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -135,41 +135,41 @@ class Address extends Model {
     return buffer.toString();
   }
   
-  Address copyWith({String? name, String? pincode, String? state, String? city, String? userID}) {
+  Address copyWith({String? name, String? pincode, String? userID, String? phone, String? email}) {
     return Address._internal(
       id: id,
       name: name ?? this.name,
       pincode: pincode ?? this.pincode,
-      state: state ?? this.state,
-      city: city ?? this.city,
-      userID: userID ?? this.userID);
+      userID: userID ?? this.userID,
+      phone: phone ?? this.phone,
+      email: email ?? this.email);
   }
   
   Address.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
       _name = json['name'],
       _pincode = json['pincode'],
-      _state = json['state'],
-      _city = json['city'],
       _userID = json['userID'],
+      _phone = json['phone'],
+      _email = json['email'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'pincode': _pincode, 'state': _state, 'city': _city, 'userID': _userID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'pincode': _pincode, 'userID': _userID, 'phone': _phone, 'email': _email, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
-    'id': id, 'name': _name, 'pincode': _pincode, 'state': _state, 'city': _city, 'userID': _userID, 'createdAt': _createdAt, 'updatedAt': _updatedAt
+    'id': id, 'name': _name, 'pincode': _pincode, 'userID': _userID, 'phone': _phone, 'email': _email, 'createdAt': _createdAt, 'updatedAt': _updatedAt
   };
 
   static final QueryModelIdentifier<AddressModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<AddressModelIdentifier>();
   static final QueryField ID = QueryField(fieldName: "id");
   static final QueryField NAME = QueryField(fieldName: "name");
   static final QueryField PINCODE = QueryField(fieldName: "pincode");
-  static final QueryField STATE = QueryField(fieldName: "state");
-  static final QueryField CITY = QueryField(fieldName: "city");
   static final QueryField USERID = QueryField(fieldName: "userID");
+  static final QueryField PHONE = QueryField(fieldName: "phone");
+  static final QueryField EMAIL = QueryField(fieldName: "email");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Address";
     modelSchemaDefinition.pluralName = "Addresses";
@@ -204,20 +204,20 @@ class Address extends Model {
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Address.STATE,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Address.CITY,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: Address.USERID,
       isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Address.PHONE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Address.EMAIL,
+      isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     

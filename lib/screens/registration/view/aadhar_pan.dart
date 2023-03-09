@@ -1,10 +1,13 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_core/amplify_core.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 import '../../../widgets/image_upload_widget.dart';
@@ -117,7 +120,7 @@ class _UserKYCPageState extends State<UserKYCPage> {
 
                 /// Aadhar Card Image
                 ImageUploadButtonWidget(
-                  uploadPath: 'aadhar/{_user.userId}',
+                  uploadPath: 'aadhar/${_user.userId}',
                   title: 'Aadhar',
                 ),
 
@@ -170,7 +173,7 @@ class _UserKYCPageState extends State<UserKYCPage> {
 
                 /// Pan Card image
                 ImageUploadButtonWidget(
-                  uploadPath: 'pan/{_user.userId}',
+                  uploadPath: 'pan/${_user.userId}',
                   title: 'Pan',
                 ),
               ],

@@ -35,14 +35,11 @@ class User extends Model {
   final String? _email;
   final String? _phone;
   final Wallet? _wallet;
-  final int? _pincode;
   final String? _goldProviderDetails;
   final List<BankAccount>? _bankAccounts;
   final List<Address>? _address;
   final String? _kycDetails;
   final TemporalDate? _dob;
-  final String? _state;
-  final String? _city;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
   final String? _userWalletId;
@@ -80,10 +77,6 @@ class User extends Model {
     return _wallet;
   }
   
-  int? get pincode {
-    return _pincode;
-  }
-  
   String? get goldProviderDetails {
     return _goldProviderDetails;
   }
@@ -104,14 +97,6 @@ class User extends Model {
     return _dob;
   }
   
-  String? get state {
-    return _state;
-  }
-  
-  String? get city {
-    return _city;
-  }
-  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -124,9 +109,9 @@ class User extends Model {
     return _userWalletId;
   }
   
-  const User._internal({required this.id, fname, lname, email, phone, wallet, pincode, goldProviderDetails, bankAccounts, address, kycDetails, dob, state, city, createdAt, updatedAt, userWalletId}): _fname = fname, _lname = lname, _email = email, _phone = phone, _wallet = wallet, _pincode = pincode, _goldProviderDetails = goldProviderDetails, _bankAccounts = bankAccounts, _address = address, _kycDetails = kycDetails, _dob = dob, _state = state, _city = city, _createdAt = createdAt, _updatedAt = updatedAt, _userWalletId = userWalletId;
+  const User._internal({required this.id, fname, lname, email, phone, wallet, goldProviderDetails, bankAccounts, address, kycDetails, dob, createdAt, updatedAt, userWalletId}): _fname = fname, _lname = lname, _email = email, _phone = phone, _wallet = wallet, _goldProviderDetails = goldProviderDetails, _bankAccounts = bankAccounts, _address = address, _kycDetails = kycDetails, _dob = dob, _createdAt = createdAt, _updatedAt = updatedAt, _userWalletId = userWalletId;
   
-  factory User({String? id, String? fname, String? lname, String? email, String? phone, Wallet? wallet, int? pincode, String? goldProviderDetails, List<BankAccount>? bankAccounts, List<Address>? address, String? kycDetails, TemporalDate? dob, String? state, String? city, String? userWalletId}) {
+  factory User({String? id, String? fname, String? lname, String? email, String? phone, Wallet? wallet, String? goldProviderDetails, List<BankAccount>? bankAccounts, List<Address>? address, String? kycDetails, TemporalDate? dob, String? userWalletId}) {
     return User._internal(
       id: id == null ? UUID.getUUID() : id,
       fname: fname,
@@ -134,14 +119,11 @@ class User extends Model {
       email: email,
       phone: phone,
       wallet: wallet,
-      pincode: pincode,
       goldProviderDetails: goldProviderDetails,
       bankAccounts: bankAccounts != null ? List<BankAccount>.unmodifiable(bankAccounts) : bankAccounts,
       address: address != null ? List<Address>.unmodifiable(address) : address,
       kycDetails: kycDetails,
       dob: dob,
-      state: state,
-      city: city,
       userWalletId: userWalletId);
   }
   
@@ -159,14 +141,11 @@ class User extends Model {
       _email == other._email &&
       _phone == other._phone &&
       _wallet == other._wallet &&
-      _pincode == other._pincode &&
       _goldProviderDetails == other._goldProviderDetails &&
       DeepCollectionEquality().equals(_bankAccounts, other._bankAccounts) &&
       DeepCollectionEquality().equals(_address, other._address) &&
       _kycDetails == other._kycDetails &&
       _dob == other._dob &&
-      _state == other._state &&
-      _city == other._city &&
       _userWalletId == other._userWalletId;
   }
   
@@ -183,12 +162,9 @@ class User extends Model {
     buffer.write("lname=" + "$_lname" + ", ");
     buffer.write("email=" + "$_email" + ", ");
     buffer.write("phone=" + "$_phone" + ", ");
-    buffer.write("pincode=" + (_pincode != null ? _pincode!.toString() : "null") + ", ");
     buffer.write("goldProviderDetails=" + "$_goldProviderDetails" + ", ");
     buffer.write("kycDetails=" + "$_kycDetails" + ", ");
     buffer.write("dob=" + (_dob != null ? _dob!.format() : "null") + ", ");
-    buffer.write("state=" + "$_state" + ", ");
-    buffer.write("city=" + "$_city" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
     buffer.write("userWalletId=" + "$_userWalletId");
@@ -197,7 +173,7 @@ class User extends Model {
     return buffer.toString();
   }
   
-  User copyWith({String? fname, String? lname, String? email, String? phone, Wallet? wallet, int? pincode, String? goldProviderDetails, List<BankAccount>? bankAccounts, List<Address>? address, String? kycDetails, TemporalDate? dob, String? state, String? city, String? userWalletId}) {
+  User copyWith({String? fname, String? lname, String? email, String? phone, Wallet? wallet, String? goldProviderDetails, List<BankAccount>? bankAccounts, List<Address>? address, String? kycDetails, TemporalDate? dob, String? userWalletId}) {
     return User._internal(
       id: id,
       fname: fname ?? this.fname,
@@ -205,14 +181,11 @@ class User extends Model {
       email: email ?? this.email,
       phone: phone ?? this.phone,
       wallet: wallet ?? this.wallet,
-      pincode: pincode ?? this.pincode,
       goldProviderDetails: goldProviderDetails ?? this.goldProviderDetails,
       bankAccounts: bankAccounts ?? this.bankAccounts,
       address: address ?? this.address,
       kycDetails: kycDetails ?? this.kycDetails,
       dob: dob ?? this.dob,
-      state: state ?? this.state,
-      city: city ?? this.city,
       userWalletId: userWalletId ?? this.userWalletId);
   }
   
@@ -225,7 +198,6 @@ class User extends Model {
       _wallet = json['wallet']?['serializedData'] != null
         ? Wallet.fromJson(new Map<String, dynamic>.from(json['wallet']['serializedData']))
         : null,
-      _pincode = (json['pincode'] as num?)?.toInt(),
       _goldProviderDetails = json['goldProviderDetails'],
       _bankAccounts = json['bankAccounts'] is List
         ? (json['bankAccounts'] as List)
@@ -241,18 +213,16 @@ class User extends Model {
         : null,
       _kycDetails = json['kycDetails'],
       _dob = json['dob'] != null ? TemporalDate.fromString(json['dob']) : null,
-      _state = json['state'],
-      _city = json['city'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
       _userWalletId = json['userWalletId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'fname': _fname, 'lname': _lname, 'email': _email, 'phone': _phone, 'wallet': _wallet?.toJson(), 'pincode': _pincode, 'goldProviderDetails': _goldProviderDetails, 'bankAccounts': _bankAccounts?.map((BankAccount? e) => e?.toJson()).toList(), 'address': _address?.map((Address? e) => e?.toJson()).toList(), 'kycDetails': _kycDetails, 'dob': _dob?.format(), 'state': _state, 'city': _city, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'userWalletId': _userWalletId
+    'id': id, 'fname': _fname, 'lname': _lname, 'email': _email, 'phone': _phone, 'wallet': _wallet?.toJson(), 'goldProviderDetails': _goldProviderDetails, 'bankAccounts': _bankAccounts?.map((BankAccount? e) => e?.toJson()).toList(), 'address': _address?.map((Address? e) => e?.toJson()).toList(), 'kycDetails': _kycDetails, 'dob': _dob?.format(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'userWalletId': _userWalletId
   };
   
   Map<String, Object?> toMap() => {
-    'id': id, 'fname': _fname, 'lname': _lname, 'email': _email, 'phone': _phone, 'wallet': _wallet, 'pincode': _pincode, 'goldProviderDetails': _goldProviderDetails, 'bankAccounts': _bankAccounts, 'address': _address, 'kycDetails': _kycDetails, 'dob': _dob, 'state': _state, 'city': _city, 'createdAt': _createdAt, 'updatedAt': _updatedAt, 'userWalletId': _userWalletId
+    'id': id, 'fname': _fname, 'lname': _lname, 'email': _email, 'phone': _phone, 'wallet': _wallet, 'goldProviderDetails': _goldProviderDetails, 'bankAccounts': _bankAccounts, 'address': _address, 'kycDetails': _kycDetails, 'dob': _dob, 'createdAt': _createdAt, 'updatedAt': _updatedAt, 'userWalletId': _userWalletId
   };
 
   static final QueryModelIdentifier<UserModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<UserModelIdentifier>();
@@ -264,7 +234,6 @@ class User extends Model {
   static final QueryField WALLET = QueryField(
     fieldName: "wallet",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'Wallet'));
-  static final QueryField PINCODE = QueryField(fieldName: "pincode");
   static final QueryField GOLDPROVIDERDETAILS = QueryField(fieldName: "goldProviderDetails");
   static final QueryField BANKACCOUNTS = QueryField(
     fieldName: "bankAccounts",
@@ -274,8 +243,6 @@ class User extends Model {
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'Address'));
   static final QueryField KYCDETAILS = QueryField(fieldName: "kycDetails");
   static final QueryField DOB = QueryField(fieldName: "dob");
-  static final QueryField STATE = QueryField(fieldName: "state");
-  static final QueryField CITY = QueryField(fieldName: "city");
   static final QueryField USERWALLETID = QueryField(fieldName: "userWalletId");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "User";
@@ -326,12 +293,6 @@ class User extends Model {
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: User.PINCODE,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.int)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: User.GOLDPROVIDERDETAILS,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
@@ -361,18 +322,6 @@ class User extends Model {
       key: User.DOB,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.date)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: User.STATE,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: User.CITY,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

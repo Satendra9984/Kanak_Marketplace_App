@@ -11,6 +11,7 @@ class DatastoreServices {
     String? nextRequiredDetails;
     final request = ModelQueries.get(User.classType, uid);
     await _instance.query(request: request).response.then((result) {
+      safePrint(result.data);
       if (result.data == null) {
         nextRequiredDetails = 'UserDetails';
         return;
@@ -32,14 +33,58 @@ class DatastoreServices {
     return nextRequiredDetails;
   }
 
-  static Future<User?> addUserDetails(
-      {required String email,
+  static Future<User?> fetchUserById(String id) async {
+    User? fetchedUser;
+    final request = ModelQueries.get(User.classType, id);
+    await Amplify.API.query(request: request).response.then((user) {
+      if (user.data == null) {
+        return;
+      }
+      fetchedUser = user.data;
+    });
+    String getUser = 'getUser';
+    String graphQlDoc = '''query GetUser(\$id: ID!) {
+      $getUser(id: \$id) {
+        id
+        wallet {
+          id
+        }
+        address {
+          items {
+            id
+          }
+        }
+        bankAccounts {
+          items {
+            id
+          }
+        }
+      }
+    }''';
+    final getUserReq = GraphQLRequest<User>(
+      document: graphQlDoc,
+      modelType: User.classType,
+      decodePath: getUser,
+      variables: <String, String>{'id': id}
+    );
+    await Amplify.API.query(request: getUserReq).response.then((value) {
+      safePrint('+++++> ${value.data}');
+    });
+    return fetchedUser;
+  }
+
+  static getAddressOfUser(String user) async {
+
+  }
+
+  static Future<User?> createUser({
+      required String email,
       required String phone,
       required String fname,
       required String lname,
-      required int pincode,
       required String dob,
-      required String userId}) async {
+      required String userId
+    }) async {
     User? createdUser;
     final wallet =
         Wallet(balance: 0, gold_balance: 0, address: '$phone@tasvat');
@@ -50,11 +95,12 @@ class DatastoreServices {
           id: userId,
           email: email,
           phone: phone,
-          pincode: pincode,
           wallet: wallet,
           fname: fname,
           lname: lname,
-          dob: TemporalDate.fromString(dob));
+          dob: TemporalDate.fromString(dob),
+          userWalletId: wallet.id
+        );
       final userAddReq = _instance.mutate(request: ModelMutations.create(user));
       await userAddReq.response.then((userRes) {
         if (userRes.data == null) {
@@ -64,6 +110,32 @@ class DatastoreServices {
       });
     });
     return createdUser;
+  }
+  static Future<Address?> addUserAddress({
+    required String address,
+    String? name,
+    required String pincode,
+    String? email,
+    String? phone,
+    required String userId
+  }) async {
+    Address? createdAddr;
+    final addr = Address(
+      pincode: pincode,
+      phone: phone,
+      name: name,
+      address: address,
+      email: email,
+      userID: userId
+    );
+    final addressAddReq = _instance.mutate(request: ModelMutations.create(addr));
+    await addressAddReq.response.then((value) {
+      if (value.data == null) {
+        return;
+      }
+      createdAddr = addr;
+    });
+    return createdAddr;
   }
 
   static Future<void> createAndUploadFile(

@@ -7,10 +7,11 @@ import 'package:tasvat/amplifyconfiguration.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/models/auth_model.dart';
 import 'package:tasvat/providers/auth_provider.dart';
+import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/home_screen.dart';
 import 'package:tasvat/screens/login/view/pages/login_page.dart';
 import 'package:tasvat/screens/registration/view/aadhar_pan.dart';
-import 'package:tasvat/screens/registration/view/add_user_details.dart';
+import 'package:tasvat/screens/registration/view/user_address.dart';
 import 'package:tasvat/screens/registration/view/user_bank_details.dart';
 import 'package:tasvat/screens/registration/view/user_details.dart';
 import 'package:tasvat/services/datastore_services.dart';
@@ -24,14 +25,29 @@ class OnBoardingPage extends ConsumerStatefulWidget {
 class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
   Future<void> _decideRoute() async {
     await Amplify.Auth.getCurrentUser().then((user) async {
-      ref.read(authProvider).copyWith(
-          phone: user.username,
-          id: user.userId,
-          authStatus: AuthStatus.loggedin);
-      await DatastoreServices.checkRequiredData(user.userId).then((value) {
+
+      // sets auth provider with user id
+      ref.read(authProvider.notifier).logInAndSetUser(
+        user.username,
+        user.userId,
+      );
+
+      // sets user with user id
+      ref.read(userProvider.notifier).initializeWithUser(
+        User(id: user.userId)
+      );
+      
+      await DatastoreServices.fetchUserById(user.userId);
+
+      await DatastoreServices.checkRequiredData(user.userId).then((value) async {
         if (value == null) {
-          Navigator.of(context).pushReplacement(
+          await DatastoreServices.fetchUserById(user.userId).then((value) {
+            if (value == null) {
+              return;
+            }
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => const HomeScreen()));
+          });
         } else if (value == 'UserDetails') {
           Navigator.pushReplacement(
             context, MaterialPageRoute(
@@ -39,16 +55,33 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
             )
           );
         } else if (value == 'Address') {
-          Navigator.pushReplacement(context,
+          await DatastoreServices.fetchUserById(user.userId).then((value) {
+            if (value == null) {
+              return;
+            }
+            Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const UserAddressPage()));
+          });
         } else if (value == 'KycDetails') {
-          Navigator.pushReplacement(context,
+          await DatastoreServices.fetchUserById(user.userId).then((value) {
+            if (value == null) {
+              return;
+            }
+            Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const UserKYCPage()));
+          });
         } else if (value == 'BankAccount') {
-          Navigator.pushReplacement(
+          await DatastoreServices.fetchUserById(user.userId).then((value) {
+            if (value == null) {
+              return;
+            }
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => const UserBankDetailsPage()));
+                builder: (context) => const UserBankDetailsPage()
+              ));
+          });
+          
         }
       });
     }).catchError((err) {

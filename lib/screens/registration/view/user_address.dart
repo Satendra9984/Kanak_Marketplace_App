@@ -1,6 +1,7 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/models/ModelProvider.dart';
+import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
@@ -16,101 +17,34 @@ class UserAddressPage extends ConsumerStatefulWidget {
 
 class _UserAddressPageState extends ConsumerState<UserAddressPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _fNameCtrl = TextEditingController();
-  final TextEditingController _lNameCtrl = TextEditingController();
-  final TextEditingController _emailCtrl = TextEditingController();
   final TextEditingController _pinCodeCtrl = TextEditingController();
   final TextEditingController _addressCtrl = TextEditingController();
-  DateTime? _dob;
 
   final List<String> _statesList = states;
   final List<String> _cityList = [];
 
   @override
   void initState() {
-    _dob = getEndDate();
-    if (widget.email != null) {
-      _emailCtrl.text = widget.email!;
-    }
-    _setList();
     super.initState();
   }
 
-  void _setList() {
-    _statesList.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-
-    List<String> list =
-        stateCities.map((element) => element['name'].toString()).toList();
-    _cityList.addAll(list);
-    _cityList.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-  }
-
-  void filterCitiesWithState(String state) {
-    List<Map<String, dynamic>> list = stateCities.where((element) {
-      return element['state'].toString().toLowerCase() == state.toLowerCase();
-    }).toList();
-
-    _cityList.clear();
-    _cityList.addAll(list.map((e) => e['name']));
-    _cityList.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-    if (_cityList.isEmpty) {
-      _cityList.add(state);
-    }
-    debugPrint(_cityList.toString());
-  }
-
-  Future<void> _createUserAccount() async {
+  Future<void> _addUserAddress() async {
     final authData = await Amplify.Auth.getCurrentUser();
-    await DatastoreServices.addUserDetails(
-      email: _emailCtrl.text,
+    final user = ref.read(userProvider);
+    await DatastoreServices.addUserAddress(
+      address: _addressCtrl.text,
+      pincode: _pinCodeCtrl.text,
+      email: widget.email,
+      name: 'primary',
       phone: authData.username,
-      pincode: int.parse(_pinCodeCtrl.text),
-      dob: _dob!.toIso8601String().split('T')[0],
-      userId: authData.userId,
-      fname: _fNameCtrl.text,
-      lname: _lNameCtrl.text
+      userId: user!.id
     ).then((value) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Successfully added your details!'))
-      );
-    }).catchError((err) {
-      print(err);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(err.toString()))
-      );
+      if (value == null) {
+        return;
+      }
+      ref.read(userProvider.notifier).addUserAddress(address: value);
     });
   }
-
-  DateTime getEndDate() {
-    DateTime today = DateTime.now();
-    DateTime endDate = DateTime(
-      today.year - 18,
-      today.month,
-      today.day,
-      today.hour,
-      today.minute,
-      today.second,
-      today.millisecond,
-      today.microsecond,
-    );
-    return endDate;
-  }
-
-  DateTime getFirstDate() {
-    DateTime today = DateTime.now();
-    DateTime endDate = DateTime(
-      today.year - 130,
-      today.month,
-      today.day,
-      today.hour,
-      today.minute,
-      today.second,
-      today.millisecond,
-      today.microsecond,
-    );
-    return endDate;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -213,7 +147,6 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                       } else if (value.length > 6 || value.length < 6) {
                         return 'Pin code length should be 6';
                       }
-
                       int? pin = int.tryParse(value);
                       if (pin == null) {
                         return 'Enter a valid pin code';
@@ -245,7 +178,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
           child: ElevatedButton(
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                await _createUserAccount();
+                await _addUserAddress();
               }
             },
             style: ElevatedButton.styleFrom(

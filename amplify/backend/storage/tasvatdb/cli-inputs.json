@@ -1,0 +1,14 @@
+{
+  "resourceName": "tasvatdb",
+  "tableName": "users",
+  "partitionKey": {
+    "fieldName": "id",
+    "fieldType": "string"
+  },
+  "sortKey": {
+    "fieldName": "email",
+    "fieldType": "string"
+  },
+  "gsi": [],
+  "triggerFunctions": []
+}

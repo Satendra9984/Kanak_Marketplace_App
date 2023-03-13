@@ -57,7 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
           lname: "Chowdhury",
           email: "subhadeepchowdhury41@gmail.com",
           phone: "8768715527",
-          pincode: 722150,
           goldProviderDetails: jsonEncode({}),
           wallet: wallet,
           userWalletId: wallet.id);

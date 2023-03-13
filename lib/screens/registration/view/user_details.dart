@@ -2,6 +2,8 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/providers/auth_provider.dart';
+import 'package:tasvat/providers/user_provider.dart';
+import 'package:tasvat/screens/registration/view/user_address.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
@@ -19,60 +21,43 @@ class _UserDetailsPageState extends ConsumerState<UserDetailsPage> {
   final TextEditingController _fNameCtrl = TextEditingController();
   final TextEditingController _lNameCtrl = TextEditingController();
   final TextEditingController _emailCtrl = TextEditingController();
-  final TextEditingController _pinCodeCtrl = TextEditingController();
-  String? _state, _city;
   DateTime? _dob;
-
-  final List<String> _statesList = states;
-  final List<String> _cityList = [];
 
   @override
   void initState() {
+    final us = ref.read(userProvider);
+    safePrint(us);
     _emailCtrl.text = ref.read(authProvider).email!;
     _dob = getEndDate();
-    _setList();
     super.initState();
-  }
-
-  void _setList() {
-    _statesList.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-
-    List<String> list =
-        stateCities.map((element) => element['name'].toString()).toList();
-    _cityList.addAll(list);
-    _cityList.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-  }
-
-  void filterCitiesWithState(String state) {
-    List<Map<String, dynamic>> list = stateCities.where((element) {
-      return element['state'].toString().toLowerCase() == state.toLowerCase();
-    }).toList();
-
-    _cityList.clear();
-    _cityList.addAll(list.map((e) => e['name']));
-    _cityList.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-    if (_cityList.isEmpty) {
-      _cityList.add(state);
-    }
-    debugPrint(_cityList.toString());
   }
 
   Future<void> _createUserAccount() async {
     final authData = await Amplify.Auth.getCurrentUser();
-    await DatastoreServices.addUserDetails(
+    await DatastoreServices.createUser(
       email: _emailCtrl.text,
       phone: authData.username,
-      pincode: int.parse(_pinCodeCtrl.text),
       dob: _dob!.toIso8601String().split('T')[0],
       userId: authData.userId,
       fname: _fNameCtrl.text,
-      lname: _lNameCtrl.text
-    ).then((value) {
+      lname: _lNameCtrl.text,
+      
+    ).then((user) {
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Something went wrong!'))
+        );
+        return;
+      }
+      ref.read(userProvider.notifier).syncDetails(user: user);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Successfully added your details!'))
       );
+      Navigator.pushReplacement(context, MaterialPageRoute(
+        builder: (context) => const UserAddressPage()
+      ));
     }).catchError((err) {
-      print(err);
+      safePrint(err);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(err.toString()))
       );

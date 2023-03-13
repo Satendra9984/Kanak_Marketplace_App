@@ -11,6 +11,20 @@
       "StackId": "arn:aws:cloudformation:ap-south-1:640586525302:stack/amplify-tasvat-staging-81356/069ba160-ae9b-11ed-be0e-069bc1da6864",
       "AmplifyAppId": "d471l36myb8f7",
       "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-tasvat-staging-81356-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+    },
+    "categories": {
+      "auth": {
+        "tasvatauth": {}
+      },
+      "storage": {
+        "tasvatdb": {}
+      },
+      "function": {
+        "registerusertrigger": {
+          "deploymentBucketName": "amplify-tasvat-staging-81356-deployment",
+          "s3Key": "amplify-builds/registerusertrigger-756677367550486f5658-build.zip"
+        }
+      }
     }
   }
 }

@@ -1,0 +1,65 @@
+type Address @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  pincode: String
+  userID: ID! @index(name: "byUser")
+  phone: AWSPhone
+  email: AWSEmail
+  address: String
+}
+
+type BankAccount @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  bankId: String
+  accNo: String
+  ifsc: String
+  addressId: String
+  accName: String
+  userID: ID! @index(name: "byUser")
+}
+
+enum TransactionStatus {
+  PENDING
+  FAILED
+  SUCCESSFUL
+}
+
+enum TransactionType {
+  BUY
+  SELL
+  EXCHANGE
+  ADD
+  GIFT
+}
+
+type Transaction @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  type: TransactionType
+  amount: Float
+  status: TransactionStatus
+  dateTime: AWSDateTime
+  receiver: Wallet @hasOne
+  sender: Wallet @hasOne
+}
+
+type Wallet @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  balance: Float
+  gold_balance: Float
+  address: String
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  fname: String
+  lname: String
+  email: AWSEmail
+  phone: AWSPhone
+  wallet: Wallet @hasOne
+  goldProviderDetails: AWSJSON
+  bankAccounts: [BankAccount] @hasMany(indexName: "byUser", fields: ["id"])
+  address: [Address] @hasMany(indexName: "byUser", fields: ["id"])
+  kycDetails: AWSJSON
+  dob: AWSDate
+}
+ 

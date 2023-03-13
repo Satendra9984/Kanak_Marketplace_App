@@ -8,13 +8,11 @@ class AuthNotifier extends StateNotifier<AuthUserModel> {
   ));
 
   void logInAndSetUser(String username, String userId) {
-    state.copyWith(phone: username, id: userId, authStatus: AuthStatus.loggedin);
+    state = state.copyWith(phone: username, id: userId, authStatus: AuthStatus.loggedin);
   }
-
   void logOutAndClearUser() {
-    state.copyWith(phone: '', email: '', id: '', authStatus: AuthStatus.loggedout);
+    state = state.copyWith(phone: '', email: '', id: '', authStatus: AuthStatus.loggedout);
   }
-
 }
 
 final authProvider = StateNotifierProvider<AuthNotifier,

@@ -33,6 +33,7 @@ class Address extends Model {
   final String? _userID;
   final String? _phone;
   final String? _email;
+  final String? _address;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -78,6 +79,10 @@ class Address extends Model {
     return _email;
   }
   
+  String? get address {
+    return _address;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -86,16 +91,17 @@ class Address extends Model {
     return _updatedAt;
   }
   
-  const Address._internal({required this.id, name, pincode, required userID, phone, email, createdAt, updatedAt}): _name = name, _pincode = pincode, _userID = userID, _phone = phone, _email = email, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Address._internal({required this.id, name, pincode, required userID, phone, email, address, createdAt, updatedAt}): _name = name, _pincode = pincode, _userID = userID, _phone = phone, _email = email, _address = address, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Address({String? id, String? name, String? pincode, required String userID, String? phone, String? email}) {
+  factory Address({String? id, String? name, String? pincode, required String userID, String? phone, String? email, String? address}) {
     return Address._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
       pincode: pincode,
       userID: userID,
       phone: phone,
-      email: email);
+      email: email,
+      address: address);
   }
   
   bool equals(Object other) {
@@ -111,7 +117,8 @@ class Address extends Model {
       _pincode == other._pincode &&
       _userID == other._userID &&
       _phone == other._phone &&
-      _email == other._email;
+      _email == other._email &&
+      _address == other._address;
   }
   
   @override
@@ -128,6 +135,7 @@ class Address extends Model {
     buffer.write("userID=" + "$_userID" + ", ");
     buffer.write("phone=" + "$_phone" + ", ");
     buffer.write("email=" + "$_email" + ", ");
+    buffer.write("address=" + "$_address" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -135,14 +143,15 @@ class Address extends Model {
     return buffer.toString();
   }
   
-  Address copyWith({String? name, String? pincode, String? userID, String? phone, String? email}) {
+  Address copyWith({String? name, String? pincode, String? userID, String? phone, String? email, String? address}) {
     return Address._internal(
       id: id,
       name: name ?? this.name,
       pincode: pincode ?? this.pincode,
       userID: userID ?? this.userID,
       phone: phone ?? this.phone,
-      email: email ?? this.email);
+      email: email ?? this.email,
+      address: address ?? this.address);
   }
   
   Address.fromJson(Map<String, dynamic> json)  
@@ -152,15 +161,16 @@ class Address extends Model {
       _userID = json['userID'],
       _phone = json['phone'],
       _email = json['email'],
+      _address = json['address'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'pincode': _pincode, 'userID': _userID, 'phone': _phone, 'email': _email, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'pincode': _pincode, 'userID': _userID, 'phone': _phone, 'email': _email, 'address': _address, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
-    'id': id, 'name': _name, 'pincode': _pincode, 'userID': _userID, 'phone': _phone, 'email': _email, 'createdAt': _createdAt, 'updatedAt': _updatedAt
+    'id': id, 'name': _name, 'pincode': _pincode, 'userID': _userID, 'phone': _phone, 'email': _email, 'address': _address, 'createdAt': _createdAt, 'updatedAt': _updatedAt
   };
 
   static final QueryModelIdentifier<AddressModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<AddressModelIdentifier>();
@@ -170,6 +180,7 @@ class Address extends Model {
   static final QueryField USERID = QueryField(fieldName: "userID");
   static final QueryField PHONE = QueryField(fieldName: "phone");
   static final QueryField EMAIL = QueryField(fieldName: "email");
+  static final QueryField ADDRESS = QueryField(fieldName: "address");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Address";
     modelSchemaDefinition.pluralName = "Addresses";
@@ -177,7 +188,7 @@ class Address extends Model {
     modelSchemaDefinition.authRules = [
       AuthRule(
         authStrategy: AuthStrategy.PUBLIC,
-        operations: [
+        operations: const [
           ModelOperation.CREATE,
           ModelOperation.UPDATE,
           ModelOperation.DELETE,
@@ -217,6 +228,12 @@ class Address extends Model {
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: Address.EMAIL,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Address.ADDRESS,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));

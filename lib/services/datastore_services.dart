@@ -10,29 +10,38 @@ class DatastoreServices {
   static Future<String?> checkRequiredData(String uid) async {
     String? nextRequiredDetails;
     final request = ModelQueries.get(User.classType, uid);
-    await _instance.query(request: request).response.then((result) {
+    await _instance.query(request: request).response.then((result) async {
       safePrint(result.data);
       if (result.data == null) {
         nextRequiredDetails = 'UserDetails';
         return;
       }
-      if (result.data?.address == null ||
-          result.data?.address?.isEmpty == true) {
-        nextRequiredDetails = 'Address';
-        return;
-      }
-      if (result.data?.kycDetails == null) {
-        nextRequiredDetails = 'KycDetails';
-      }
-      if (result.data?.bankAccounts == null ||
-          result.data?.bankAccounts?.isEmpty == true) {
-        nextRequiredDetails = 'BankAccount';
-      }
+      await _instance.query(request: ModelQueries.list(
+        Address.classType, where: Address.USERID.eq(uid))).response.then((address) async {
+          safePrint(address.data?.items);
+          if (address.data?.items == null ||
+            address.data?.items.isEmpty == true) {
+            nextRequiredDetails = 'Address';
+            return;
+          }
+          if (result.data?.kycDetails == null) {
+            nextRequiredDetails = 'KycDetails';
+            return;
+          }
+          await _instance.query(request: ModelQueries.list(
+            BankAccount.classType, where: BankAccount.USERID.eq(uid)
+          )).response.then((acc) async {
+            if (acc.data?.items == null
+              || acc.data?.items.isEmpty == true) {
+              nextRequiredDetails = 'BankAccount';
+            }
+          });
+        }
+      );
     });
     safePrint(nextRequiredDetails);
     return nextRequiredDetails;
   }
-
   static Future<User?> fetchUserById(String id) async {
     User? fetchedUser;
     final request = ModelQueries.get(User.classType, id);
@@ -138,6 +147,19 @@ class DatastoreServices {
     return createdAddr;
   }
 
+  static Future<BankAccount?> addBankAccount({
+    required BankAccount account
+  }) async {
+    BankAccount? createdAcc;
+    final bankAccountReq = _instance.mutate(request: ModelMutations.create(account));
+    await bankAccountReq.response.then((acc) {
+      if (acc.data == null) {
+        return;
+      }
+      createdAcc = acc.data;
+    });
+    return createdAcc;
+  }
   static Future<void> createAndUploadFile(
       Uint8List file, Function(TransferProgress) onProgress,
       {required String path}) async {

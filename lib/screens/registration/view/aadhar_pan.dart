@@ -6,25 +6,25 @@ import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:tasvat/providers/auth_provider.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 import '../../../widgets/image_upload_widget.dart';
 
-class UserKYCPage extends StatefulWidget {
+class UserKYCPage extends ConsumerStatefulWidget {
   const UserKYCPage({super.key});
 
   @override
-  State<UserKYCPage> createState() => _UserKYCPageState();
+  ConsumerState<UserKYCPage> createState() => _UserKYCPageState();
 }
 
-class _UserKYCPageState extends State<UserKYCPage> {
+class _UserKYCPageState extends ConsumerState<UserKYCPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _aadharCtrl = TextEditingController();
   final TextEditingController _panCtrl = TextEditingController();
-
-  late AuthUser _user;
 
   Future<void> _uploadPanCardImage() async {
     try {} catch (e) {
@@ -40,14 +40,12 @@ class _UserKYCPageState extends State<UserKYCPage> {
 
   @override
   void initState() {
-    AmplifyAuthCognito().getCurrentUser().then((value) {
-      _user = value;
-    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(authProvider);
     return Scaffold(
       backgroundColor: background,
       body: Form(
@@ -120,7 +118,7 @@ class _UserKYCPageState extends State<UserKYCPage> {
 
                 /// Aadhar Card Image
                 ImageUploadButtonWidget(
-                  uploadPath: 'aadhar/${_user.userId}',
+                  uploadPath: 'tasvatusercontent/aadhar/${user.id}',
                   title: 'Aadhar',
                 ),
 
@@ -173,7 +171,7 @@ class _UserKYCPageState extends State<UserKYCPage> {
 
                 /// Pan Card image
                 ImageUploadButtonWidget(
-                  uploadPath: 'pan/${_user.userId}',
+                  uploadPath: 'tasvatusercontent/pan/${user.id}',
                   title: 'Pan',
                 ),
               ],

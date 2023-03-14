@@ -162,17 +162,12 @@ class DatastoreServices {
   }
   static Future<void> createAndUploadFile(
       Uint8List file, Function(TransferProgress) onProgress,
-      {required String path}) async {
-    // final tempDir = await getTemporaryDirectory();
-    final exampleFile = File(path)
-      ..createSync()
-      ..writeAsBytesSync(file);
-
-    // Upload the file to S3
+      {required String path, required String uploadPath}) async {
+    File file = File(path);
     try {
       final UploadFileResult result = await Amplify.Storage.uploadFile(
-          local: exampleFile,
-          key: 'ExampleKey',
+          local: file,
+          key: uploadPath,
           onProgress: (progress) {
             safePrint('Fraction completed: ${progress.getFractionCompleted()}');
             onProgress(progress);

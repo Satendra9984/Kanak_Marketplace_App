@@ -1,7 +1,7 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:tasvat/screens/home_screen.dart';
 import 'package:tasvat/screens/login/view/pages/login_page.dart';
+import 'package:tasvat/screens/onboarding/onboarding_page.dart';
 import '../../../../utils/app_constants.dart';
 import '../../../../utils/ui_functions.dart';
 
@@ -24,7 +24,7 @@ class _OtpScreenState extends State<OtpScreen> {
           const SnackBar(content: Text('Successfully Logged In!')),
         );
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (ctx) => const HomeScreen()),
+          MaterialPageRoute(builder: (ctx) => const OnBoardingPage()),
           (route) => true
         );
       });

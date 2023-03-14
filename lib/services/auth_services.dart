@@ -53,4 +53,7 @@ class AuthRepository implements AuthServices {
   Future<void> resendConfirmation(String phone) async {
     await Amplify.Auth.resendSignUpCode(username: '+91$phone');
   }
+  Future<void> signOut() async {
+    await Amplify.Auth.signOut();
+  }
 }

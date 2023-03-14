@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/services/auth_services.dart';
+import 'package:tasvat/services/gold_services.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -35,10 +36,19 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         await authRepository
             .signInWithPhoneAndPassword(
                 phone: state.phone, password: state.password)
-            .then((result) {
-          safePrint('Done');
-          emit(state.copyWith(status: LoginStatus.success));
-        }).catchError((err) {
+            .then((result) async {
+              await GoldServices.sessionLogIn().then((value) async {
+                if (!value) {
+                  await authRepository.signOut();
+                  emit(state.copyWith(status:  LoginStatus.error));
+                  return;
+                }
+                safePrint('Done');
+                emit(state.copyWith(status: LoginStatus.success));
+              });
+          
+        }).catchError((err) async {
+          await authRepository.signOut();
           emit(state.copyWith(
               errMsg: err.toString(), status: LoginStatus.error));
         });
@@ -52,10 +62,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(state.copyWith(status: LoginStatus.initial));
     });
 
-    // // logout event
-    // on<LogOutEvent> ((event, emit) {
-    //   emit(state.copyWith(status: LoginStatus.initial));
-    // });
+    // logout event
+    on<LogOutEvent> ((event, emit) {
+      emit(state.copyWith(status: LoginStatus.initial));
+    });
   }
   void addFormKey(GlobalKey<FormState> key) {
     formKey = key;

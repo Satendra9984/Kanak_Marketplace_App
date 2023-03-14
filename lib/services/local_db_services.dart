@@ -19,22 +19,23 @@ class LocalDBServices {
 
   static Future<void> storeGPTokenExpiry(String token) async {
     await _prefs.then((value) {
-      value.setString('gpAccessToken', token);
+      value.setString('gpTokenExpiry', token);
     });
   }
   static Future<String?> getGPTokenExpiry() async {
     final pref = await _prefs;
-    return pref.getString('gpTokenExoiry');
+    // return '2023-03-14 11:42:10';
+    return pref.getString('gpTokenExpiry');
   }
   static Future<void> clearGPTokenExpiry() async {
     final pref = await _prefs;
-    pref.remove('gpAccessToken');
+    pref.remove('gpTokenExpiry');
   }
 
   
-  static Future<void> storeGPMerchantId(String token) async {
+  static Future<void> storeGPMerchantId(int id) async {
     await _prefs.then((value) {
-      value.setString('gpAccessToken', token);
+      value.setInt('gpMerchantId', id);
     });
   }
   static Future<String?> getGPMerchantId() async {
@@ -43,7 +44,7 @@ class LocalDBServices {
   }
   static Future<void> clearGPMerchantId() async {
     final pref = await _prefs;
-    pref.remove('gpAccessToken');
+    pref.remove('gpMerchantId');
   }
   
 }

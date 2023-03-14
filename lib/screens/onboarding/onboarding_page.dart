@@ -1,6 +1,7 @@
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/amplifyconfiguration.dart';
@@ -14,7 +15,9 @@ import 'package:tasvat/screens/registration/view/aadhar_pan.dart';
 import 'package:tasvat/screens/registration/view/user_address.dart';
 import 'package:tasvat/screens/registration/view/user_bank_details.dart';
 import 'package:tasvat/screens/registration/view/user_details.dart';
+import 'package:tasvat/services/auth_services.dart';
 import 'package:tasvat/services/datastore_services.dart';
+import 'package:tasvat/services/local_db_services.dart';
 
 class OnBoardingPage extends ConsumerStatefulWidget {
   const OnBoardingPage({super.key});
@@ -25,7 +28,19 @@ class OnBoardingPage extends ConsumerStatefulWidget {
 class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
   Future<void> _decideRoute() async {
     await Amplify.Auth.getCurrentUser().then((user) async {
+      final expiry = await LocalDBServices.getGPTokenExpiry();
 
+      if (expiry == null || DateTime.now().compareTo(DateTime.parse(expiry)) > 0) {
+        safePrint('Token Expired');
+        AuthRepository().signOut().then((value) {
+          Navigator.pushReplacement(
+            context, MaterialPageRoute(
+              builder: (context) => const LogInPage()
+          ));
+        });
+        
+        return;
+      }
       // sets auth provider with user id
       ref.read(authProvider.notifier).logInAndSetUser(
         user.username,
@@ -95,7 +110,8 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
     try {
       final auth = AmplifyAuthCognito();
       final api = AmplifyAPI(modelProvider: ModelProvider.instance);
-      await Amplify.addPlugins([auth, api]);
+      final storage = AmplifyStorageS3();
+      await Amplify.addPlugins([auth, api, storage]);
       await Amplify.configure(amplifyconfig).then((value) async {
         safePrint('😄😄😄 Successfully Coynfigured Amplify!');
         await Amplify.Auth.getCurrentUser().then((value) {

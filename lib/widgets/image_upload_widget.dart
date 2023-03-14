@@ -31,6 +31,7 @@ enum UploadState {
 
 class _ImageUploadButtonWidgetState extends State<ImageUploadButtonWidget> {
   String? _imageName;
+  String? _imagePath;
   Uint8List? _imageBytes;
   UploadState _uploadState = UploadState.failure;
   int _progressPercent = 0;
@@ -53,6 +54,7 @@ class _ImageUploadButtonWidgetState extends State<ImageUploadButtonWidget> {
           if (pickedImage != null) {
             // set file name
             _imageName = pickedImage.name;
+            _imagePath = pickedImage.path;
             // SET BYTES TO IMAGE VARIABLE
             _imageBytes = await pickedImage.readAsBytes();
             // UPLOAD IMAGE TO AMPLIFY STORAGE
@@ -62,9 +64,9 @@ class _ImageUploadButtonWidgetState extends State<ImageUploadButtonWidget> {
               _uploadState = UploadState.progressing;
             });
             await DatastoreServices.createAndUploadFile(_imageBytes!,
-                    (progress) {
+              (progress) {
               uploadProgress(progress);
-            }, path: widget.uploadPath)
+            }, uploadPath: widget.uploadPath, path: _imagePath!)
                 .then((value) {
               setState(() {
                 _uploadState = UploadState.success;

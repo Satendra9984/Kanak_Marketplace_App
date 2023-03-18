@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/screens/withdraw/withdraw_asset_body.dart';
 import 'package:tasvat/utils/app_constants.dart';
-import 'package:tasvat/screens/buy/buy_confirmation.dart';
+import 'package:tasvat/screens/buy/views/buy_confirmation.dart';
 import 'package:http/http.dart' as http;
 
 class WithdrawAssets extends StatefulWidget {

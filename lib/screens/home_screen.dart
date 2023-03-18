@@ -6,7 +6,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/models/ModelProvider.dart';
-import 'package:tasvat/screens/buy/buy_assets.dart';
+import 'package:tasvat/screens/buy/views/buy_assets.dart';
 import 'package:tasvat/screens/dashboard/dashboard.dart';
 import 'package:tasvat/screens/portfolio/portfolio_home.dart';
 import 'package:tasvat/screens/sell/sell_assets.dart';
@@ -39,10 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
       // final response = await restOperation.response;
       // safePrint('GET CALL RESPONSE: ${response.body}');
 
-      Wallet wallet = Wallet(
-          balance: 20,
-          gold_balance: 0,
-          address: "8768715527@tasvat");
+      Wallet wallet =
+          Wallet(balance: 20, gold_balance: 0, address: "8768715527@tasvat");
 
       final request1 = ModelMutations.create(wallet);
       final response1 = await Amplify.API.mutate(request: request1).response;

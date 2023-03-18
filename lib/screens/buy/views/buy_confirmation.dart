@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:custom_timer/custom_timer.dart';
 import 'package:flutter/material.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:tasvat/models/ModelProvider.dart';
-import 'package:tasvat/screens/buy/buy_completed.dart';
-import '../../models/Transaction.dart';
-import '../../utils/app_constants.dart';
-import '../../widgets/row_details_widget.dart';
+import 'package:tasvat/screens/buy/views/buy_completed.dart';
+import '../../../models/Transaction.dart';
+import '../../../utils/app_constants.dart';
+import '../../../widgets/row_details_widget.dart';
 import 'package:http/http.dart' as http;
 
 class BuyConfirmationScreen extends StatefulWidget {
@@ -24,6 +25,7 @@ class BuyConfirmationScreen extends StatefulWidget {
 class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
     with TickerProviderStateMixin {
   late CustomTimerController _timerController;
+  late Razorpay _razorpay;
 
   final Transaction buyOrderDetails = Transaction(
     id: '123456789',
@@ -77,7 +79,33 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
   void dispose() {
     // TODO: implement dispose
     _timerController.dispose();
+    _razorpay.clear();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    super.initState();
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    // Do something when payment succeeds
+    debugPrint('payment done');
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    // Do something when payment fails
+    debugPrint('payment failed');
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    // Do something when an external wallet is selected
+    debugPrint('payment done');
   }
 
   @override
@@ -266,12 +294,30 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                       ),
                                     ),
 
+                                    /// confirm button
                                     const SizedBox(height: 20),
                                     // Condition for confirmation button
                                     if (state == CustomTimerState.counting)
                                       ElevatedButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           /// TODO: proceed to PAYMENTS SCREEN
+
+                                          var options = {
+                                            'key': '<YOUR_KEY_ID>',
+                                            'amount':
+                                                50000, //in the smallest currency sub-unit.
+                                            'name': 'Tasvat',
+                                            'order_id':
+                                                'order_EMBFqjDHEEn80l', // Generate order_id using Orders API
+                                            'description': 'Gold Order',
+                                            'timeout': 60, // in seconds
+                                            'prefill': {
+                                              'contact': '9123456789',
+                                              'email':
+                                                  'gaurav.kumar@example.com'
+                                            }
+                                          };
+                                          _razorpay.open(options);
                                           Navigator.pushAndRemoveUntil(
                                             context,
                                             MaterialPageRoute(
@@ -310,8 +356,6 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                               },
                             ),
                           ),
-
-                          /// confirm button
                         ],
                       ),
                     ],

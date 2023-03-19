@@ -1,7 +1,7 @@
 type Address @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String
-  pincode: String
+  pincode: Int
   userID: ID! @index(name: "byUser")
   phone: AWSPhone
   email: AWSEmail

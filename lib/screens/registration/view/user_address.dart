@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/services/datastore_services.dart';
+import 'package:tasvat/services/gold_services.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,21 +29,50 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
     super.initState();
   }
 
-  Future<void> _addUserAddress() async {
+  // flow | registerGoldUser > updateGPDetails > addGoldUserAddress > addUserAddress > provider
+  Future<void> _createGoldUserWithAddress() async {
     final authData = await Amplify.Auth.getCurrentUser();
     final user = ref.read(userProvider);
-    await DatastoreServices.addUserAddress(
-      address: _addressCtrl.text,
-      pincode: _pinCodeCtrl.text,
-      email: widget.email,
-      name: 'primary',
-      phone: authData.username,
-      userId: user!.id
-    ).then((value) {
-      if (value == null) {
+    await GoldServices.registerGoldUser(
+      phone: authData.username.substring(3),
+      email: user!.email!,
+      userId: authData.userId,
+      name: '${user.fname!} ${user.lname!}',
+      pincode: _pinCodeCtrl.text, 
+      dob: user.dob!.getDateTime()
+        .toIso8601String().split('T')[0]
+    ).then((goldUser) async {
+      if (goldUser == null) {
         return;
       }
-      ref.read(userProvider.notifier).addUserAddress(address: value);
+      await DatastoreServices.
+      updateGPDetails(user: user, details: goldUser).then((updatedUser) async {
+        if (updatedUser == null) {
+          return;
+        }
+        ref.read(userProvider.notifier).updateUserDetails(
+          gpDetails: jsonDecode(updatedUser.goldProviderDetails!
+        ));
+        await GoldServices.addGoldUserAddress(
+          user: user,
+          name: 'primary',
+          address: _addressCtrl.text,
+          pincode: int.parse(_pinCodeCtrl.text),
+          //TODO: Add state and city controller with dropdown
+          state: 'state',
+          city: 'city'
+        ).then((rsp) async {
+          if (rsp == null) {
+            return;
+          }
+          await DatastoreServices.addUserAddress(rsp: rsp).then((addr) {
+            if (addr == null) {
+              return;
+            }
+            ref.read(userProvider.notifier).addUserAddress(address: addr);
+          });
+        });
+      });
     });
   }
   @override
@@ -178,7 +208,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
           child: ElevatedButton(
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
-                await _addUserAddress();
+                await _createGoldUserWithAddress();
               }
             },
             style: ElevatedButton.styleFrom(

@@ -34,7 +34,7 @@ class _UserDetailsPageState extends ConsumerState<UserDetailsPage> {
 
   Future<void> _createUserAccount() async {
     final authData = await Amplify.Auth.getCurrentUser();
-    await DatastoreServices.createUser(
+    await DatastoreServices.createUserWithWallet(
       email: _emailCtrl.text,
       phone: authData.username,
       dob: _dob!.toIso8601String().split('T')[0],

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 
-import 'package:tasvat/screens/buy/buy_completed.dart';
+import 'package:tasvat/screens/buy/views/buy_completed.dart';
 import 'package:tasvat/screens/sell/sell_completed_screen.dart';
 
 import '../../models/Transaction.dart';

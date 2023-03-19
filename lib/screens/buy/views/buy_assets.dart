@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:tasvat/screens/buy/buy_asset_body.dart';
+import 'package:tasvat/screens/buy/views/buy_asset_body.dart';
 import 'package:tasvat/utils/app_constants.dart';
-import 'package:tasvat/screens/buy/buy_confirmation.dart';
+import 'package:tasvat/screens/buy/views/buy_confirmation.dart';
 import 'package:http/http.dart' as http;
 
 class BuyAssets extends StatefulWidget {
@@ -67,7 +67,8 @@ class _BuyAssetsState extends State<BuyAssets> {
             }
             // debugPrint(response.data!.body);
             return BuyAssetBody(
-                goldApiRateData: jsonDecode(response.data!.body),);
+              goldApiRateData: jsonDecode(response.data!.body),
+            );
           },
         ),
       ),

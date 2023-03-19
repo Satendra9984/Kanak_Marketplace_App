@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../models/Transaction.dart';
-import '../../utils/app_constants.dart';
-import '../../widgets/row_details_widget.dart';
+import '../../../models/Transaction.dart';
+import '../../../utils/app_constants.dart';
+import '../../../widgets/row_details_widget.dart';
 
-class PaymentScreen extends StatelessWidget {
+class BuyCompletedScreen extends StatelessWidget {
   final Transaction buyOrderDetails;
   final bool backToHome;
-  const PaymentScreen({
+  const BuyCompletedScreen({
     Key? key,
     required this.buyOrderDetails,
     this.backToHome = false,
@@ -97,8 +97,7 @@ class PaymentScreen extends StatelessWidget {
                         title: 'Transaction Type',
                         value: buyOrderDetails.type.toString()),
                     const SizedBox(height: 25),
-                    const RowDetailWidget(
-                        title: 'Price', value: '${10000} INR/gm'),
+                    RowDetailWidget(title: 'Price', value: '${10000} INR/gm'),
                     const SizedBox(height: 25),
                     RowDetailWidget(
                         title: 'Amount', value: '${buyOrderDetails.amount} gm'),

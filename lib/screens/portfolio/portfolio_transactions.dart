@@ -1,7 +1,7 @@
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/models/ModelProvider.dart';
-import 'package:tasvat/screens/buy/buy_completed.dart';
+import 'package:tasvat/screens/buy/views/buy_completed.dart';
 import 'package:tasvat/screens/sell/sell_completed_screen.dart';
 import 'package:tasvat/screens/withdraw/withdraw_completed.dart';
 
@@ -12,18 +12,16 @@ class PortfolioTransactions extends StatelessWidget {
 
   final List<Transaction> _transactionList = [
     Transaction(
-      id: '123456789',
-      type: TransactionType.BUY,
-      dateTime: TemporalDateTime.fromString('2023-03-05'),
-      amount: 12
-    ),
+        id: '123456789',
+        type: TransactionType.BUY,
+        dateTime: TemporalDateTime.fromString('2023-03-05'),
+        amount: 12),
     Transaction(
-      id: '123456789',
-      type: TransactionType.SELL,
-      amount: 5,
-      status: TransactionStatus.PENDING,
-      dateTime: TemporalDateTime.fromString('2023-03-05')
-    ),
+        id: '123456789',
+        type: TransactionType.SELL,
+        amount: 5,
+        status: TransactionStatus.PENDING,
+        dateTime: TemporalDateTime.fromString('2023-03-05')),
     Transaction(
       id: '123456789',
       type: TransactionType.EXCHANGE,

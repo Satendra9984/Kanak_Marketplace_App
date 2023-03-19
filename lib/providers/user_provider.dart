@@ -18,7 +18,9 @@ class UserNotifier extends StateNotifier<User?> {
     String? phone,
     String? fname,
     String? lname,
-    String? dob
+    String? dob,
+    Map<String, dynamic>? kyc,
+    Map<String, dynamic>? gpDetails
   }) {
     state = state?.copyWith(
       email: email,

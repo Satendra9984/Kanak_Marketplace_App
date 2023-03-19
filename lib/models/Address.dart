@@ -29,7 +29,7 @@ class Address extends Model {
   static const classType = const _AddressModelType();
   final String id;
   final String? _name;
-  final String? _pincode;
+  final int? _pincode;
   final String? _userID;
   final String? _phone;
   final String? _email;
@@ -54,7 +54,7 @@ class Address extends Model {
     return _name;
   }
   
-  String? get pincode {
+  int? get pincode {
     return _pincode;
   }
   
@@ -93,7 +93,7 @@ class Address extends Model {
   
   const Address._internal({required this.id, name, pincode, required userID, phone, email, address, createdAt, updatedAt}): _name = name, _pincode = pincode, _userID = userID, _phone = phone, _email = email, _address = address, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Address({String? id, String? name, String? pincode, required String userID, String? phone, String? email, String? address}) {
+  factory Address({String? id, String? name, int? pincode, required String userID, String? phone, String? email, String? address}) {
     return Address._internal(
       id: id == null ? UUID.getUUID() : id,
       name: name,
@@ -131,7 +131,7 @@ class Address extends Model {
     buffer.write("Address {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("name=" + "$_name" + ", ");
-    buffer.write("pincode=" + "$_pincode" + ", ");
+    buffer.write("pincode=" + (_pincode != null ? _pincode!.toString() : "null") + ", ");
     buffer.write("userID=" + "$_userID" + ", ");
     buffer.write("phone=" + "$_phone" + ", ");
     buffer.write("email=" + "$_email" + ", ");
@@ -143,7 +143,7 @@ class Address extends Model {
     return buffer.toString();
   }
   
-  Address copyWith({String? name, String? pincode, String? userID, String? phone, String? email, String? address}) {
+  Address copyWith({String? name, int? pincode, String? userID, String? phone, String? email, String? address}) {
     return Address._internal(
       id: id,
       name: name ?? this.name,
@@ -157,7 +157,7 @@ class Address extends Model {
   Address.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
       _name = json['name'],
-      _pincode = json['pincode'],
+      _pincode = (json['pincode'] as num?)?.toInt(),
       _userID = json['userID'],
       _phone = json['phone'],
       _email = json['email'],
@@ -188,7 +188,7 @@ class Address extends Model {
     modelSchemaDefinition.authRules = [
       AuthRule(
         authStrategy: AuthStrategy.PUBLIC,
-        operations: const [
+        operations: [
           ModelOperation.CREATE,
           ModelOperation.UPDATE,
           ModelOperation.DELETE,
@@ -211,7 +211,7 @@ class Address extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: Address.PINCODE,
       isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+      ofType: ModelFieldType(ModelFieldTypeEnum.int)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(

@@ -7,6 +7,7 @@ import 'package:tasvat/models/ModelProvider.dart';
 
 class DatastoreServices {
   static final _instance = Amplify.API;
+
   static Future<String?> checkRequiredData(String uid) async {
     String? nextRequiredDetails;
     final request = ModelQueries.get(User.classType, uid);
@@ -16,32 +17,38 @@ class DatastoreServices {
         nextRequiredDetails = 'UserDetails';
         return;
       }
-      await _instance.query(request: ModelQueries.list(
-        Address.classType, where: Address.USERID.eq(uid))).response.then((address) async {
-          safePrint(address.data?.items);
-          if (address.data?.items == null ||
+      await _instance
+          .query(
+              request: ModelQueries.list(Address.classType,
+                  where: Address.USERID.eq(uid)))
+          .response
+          .then((address) async {
+        safePrint(address.data?.items);
+        if (address.data?.items == null ||
             address.data?.items.isEmpty == true) {
-            nextRequiredDetails = 'Address';
-            return;
-          }
-          if (result.data?.kycDetails == null) {
-            nextRequiredDetails = 'KycDetails';
-            return;
-          }
-          await _instance.query(request: ModelQueries.list(
-            BankAccount.classType, where: BankAccount.USERID.eq(uid)
-          )).response.then((acc) async {
-            if (acc.data?.items == null
-              || acc.data?.items.isEmpty == true) {
-              nextRequiredDetails = 'BankAccount';
-            }
-          });
+          nextRequiredDetails = 'Address';
+          return;
         }
-      );
+        if (result.data?.kycDetails == null) {
+          nextRequiredDetails = 'KycDetails';
+          return;
+        }
+        await _instance
+            .query(
+                request: ModelQueries.list(BankAccount.classType,
+                    where: BankAccount.USERID.eq(uid)))
+            .response
+            .then((acc) async {
+          if (acc.data?.items == null || acc.data?.items.isEmpty == true) {
+            nextRequiredDetails = 'BankAccount';
+          }
+        });
+      });
     });
     safePrint(nextRequiredDetails);
     return nextRequiredDetails;
   }
+
   static Future<User?> fetchUserById(String id) async {
     User? fetchedUser;
     final request = ModelQueries.get(User.classType, id);
@@ -71,29 +78,25 @@ class DatastoreServices {
       }
     }''';
     final getUserReq = GraphQLRequest<User>(
-      document: graphQlDoc,
-      modelType: User.classType,
-      decodePath: getUser,
-      variables: <String, String>{'id': id}
-    );
+        document: graphQlDoc,
+        modelType: User.classType,
+        decodePath: getUser,
+        variables: <String, String>{'id': id});
     await Amplify.API.query(request: getUserReq).response.then((value) {
       safePrint('+++++> ${value.data}');
     });
     return fetchedUser;
   }
 
-  static getAddressOfUser(String user) async {
+  static getAddressOfUser(String user) async {}
 
-  }
-
-  static Future<User?> createUser({
-      required String email,
+  static Future<User?> createUser(
+      {required String email,
       required String phone,
       required String fname,
       required String lname,
       required String dob,
-      required String userId
-    }) async {
+      required String userId}) async {
     User? createdUser;
     final wallet =
         Wallet(balance: 0, gold_balance: 0, address: '$phone@tasvat');
@@ -108,8 +111,7 @@ class DatastoreServices {
           fname: fname,
           lname: lname,
           dob: TemporalDate.fromString(dob),
-          userWalletId: wallet.id
-        );
+          userWalletId: wallet.id);
       final userAddReq = _instance.mutate(request: ModelMutations.create(user));
       await userAddReq.response.then((userRes) {
         if (userRes.data == null) {
@@ -120,24 +122,24 @@ class DatastoreServices {
     });
     return createdUser;
   }
-  static Future<Address?> addUserAddress({
-    required String address,
-    String? name,
-    required String pincode,
-    String? email,
-    String? phone,
-    required String userId
-  }) async {
+
+  static Future<Address?> addUserAddress(
+      {required String address,
+      String? name,
+      required String pincode,
+      String? email,
+      String? phone,
+      required String userId}) async {
     Address? createdAddr;
     final addr = Address(
-      pincode: pincode,
-      phone: phone,
-      name: name,
-      address: address,
-      email: email,
-      userID: userId
-    );
-    final addressAddReq = _instance.mutate(request: ModelMutations.create(addr));
+        pincode: pincode,
+        phone: phone,
+        name: name,
+        address: address,
+        email: email,
+        userID: userId);
+    final addressAddReq =
+        _instance.mutate(request: ModelMutations.create(addr));
     await addressAddReq.response.then((value) {
       if (value.data == null) {
         return;
@@ -147,11 +149,11 @@ class DatastoreServices {
     return createdAddr;
   }
 
-  static Future<BankAccount?> addBankAccount({
-    required BankAccount account
-  }) async {
+  static Future<BankAccount?> addBankAccount(
+      {required BankAccount account}) async {
     BankAccount? createdAcc;
-    final bankAccountReq = _instance.mutate(request: ModelMutations.create(account));
+    final bankAccountReq =
+        _instance.mutate(request: ModelMutations.create(account));
     await bankAccountReq.response.then((acc) {
       if (acc.data == null) {
         return;
@@ -160,6 +162,7 @@ class DatastoreServices {
     });
     return createdAcc;
   }
+
   static Future<void> createAndUploadFile(
       Uint8List file, Function(TransferProgress) onProgress,
       {required String path, required String uploadPath}) async {

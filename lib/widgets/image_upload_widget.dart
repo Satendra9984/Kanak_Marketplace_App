@@ -12,10 +12,12 @@ import '../utils/app_constants.dart';
 
 class ImageUploadButtonWidget extends StatefulWidget {
   final String uploadPath, title;
+  final Function(XFile? image) onUploaded;
   const ImageUploadButtonWidget({
     Key? key,
     required this.uploadPath,
     required this.title,
+    required this.onUploaded,
   }) : super(key: key);
 
   @override
@@ -36,16 +38,16 @@ class _ImageUploadButtonWidgetState extends State<ImageUploadButtonWidget> {
   UploadState _uploadState = UploadState.failure;
   int _progressPercent = 0;
 
-  void uploadProgress(TransferProgress progress) {
-    double progressPercent = (progress.totalBytes - progress.currentBytes) *
-        100 /
-        progress.totalBytes;
-
-    int per = progressPercent.toInt();
-    setState(() {
-      _progressPercent = per;
-    });
-  }
+  // void uploadProgress(TransferProgress progress) {
+  //   double progressPercent = (progress.totalBytes - progress.currentBytes) *
+  //       100 /
+  //       progress.totalBytes;
+  //
+  //   int per = progressPercent.toInt();
+  //   setState(() {
+  //     _progressPercent = per;
+  //   });
+  // }
 
   Future<void> _uploadImage() async {
     try {
@@ -57,21 +59,13 @@ class _ImageUploadButtonWidgetState extends State<ImageUploadButtonWidget> {
             _imagePath = pickedImage.path;
             // SET BYTES TO IMAGE VARIABLE
             _imageBytes = await pickedImage.readAsBytes();
-            // UPLOAD IMAGE TO AMPLIFY STORAGE
+
             setState(() {
-              _imageName = pickedImage.name;
+              _imageName;
               _imageBytes;
-              _uploadState = UploadState.progressing;
+              _uploadState = UploadState.success;
             });
-            await DatastoreServices.createAndUploadFile(_imageBytes!,
-              (progress) {
-              uploadProgress(progress);
-            }, uploadPath: widget.uploadPath, path: _imagePath!)
-                .then((value) {
-              setState(() {
-                _uploadState = UploadState.success;
-              });
-            });
+            widget.onUploaded(pickedImage);
           }
         },
       );
@@ -98,17 +92,31 @@ class _ImageUploadButtonWidgetState extends State<ImageUploadButtonWidget> {
 
   Widget _showImageDialog() {
     return Dialog(
-      child: Column(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Stack(
         children: [
-          Align(
+          Positioned(
+            top: 5,
+            right: 5,
             child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: Icon(
                 Icons.cancel,
+                color: error,
               ),
             ),
           ),
-          Image.memory(_imageBytes!),
+          Container(
+            decoration: BoxDecoration(border: Border.all(color: accent2)),
+            child: Image.memory(
+              _imageBytes!,
+              fit: BoxFit.fill,
+              height: 400,
+              width: double.infinity,
+            ),
+          ),
         ],
       ),
     );
@@ -208,48 +216,74 @@ class _ImageUploadButtonWidgetState extends State<ImageUploadButtonWidget> {
             ),
           ),
         if (_uploadState == UploadState.success)
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  onPressed: () async {
-                    _uploadImage();
-                  },
-                  icon: Icon(
-                    Icons.image,
-                    color: accent2,
-                    size: 32,
+          DottedBorder(
+            dashPattern: const [10, 1],
+            strokeCap: StrokeCap.butt,
+            strokeWidth: 1.0,
+            radius: const Radius.circular(10),
+            color: accent2,
+            child: Container(
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(width: 10),
+
+                  Image.memory(
+                    _imageBytes!,
+                    height: 28,
+                    width: 28,
                   ),
-                ),
-                const SizedBox(width: 15),
-                TextButton(
-                  onPressed: () {
-                    _showImageDialog();
-                  },
-                  child: Text(
-                    '$_imageName',
-                    softWrap: true,
-                    style: TextStyle(
-                      color: text400,
-                      fontSize: body2,
-                      fontWeight: FontWeight.w500,
+                  // IconButton(
+                  //   onPressed: () async {
+                  //     _uploadImage();
+                  //   },
+                  //   icon: Icon(
+                  //     Icons.image,
+                  //     color: accent2,
+                  //     size: 32,
+                  //   ),
+                  // ),
+                  TextButton(
+                    onPressed: () async {
+                      await showDialog(
+                          context: context,
+                          builder: (ctx) {
+                            return _showImageDialog();
+                          });
+                    },
+                    child: Text(
+                      '$_imageName',
+                      softWrap: true,
+                      style: TextStyle(
+                        color: text400,
+                        fontSize: body2,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    // TODO: DELETE IMAGE
-                  },
-                  icon: const Icon(Icons.cancel),
-                ),
-              ],
+                  IconButton(
+                    onPressed: () {
+                      // TODO: DELETE IMAGE
+                      setState(() {
+                        _imageBytes = null;
+                        _imageName = null;
+                        _imagePath = null;
+                        _uploadState = UploadState.failure;
+                      });
+                    },
+                    icon: Icon(
+                      Icons.cancel,
+                      color: error.withOpacity(0.75),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
       ],

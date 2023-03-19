@@ -103,11 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            ElevatedButton(
-                onPressed: () async {
-                  await callDemoAPI();
-                },
-                child: const Text('Add')),
             FloatingActionButton.small(
               heroTag: '0',
               elevation: 5.0,

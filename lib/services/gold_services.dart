@@ -183,4 +183,6 @@ class GoldServices {
     });
     return rsp;
   }
-}
+
+  // add gold bank account
+  static Future<Ban

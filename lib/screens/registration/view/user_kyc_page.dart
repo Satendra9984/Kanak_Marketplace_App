@@ -23,8 +23,8 @@ class UserKYCPage extends ConsumerStatefulWidget {
 
 class _UserKYCPageState extends ConsumerState<UserKYCPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _aadharCtrl = TextEditingController();
   final TextEditingController _panCtrl = TextEditingController();
+  XFile? _image;
 
   Future<void> _uploadPanCardImage() async {
     try {} catch (e) {
@@ -72,61 +72,59 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
                 const SizedBox(height: 20),
 
                 /// Aadhar number
-                Text(
-                  'Aadhar',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.number,
-                    controller: _aadharCtrl,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter Aadhar number';
-                      }
-                      bool aadharValid =
-                          RegExp(r'^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}$')
-                              .hasMatch(value);
-
-                      if (!aadharValid) {
-                        return 'Please enter valid Aadhar number';
-                      }
-                      return null;
-                    },
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: accent2,
-                    ),
-                    decoration: getInputDecoration('123412341234'),
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
+                // Text(
+                //   'Aadhar',
+                //   style: TextStyle(
+                //     color: text500,
+                //     fontSize: body2,
+                //     fontWeight: FontWeight.w500,
+                //   ),
+                // ),
+                // Container(
+                //   margin:
+                //       const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                //   padding:
+                //       const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(10),
+                //   ),
+                //   child: TextFormField(
+                //     autovalidateMode: AutovalidateMode.onUserInteraction,
+                //     keyboardType: TextInputType.number,
+                //     controller: _aadharCtrl,
+                //     validator: (value) {
+                //       if (value == null || value.isEmpty) {
+                //         return 'Please enter Aadhar number';
+                //       }
+                //       bool aadharValid =
+                //           RegExp(r'^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}$')
+                //               .hasMatch(value);
+                //
+                //       if (!aadharValid) {
+                //         return 'Please enter valid Aadhar number';
+                //       }
+                //       return null;
+                //     },
+                //     style: TextStyle(
+                //       fontSize: 16,
+                //       fontWeight: FontWeight.w500,
+                //       color: accent2,
+                //     ),
+                //     decoration: getInputDecoration('123412341234'),
+                //   ),
+                // ),
+                // const SizedBox(height: 10),
                 /// Aadhar Card Image
-                ImageUploadButtonWidget(
-                  uploadPath: 'tasvatusercontent/aadhar/${user.id}',
-                  title: 'Aadhar',
-                ),
+                // ImageUploadButtonWidget(
+                //   uploadPath: 'tasvatusercontent/aadhar/${user.id}',
+                //   title: 'Aadhar',
+                // ),
 
                 const SizedBox(height: 20),
 
                 /// Pan Number
                 Text(
-                  'Pan',
+                  'Pan Number',
                   style: TextStyle(
                     color: text500,
                     fontSize: body2,
@@ -170,9 +168,44 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
                 const SizedBox(height: 10),
 
                 /// Pan Card image
-                ImageUploadButtonWidget(
-                  uploadPath: 'tasvatusercontent/pan/${user.id}',
-                  title: 'Pan',
+                FormField(
+                  initialValue: _image,
+                  validator: (image) {
+                    if (image == null) {
+                      return 'Please Upload Pan Card';
+                    }
+                    return null;
+                  },
+                  builder: (formState) {
+                    return Column(
+                      children: [
+                        ImageUploadButtonWidget(
+                          uploadPath: 'tasvatusercontent/pan/${user.id}',
+                          title: 'Pan',
+                          onUploaded: (image) {
+                            if (image != null) {
+                              setState(() {
+                                _image = image;
+                                debugPrint('image uploaded');
+                              });
+                            }
+                          },
+                        ),
+                        if (formState.hasError)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: Text(
+                              formState.errorText.toString(),
+                              style: TextStyle(
+                                color: error,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -209,6 +242,19 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
               ),
             ),
           ),
+          // Container(
+          //   margin: const EdgeInsets.only(top: 5),
+          //   child: TextButton(
+          //     onPressed: () {},
+          //     child: Text(
+          //       'Skip for now',
+          //       style: TextStyle(
+          //         color: accent2,
+          //         fontSize: 16,
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

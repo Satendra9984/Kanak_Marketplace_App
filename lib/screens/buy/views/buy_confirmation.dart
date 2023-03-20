@@ -96,6 +96,16 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     // Do something when payment succeeds
     debugPrint('payment done');
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (ctx) => BuyCompletedScreen(
+          buyOrderDetails: buyOrderDetails,
+          backToHome: true,
+        ),
+      ),
+      (route) => route.isFirst,
+    );
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -157,7 +167,7 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                 } else if (priceData.data!.statusCode == 200) {
                   _timerController = CustomTimerController(
                     vsync: this,
-                    begin: const Duration(minutes: 7),
+                    begin: const Duration(minutes: 5),
                     end: const Duration(seconds: 00),
                     initialState: CustomTimerState.reset,
                     interval: CustomTimerInterval.milliseconds,
@@ -303,12 +313,12 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                           /// TODO: proceed to PAYMENTS SCREEN
 
                                           var options = {
-                                            'key': '<YOUR_KEY_ID>',
+                                            'key': 'LlZL90wcQYlZQhWjdCY29scS',
                                             'amount':
                                                 50000, //in the smallest currency sub-unit.
                                             'name': 'Tasvat',
-                                            'order_id':
-                                                'order_EMBFqjDHEEn80l', // Generate order_id using Orders API
+                                            'order_id': UUID
+                                                .getUUID(), // Generate order_id using Orders API
                                             'description': 'Gold Order',
                                             'timeout': 60, // in seconds
                                             'prefill': {
@@ -318,18 +328,6 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                             }
                                           };
                                           _razorpay.open(options);
-                                          Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (ctx) =>
-                                                  BuyCompletedScreen(
-                                                buyOrderDetails:
-                                                    buyOrderDetails,
-                                                backToHome: true,
-                                              ),
-                                            ),
-                                            (route) => route.isFirst,
-                                          );
                                         },
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(

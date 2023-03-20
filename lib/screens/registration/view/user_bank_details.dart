@@ -3,6 +3,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/screens/login/view/pages/login_page.dart';
 import 'package:tasvat/screens/login/view/pages/otp_screen.dart';
+import 'package:tasvat/screens/registration/view/user_kyc_page.dart';
 
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
@@ -48,48 +49,6 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
                   ),
                 ),
                 const SizedBox(height: 25),
-
-                /// Bank Id
-                Text(
-                  'Bank Id',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    // color: text150,
-                  ),
-                  child: TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.name,
-                    controller: _bankIdCtrl,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'BankId field is required';
-                      } else if (value.length > 18) {
-                        return 'Bank Id should not be greater than 18 characters';
-                      } else if (value.length < 9) {
-                        return 'Bank Id should not be lesser than 9 characters';
-                      }
-                      return null;
-                    },
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: accent2,
-                    ),
-                    decoration: getInputDecoration('bank id'),
-                  ),
-                ),
-                const SizedBox(height: 10),
 
                 /// Account Name
                 Text(
@@ -236,7 +195,7 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
         children: [
           /// Bank Details Submit Button
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2.5),
             child: ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
@@ -257,6 +216,27 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
                   color: background,
                   fontSize: heading2,
                   fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+
+          /// skip button
+          Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            child: TextButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (ctx) => const UserKYCPage(),
+                  ),
+                );
+              },
+              child: Text(
+                'Skip for now',
+                style: TextStyle(
+                  color: accent2,
+                  fontSize: 16,
                 ),
               ),
             ),

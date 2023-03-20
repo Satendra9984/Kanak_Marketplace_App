@@ -15,7 +15,5 @@ class GoldRateNotifier extends StateNotifier<ExchangeRates> {
   }
 }
 
-final goldRateNotifier = StateNotifierProvider<GoldRateNotifier,
- ExchangeRates>(
-  (ref) => GoldRateNotifier()
-);
+final goldRateProvider = StateNotifierProvider<GoldRateNotifier, ExchangeRates>(
+    (ref) => GoldRateNotifier());

@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:tasvat/screens/buy/views/buy_asset_body.dart';
 import 'package:tasvat/utils/app_constants.dart';
-import 'package:tasvat/screens/buy/views/buy_confirmation.dart';
 import 'package:http/http.dart' as http;
 
 class BuyAssets extends StatefulWidget {
@@ -15,8 +13,7 @@ class BuyAssets extends StatefulWidget {
 
 class _BuyAssetsState extends State<BuyAssets> {
   Stream<http.Response> _getPriceDataStream() async* {
-    // try {
-    yield* Stream.periodic(const Duration(seconds: 1), (_) {
+    yield* Stream.periodic(const Duration(seconds: 30), (_) {
       return http.get(
         Uri.parse('https://partners-staging.safegold.com/v1/buy-price'),
         headers: {
@@ -24,11 +21,6 @@ class _BuyAssetsState extends State<BuyAssets> {
         },
       );
     }).asyncMap((event) async => await event);
-
-    // return http.Response;
-    // }catch(e) {
-    //
-    // }
   }
 
   @override

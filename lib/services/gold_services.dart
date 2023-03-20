@@ -10,7 +10,8 @@ import 'package:tasvat/services/local_db_services.dart';
 import 'package:tasvat/services/rest_services.dart';
 
 class GoldServices {
-  static const String _baseUrl = 'https://uat-api.augmontgold.com/api/merchant/v1/';
+  static const String _baseUrl =
+      'https://uat-api.augmontgold.com/api/merchant/v1/';
 
   // get log in session credentials
   static Future<bool> sessionLogIn() async {
@@ -24,9 +25,12 @@ class GoldServices {
       }
       safePrint(value);
       if (value['statusCode'] == 200) {
-        await LocalDBServices.storeGPAccessToken(value['result']['data']['accessToken']);
-        await LocalDBServices.storeGPMerchantId(value['result']['data']['merchantId']);
-        await LocalDBServices.storeGPTokenExpiry(value['result']['data']['expiresAt']);
+        await LocalDBServices.storeGPAccessToken(
+            value['result']['data']['accessToken']);
+        await LocalDBServices.storeGPMerchantId(
+            value['result']['data']['merchantId']);
+        await LocalDBServices.storeGPTokenExpiry(
+            value['result']['data']['expiresAt']);
         success = true;
       }
     }).catchError((err) {
@@ -36,14 +40,13 @@ class GoldServices {
   }
 
   // create user
-  static Future<Map<String, dynamic>?> registerGoldUser({
-    required String phone,
-    required String email,
-    required String userId,
-    required String name,
-    required String pincode,
-    required String dob
-  }) async {
+  static Future<Map<String, dynamic>?> registerGoldUser(
+      {required String phone,
+      required String email,
+      required String userId,
+      required String name,
+      required String pincode,
+      required String dob}) async {
     Map<String, dynamic>? details;
     final authToken = await LocalDBServices.getGPAccessToken();
     await HttpServices.sendPostReq('${_baseUrl}users', extraHeaders: {
@@ -67,15 +70,13 @@ class GoldServices {
   }
 
   // buy gold
-  static Future<BuyInfo?> buyGold({
-    required User user,
-    required Transaction transaction,
-    required ExchangeRates rates
-  }) async {
+  static Future<BuyInfo?> buyGold(
+      {required User user,
+      required Transaction transaction,
+      required ExchangeRates rates}) async {
     BuyInfo? info;
     final authToken = await LocalDBServices.getGPAccessToken();
-    await HttpServices.sendPostReq('${_baseUrl}buy',
-    body: {
+    await HttpServices.sendPostReq('${_baseUrl}buy', body: {
       'lockPrice': int.parse(rates.gBuy!),
       'metalType': 'gold',
       'quantity': transaction.amount,
@@ -85,30 +86,25 @@ class GoldServices {
       'blockId': rates.blockId,
       'mobileNumber': user.phone,
       'emailId': user.email
-    },
-    extraHeaders: {
+    }, extraHeaders: {
       'Authorization': 'Bearer $authToken'
     }).then((res) {
       if (res == null) {
         return;
       }
-      if (res.containsKey('statusCode')
-        && res['statusCode'] == 200) {
-        info = BuyInfo.fromJson(
-          res['result']['data']
-        );
+      if (res.containsKey('statusCode') && res['statusCode'] == 200) {
+        info = BuyInfo.fromJson(res['result']['data']);
       }
     });
     return info;
   }
 
   // sell gold
-  static Future<SellInfo?> sellGold({
-    required User user,
-    required String bankId,
-    required Transaction transaction,
-    required ExchangeRates rate
-  }) async {
+  static Future<SellInfo?> sellGold(
+      {required User user,
+      required String bankId,
+      required Transaction transaction,
+      required ExchangeRates rate}) async {
     SellInfo? info;
     final authToken = await LocalDBServices.getGPAccessToken();
     await HttpServices.sendPostReq('sell', body: {
@@ -136,7 +132,7 @@ class GoldServices {
   // get gold rate
   static Future<ExchangeRates?> getMetalsRate() async {
     ExchangeRates? rates;
-    await HttpServices.sendGetReq('rates').then((result) {
+    await HttpServices.sendGetReq('${_baseUrl}rates').then((result) {
       if (result == null) {
         return;
       }
@@ -174,15 +170,11 @@ class GoldServices {
       if (addr == null) {
         return;
       }
-      if (!addr.containsKey('statusCode')
-        || addr['statusCode'] != 200) {
+      if (!addr.containsKey('statusCode') || addr['statusCode'] != 200) {
         return;
       }
-      rsp = UserAddressResponse
-        .fromJson(addr['result']['data']);
+      rsp = UserAddressResponse.fromJson(addr['result']['data']);
     });
     return rsp;
   }
-
-  // add gold bank account
-  static Future<Ban
+}

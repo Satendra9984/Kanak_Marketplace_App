@@ -54,28 +54,6 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
     // }
   }
 
-  Future<void> _buyVerify({
-    required String rateId,
-    required String goldAmount,
-    required String buyPrice,
-  }) async {
-    try {
-      await http.post(
-        Uri.parse(
-          'https://partners-staging.safegold.com/v4/users/%7Buser_id%7D/buy-gold-verify/276758',
-        ),
-        headers: {
-          'Authorization': 'Bearer 38778d59d5e17cfadc750e87703eb5e2',
-        },
-        body: {
-          'rate_id': rateId,
-          'gold_amount': goldAmount,
-          'buy_price': buyPrice,
-        },
-      );
-    } catch (e) {}
-  }
-
   @override
   void dispose() {
     // TODO: implement dispose
@@ -97,6 +75,7 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     // Do something when payment succeeds
     debugPrint('payment done');
+
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
@@ -127,33 +106,33 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
           'Basic ${base64Encode(utf8.encode('$userName:$password'))}';
 
       Map<String, dynamic> body = {
-        'amount': 50000,
+        'amount': 100,
         'currency': 'INR',
         'receipt': 'rcptid_11',
       };
-      var res = await http.post(Uri.https('api.razorpay.com', 'v1/orders'),
-          headers: <String, String>{
-            'Content-Type': 'application/json',
-            'authorization': basicAuth,
-          },
-          body: jsonEncode(body));
-      debugPrint('response order: ${res.body}');
-      if (res.statusCode == 200) {
-        var map = jsonDecode(res.body);
-        var options = {
-          'key': 'rzp_test_nxde3wSg0ubBiN',
-          'amount': map['amount'], //in the smallest currency sub-unit.
-          'name': 'Acme Corp.',
-          'order_id': map['id'], // Generate order_id using Orders API
-          'description': 'Fine T-Shirt',
-          'timeout': 300, // in seconds
-          'prefill': {
-            'contact': '9123456789',
-            'email': 'gaurav.kumar@example.com'
-          }
-        };
-        _razorpay.open(options);
-      }
+      // var res = await http.post(Uri.https('api.razorpay.com', 'v1/orders'),
+      //     headers: <String, String>{
+      //       'Content-Type': 'application/json',
+      //       'authorization': basicAuth,
+      //     },
+      //     body: jsonEncode(body));
+      // debugPrint('response order: ${res.body}');
+      // if (res.statusCode == 200) {
+      //   var map = jsonDecode(res.body);
+      var options = {
+        'key': 'rzp_test_nxde3wSg0ubBiN',
+        'amount': 100, //in the smallest currency sub-unit.
+        'name': 'Tasvat pvt. lmt.',
+        // 'order_id': map['id'], // Generate order_id using Orders API
+        'description': 'Gold',
+        'timeout': 300, // in seconds
+        'prefill': {
+          'contact': '9123456789',
+          'email': 'gaurav.kumar@example.com'
+        }
+      };
+      _razorpay.open(options);
+      // }
     } catch (e) {}
   }
 

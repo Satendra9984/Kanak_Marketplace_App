@@ -7,8 +7,6 @@ class BuyInitial extends BuyState {}
 
 class BuyingState extends BuyState {}
 
-class BuyCompletedState extends BuyState {
-  // data
-}
+class BuyCompletedState extends BuyState {}
 
 class BuyErrorState extends BuyState {}

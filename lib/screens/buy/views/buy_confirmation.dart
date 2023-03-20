@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:custom_timer/custom_timer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/screens/buy/views/buy_completed.dart';
@@ -116,6 +117,44 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
   void _handleExternalWallet(ExternalWalletResponse response) {
     // Do something when an external wallet is selected
     debugPrint('payment done');
+  }
+
+  Future<void> createOrder() async {
+    try {
+      String userName = 'rzp_test_nxde3wSg0ubBiN';
+      String password = 'LlZL90wcQYlZQhWjdCY29scS';
+      String basicAuth =
+          'Basic ${base64Encode(utf8.encode('$userName:$password'))}';
+
+      Map<String, dynamic> body = {
+        'amount': 50000,
+        'currency': 'INR',
+        'receipt': 'rcptid_11',
+      };
+      var res = await http.post(Uri.https('api.razorpay.com', 'v1/orders'),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'authorization': basicAuth,
+          },
+          body: jsonEncode(body));
+      debugPrint('response order: ${res.body}');
+      if (res.statusCode == 200) {
+        var map = jsonDecode(res.body);
+        var options = {
+          'key': 'rzp_test_nxde3wSg0ubBiN',
+          'amount': map['amount'], //in the smallest currency sub-unit.
+          'name': 'Acme Corp.',
+          'order_id': map['id'], // Generate order_id using Orders API
+          'description': 'Fine T-Shirt',
+          'timeout': 300, // in seconds
+          'prefill': {
+            'contact': '9123456789',
+            'email': 'gaurav.kumar@example.com'
+          }
+        };
+        _razorpay.open(options);
+      }
+    } catch (e) {}
   }
 
   @override
@@ -311,23 +350,23 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                       ElevatedButton(
                                         onPressed: () async {
                                           /// TODO: proceed to PAYMENTS SCREEN
-
-                                          var options = {
-                                            'key': 'LlZL90wcQYlZQhWjdCY29scS',
-                                            'amount':
-                                                50000, //in the smallest currency sub-unit.
-                                            'name': 'Tasvat',
-                                            'order_id': UUID
-                                                .getUUID(), // Generate order_id using Orders API
-                                            'description': 'Gold Order',
-                                            'timeout': 60, // in seconds
-                                            'prefill': {
-                                              'contact': '9123456789',
-                                              'email':
-                                                  'gaurav.kumar@example.com'
-                                            }
-                                          };
-                                          _razorpay.open(options);
+                                          await createOrder();
+                                          // var options = {
+                                          //   'key': 'LlZL90wcQYlZQhWjdCY29scS',
+                                          //   'amount':
+                                          //       50000, //in the smallest currency sub-unit.
+                                          //   'name': 'Tasvat',
+                                          //   'order_id':
+                                          //       'order_EMBFqjDHEEn80l', // Generate order_id using Orders API
+                                          //   'description': 'Gold Order',
+                                          //   'timeout': 60, // in seconds
+                                          //   'prefill': {
+                                          //     'contact': '9123456789',
+                                          //     'email':
+                                          //         'gaurav.kumar@example.com'
+                                          //   }
+                                          // };
+                                          // _razorpay.open(options);
                                         },
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(

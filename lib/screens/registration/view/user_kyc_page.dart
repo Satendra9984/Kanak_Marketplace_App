@@ -13,6 +13,7 @@ import 'package:tasvat/providers/auth_provider.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 import '../../../widgets/image_upload_widget.dart';
+import '../../home_screen.dart';
 
 class UserKYCPage extends ConsumerStatefulWidget {
   const UserKYCPage({super.key});
@@ -24,6 +25,38 @@ class UserKYCPage extends ConsumerStatefulWidget {
 class _UserKYCPageState extends ConsumerState<UserKYCPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _panCtrl = TextEditingController();
+  final TextEditingController _nameCtrl = TextEditingController();
+  DateTime? _dob;
+  DateTime getEndDate() {
+    DateTime today = DateTime.now();
+    DateTime endDate = DateTime(
+      today.year - 18,
+      today.month,
+      today.day,
+      today.hour,
+      today.minute,
+      today.second,
+      today.millisecond,
+      today.microsecond,
+    );
+    return endDate;
+  }
+
+  DateTime getFirstDate() {
+    DateTime today = DateTime.now();
+    DateTime endDate = DateTime(
+      today.year - 130,
+      today.month,
+      today.day,
+      today.hour,
+      today.minute,
+      today.second,
+      today.millisecond,
+      today.microsecond,
+    );
+    return endDate;
+  }
+
   XFile? _image;
 
   Future<void> _uploadPanCardImage() async {
@@ -40,6 +73,7 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
 
   @override
   void initState() {
+    _dob = getEndDate();
     super.initState();
   }
 
@@ -71,56 +105,142 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
                 ),
                 const SizedBox(height: 20),
 
-                /// Aadhar number
-                // Text(
-                //   'Aadhar',
-                //   style: TextStyle(
-                //     color: text500,
-                //     fontSize: body2,
-                //     fontWeight: FontWeight.w500,
-                //   ),
-                // ),
-                // Container(
-                //   margin:
-                //       const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                //   padding:
-                //       const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                //   decoration: BoxDecoration(
-                //     borderRadius: BorderRadius.circular(10),
-                //   ),
-                //   child: TextFormField(
-                //     autovalidateMode: AutovalidateMode.onUserInteraction,
-                //     keyboardType: TextInputType.number,
-                //     controller: _aadharCtrl,
-                //     validator: (value) {
-                //       if (value == null || value.isEmpty) {
-                //         return 'Please enter Aadhar number';
-                //       }
-                //       bool aadharValid =
-                //           RegExp(r'^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}$')
-                //               .hasMatch(value);
-                //
-                //       if (!aadharValid) {
-                //         return 'Please enter valid Aadhar number';
-                //       }
-                //       return null;
-                //     },
-                //     style: TextStyle(
-                //       fontSize: 16,
-                //       fontWeight: FontWeight.w500,
-                //       color: accent2,
-                //     ),
-                //     decoration: getInputDecoration('123412341234'),
-                //   ),
-                // ),
-                // const SizedBox(height: 10),
-                /// Aadhar Card Image
-                // ImageUploadButtonWidget(
-                //   uploadPath: 'tasvatusercontent/aadhar/${user.id}',
-                //   title: 'Aadhar',
-                // ),
-
+                /// name
+                Text(
+                  'First Name',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    // color: text150,
+                  ),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: TextInputType.name,
+                    controller: _nameCtrl,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter your First Name';
+                      } else if (value.length > 30) {
+                        return 'Less than 30 letters';
+                      } else if (value.length < 2) {
+                        return 'Greater than 2 letters';
+                      }
+                      return null;
+                    },
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: accent2,
+                    ),
+                    decoration: getInputDecoration('First Name').copyWith(
+                      errorStyle: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: error,
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
+
+                /// date of birth
+                Text(
+                  'Date of Birth',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                FormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  initialValue: _dob,
+                  validator: (dob) {
+                    debugPrint(dob.toString());
+                    if (dob == null) {
+                      return 'Please enter Date of Birth';
+                    }
+                    return null;
+                  },
+                  builder: (formState) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: text100,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                _dob == null
+                                    ? 'yyyy-mm-dd'
+                                    : _dob!.toIso8601String().split('T')[0],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  color: _dob == null ? accentBG : accent2,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () async {
+                                  await showDatePicker(
+                                    context: context,
+                                    initialDate: getEndDate(),
+                                    firstDate: getFirstDate(),
+                                    lastDate: getEndDate(),
+                                  ).then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        _dob = value;
+                                      });
+                                      // debugPrint(_dob);
+                                      formState.didChange(_dob);
+                                    }
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.date_range,
+                                  color: accent2.withOpacity(0.7),
+                                  size: 32,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (formState.hasError)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: Text(
+                              formState.errorText.toString(),
+                              style: TextStyle(
+                                color: error,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 10),
 
                 /// Pan Number
                 Text(
@@ -217,7 +337,7 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
         children: [
           /// Confirm BUTTON
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2.5),
             child: ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
@@ -242,19 +362,27 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
               ),
             ),
           ),
-          // Container(
-          //   margin: const EdgeInsets.only(top: 5),
-          //   child: TextButton(
-          //     onPressed: () {},
-          //     child: Text(
-          //       'Skip for now',
-          //       style: TextStyle(
-          //         color: accent2,
-          //         fontSize: 16,
-          //       ),
-          //     ),
-          //   ),
-          // ),
+
+          /// skip button
+          Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            child: TextButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (ctx) => const HomeScreen(),
+                  ),
+                );
+              },
+              child: Text(
+                'Skip for now',
+                style: TextStyle(
+                  color: accent2,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );

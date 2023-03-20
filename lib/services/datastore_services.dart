@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:tasvat/models/ModelProvider.dart';
@@ -217,10 +216,8 @@ class DatastoreServices {
     return createdAcc;
   }
   
-  // create and upload file in S3
-  static Future<void> createAndUploadFile(
-      Uint8List file, Function(TransferProgress) onProgress,
-      {required String path, required String uploadPath}) async {
+  // update kyc details
+  static Future<void> updateKycDetails() async {
     File file = File(path);
     try {
       final UploadFileResult result = await Amplify.Storage.uploadFile(

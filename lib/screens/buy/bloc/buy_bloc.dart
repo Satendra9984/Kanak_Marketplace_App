@@ -9,25 +9,30 @@ part 'buy_state.dart';
 
 class BuyBloc extends Bloc<BuyEvent, BuyState> {
   BuyBloc() : super(BuyInitial()) {
-    on<BuyEvent>((event, emit) {
-      // implement event handler
-      if (event is RateConfirmEvent) {
-        onRateConfirmEventHandler();
-      } else if (event is ConfirmButtonPressedEvent) {
-        onConfirmButtonPressedEventHandler();
-      } else if (event is PaymentErrorEvent) {
-        onPaymentErrorEventHandler();
-      } else if (event is PaymentSuccessEvent) {
-        onPaymentSuccessEventHandler();
-      } else if (event is BuyErrorEvent) {
-        onBuyErrorEventHandler();
-      } else if (event is BuySuccessEvent) {
-        onBuySuccessEventHandler();
-      } else if (event is WalletUpdateFailedEvent) {
-        onWalletUpdateErrorEventHandler();
-      } else if (event is WalletUpdateSuccessEvent) {
-        onWalletUpdateSuccessEventHandler();
-      }
+    on<RateConfirmEvent>((event, emit) {
+      onRateConfirmEventHandler();
+    });
+
+    on<ConfirmButtonPressedEvent>((event, emit) {
+      onConfirmButtonPressedEventHandler();
+    });
+    on<PaymentSuccessEvent>((event, emit) {
+      onPaymentSuccessEventHandler();
+    });
+    on<PaymentErrorEvent>((event, emit) {
+      onPaymentErrorEventHandler();
+    });
+    on<BuySuccessEvent>((event, emit) {
+      onBuySuccessEventHandler();
+    });
+    on<BuyErrorEvent>((event, emit) {
+      onBuyErrorEventHandler();
+    });
+    on<WalletUpdateFailedEvent>((event, emit) {
+      onWalletUpdateErrorEventHandler();
+    });
+    on<WalletUpdateSuccessEvent>((event, emit) {
+      onWalletUpdateErrorEventHandler();
     });
   }
 

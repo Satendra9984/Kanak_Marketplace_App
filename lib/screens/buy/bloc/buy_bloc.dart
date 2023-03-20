@@ -36,10 +36,20 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
     });
   }
 
-  Future<void> onRateConfirmEventHandler() async {}
-  Future<void> onConfirmButtonPressedEventHandler() async {}
+  Future<void> onRateConfirmEventHandler() async {
+    // TODO: CALLED WHEN CONTINUE BUTTON ON BUY-ASSET SCREEN PRESSED
+    // TODO: TRANSFER TO BUY-CONFIRM SCREEN (RATE_DATA, AMOUNT OR QUANTITY)
+    // TODO: START TIMER
+  }
+  Future<void> onConfirmButtonPressedEventHandler() async {
+    // TODO: CALL PAYMENTS
+  }
   Future<void> onPaymentErrorEventHandler() async {}
-  Future<void> onPaymentSuccessEventHandler() async {}
+  Future<void> onPaymentSuccessEventHandler() async {
+    // TODO: CALL AUGMONT BUY-API
+    // TODO: UPDATE IN TASVAT'S DATABASE
+    // TODO: CALL BUY-SUCCESS OR BUY-FAILURE EVENTS
+  }
   Future<void> onBuyErrorEventHandler() async {}
   Future<void> onBuySuccessEventHandler() async {}
   Future<void> onWalletUpdateErrorEventHandler() async {}

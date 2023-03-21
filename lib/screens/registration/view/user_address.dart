@@ -4,12 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
-import 'package:tasvat/services/rest_services.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'city_widget.dart';
 
 class UserAddressPage extends ConsumerStatefulWidget {
   final String? email;
@@ -25,18 +22,44 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
   final TextEditingController _addressCtrl = TextEditingController();
   final TextEditingController _stateCtrl = TextEditingController();
   final TextEditingController _cityCtrl = TextEditingController();
-  List<Map<dynamic, dynamic>> _statesList = [];
+  List<Map<dynamic, dynamic>> _statesList = [], _citiesList = [];
 
-  Map<dynamic, dynamic>? _state, _city;
+  Map<dynamic, dynamic>? _state, _stateId, _city, _cityId;
+  Future<void> getCitiesList() async {
+    debugPrint(_citiesList.toString());
+    try {
+      if (_state != null) {
+        await GoldServices.getCityList(_state!['id']).then((value) {
+          //List<Map<dynamic, dynamic>> cityList = [];
+          _citiesList = [];
+          for (var city in value) {
+            Map<dynamic, dynamic> cityMap = Map.from(city);
+            _citiesList.add(cityMap);
+          }
+          setState(() {
+            _citiesList;
+          });
+          debugPrint('citiesList: $_state');
+        });
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 
   Future<void> _initializeStatesList() async {
     if (_statesList.isEmpty) {
-      // List<Map<dynamic, dynamic>> states =
-      //     await GoldServices.getStateCityList('state');
-      // debugPrint(states.toString());
-      // setState(() {
-      //   _statesList = states;
-      // });
+      List<dynamic> states = await GoldServices.getStateCityList();
+
+      for (var element in states) {
+        Map<dynamic, dynamic> state = Map.from(element);
+        _statesList.add(state);
+      }
+      await getCitiesList();
+      setState(() {
+        _statesList;
+      });
+      // debugPrint(_statesList.toString());
     } else {
       return;
     }
@@ -44,7 +67,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
 
   @override
   void initState() {
-    _initializeStatesList();
+    // _initializeStatesList();
     super.initState();
   }
 
@@ -213,138 +236,197 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                 const SizedBox(height: 10),
 
                 /// state and city
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'State',
-                            style: TextStyle(
-                              color: text500,
-                              fontSize: body2,
-                              fontWeight: FontWeight.w500,
-                            ),
+                Text(
+                  'State',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                FormField(
+                  initialValue: _state,
+                  validator: (state) {
+                    if (state == null) {
+                      return 'Select State';
+                    }
+                    return null;
+                  },
+                  builder: (formState) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: text100,
                           ),
-                          const SizedBox(height: 5),
-                          Container(
-                            padding: const EdgeInsets.only(left: 5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: text100,
-                            ),
-                            child: FutureBuilder(
-                                future: _initializeStatesList(),
-                                builder: (context, snap) {
-                                  if (snap.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                          color: accent2),
-                                    );
-                                  } else if (snap.hasData) {
-                                    return DropdownButton<
-                                        Map<dynamic, dynamic>>(
-                                      hint: Text(
-                                        'Delhi',
-                                        style: TextStyle(
-                                          color: accentBG,
-                                        ),
-                                      ),
-                                      value: _state == null || _state!.isEmpty
-                                          ? null
-                                          : _state,
-                                      items: _statesList.map((state) {
-                                        return DropdownMenuItem(
-                                          value: state,
-                                          child: Text(
-                                            state['name'],
-                                            style: TextStyle(color: accent2),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _state = value;
-                                        });
-                                      },
-                                      menuMaxHeight: 400,
-                                      underline: Container(),
-                                      dropdownColor: text150,
-                                      isExpanded: true,
-                                      borderRadius: BorderRadius.circular(10),
-                                      icon: Icon(
-                                        Icons.arrow_drop_down,
-                                        color: accent2,
-                                      ),
-                                    );
-                                  } else {
-                                    return const Center(
-                                        child: Text('Something Went Wrong'));
-                                  }
-                                }),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'City',
-                            style: TextStyle(
-                              color: text500,
-                              fontSize: body2,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Container(
-                            padding: const EdgeInsets.only(left: 5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: text100,
-                            ),
-                            child: _state != null
-                                ? CityWidget(
-                                    state: _state!['id'],
-                                    onCitySelected: (city) {
-                                      _city = city['id'];
-                                    },
-                                  )
-                                : DropdownButton(
-                                    hint: Text(
-                                      'New Delhi',
-                                      style: TextStyle(
-                                        color: accentBG,
-                                      ),
-                                    ),
-                                    value: null,
-                                    items: null,
-                                    onChanged: (value) {},
-                                    menuMaxHeight: 400,
-                                    underline: Container(),
-                                    dropdownColor: text150,
-                                    isExpanded: true,
-                                    borderRadius: BorderRadius.circular(10),
-                                    icon: Icon(
-                                      Icons.arrow_drop_down,
-                                      color: text100,
+                          child: FutureBuilder(
+                            future: _initializeStatesList(),
+                            builder: (context, snap) {
+                              if (snap.connectionState ==
+                                      ConnectionState.waiting ||
+                                  snap.hasError == false) {
+                                return DropdownButton<Map<dynamic, dynamic>>(
+                                  hint: Text(
+                                    'Delhi',
+                                    style: TextStyle(
+                                      color: accentBG,
                                     ),
                                   ),
+                                  value: _state == null || _state!.isEmpty
+                                      ? null
+                                      : _state,
+                                  items: _statesList.map((state) {
+                                    return DropdownMenuItem(
+                                      value: state,
+                                      child: Text(
+                                        state['name'],
+                                        style: TextStyle(color: accent2),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _state = value;
+                                      _city = null;
+                                      _citiesList = [];
+                                      debugPrint(_state.toString());
+                                    });
+                                    getCitiesList();
+                                  },
+                                  menuMaxHeight: 400,
+                                  underline: Container(),
+                                  dropdownColor: text150,
+                                  isExpanded: true,
+                                  borderRadius: BorderRadius.circular(10),
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: _statesList.isNotEmpty
+                                        ? accent2
+                                        : text100,
+                                  ),
+                                );
+                              } else {
+                                return Container(
+                                  height: 45,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: text100,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Something Went Wrong',
+                                    style: TextStyle(color: error),
+                                  ),
+                                );
+                              }
+                            },
                           ),
-                        ],
-                      ),
-                    )
-                  ],
+                        ),
+                        if (formState.hasError)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 5),
+                            child: Text(
+                              formState.errorText.toString(),
+                              style: TextStyle(
+                                color: error,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
+
                 const SizedBox(height: 25),
+                Text(
+                  'City',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                FormField(
+                    initialValue: _city,
+                    validator: (city) {
+                      if (_state == null) {
+                        return 'First Select State';
+                      } else if (city == null) {
+                        return 'Select City';
+                      }
+                      return null;
+                    },
+                    builder: (formState) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: text100,
+                            ),
+                            child: DropdownButton<Map<dynamic, dynamic>>(
+                              hint: Text(
+                                'New Delhi',
+                                style: TextStyle(
+                                  color: accentBG,
+                                ),
+                              ),
+                              value: _city != null ? _city! : null,
+                              items: _citiesList.map((city) {
+                                return DropdownMenuItem<Map<dynamic, dynamic>>(
+                                  value: city,
+                                  child: Text(
+                                    city['name'],
+                                    style: TextStyle(color: accent2),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    _city = value;
+                                  });
+                                }
+                              },
+                              menuMaxHeight: 400,
+                              underline: Container(),
+                              dropdownColor: text150,
+                              isExpanded: true,
+                              borderRadius: BorderRadius.circular(10),
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color:
+                                    _citiesList.isNotEmpty ? accent2 : text100,
+                              ),
+                            ),
+                          ),
+                          if (formState.hasError)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 5),
+                              child: Text(
+                                formState.errorText.toString(),
+                                style: TextStyle(
+                                  color: error,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    }),
               ],
             ),
           ),

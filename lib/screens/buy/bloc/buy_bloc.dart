@@ -8,16 +8,15 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/models/gold_models/buy_info_model.dart';
 import 'package:tasvat/models/gold_models/rate_model.dart';
-
 part 'buy_event.dart';
 part 'buy_state.dart';
 
 class BuyBloc extends Bloc<BuyEvent, BuyState> {
   late CustomTimerController timerController;
+  late Timer timer;
   late Transaction _transaction;
   BuyBloc() : super(BuyInitial()) {
     on<RateConfirmEvent>((event, emit) {
-      onRateConfirmEventHandler();
       _transaction = Transaction(
         blockId: event.exchangeRates.blockId,
         lockPrice: event.exchangeRates.gBuy,
@@ -25,13 +24,13 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
         quantity: event.quantity,
         dateTime: TemporalDateTime.now(),
         transactionReceiverId: '6f6d07c8-9dab-485d-9423-4b16152af571',
-        transactionSenderId: event.userId
+        transactionSenderId: event.userId,
       );
+      onRateConfirmEventHandler();
     });
 
     on<ConfirmButtonPressedEvent>((event, emit) {
       onConfirmButtonPressedEventHandler();
-
     });
     on<PaymentSuccessEvent>((event, emit) {
       onPaymentSuccessEventHandler();
@@ -54,11 +53,23 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
   }
 
   Future<void> onRateConfirmEventHandler() async {
-    // TODO: CALLED WHEN CONTINUE BUTTON ON BUY-ASSET SCREEN PRESSED
     // TODO: TRANSFER TO BUY-CONFIRM SCREEN (RATE_DATA, AMOUNT OR QUANTITY)
     // TODO: START TIMER
+
+    timer = Timer.periodic(
+      const Duration(seconds: 180),
+      (timer) {
+        if (timer.isActive) {
+        } else if (timer.isActive == false) {
+          // TODO: EMIT CANCEL ALL STATES
+          debugPrint(timer.tick.toString());
+        }
+      },
+    );
+
     timerController.start();
   }
+
   Future<void> onConfirmButtonPressedEventHandler() async {
     // TODO: CALL PAYMENTS
   }

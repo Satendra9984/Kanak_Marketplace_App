@@ -52,7 +52,7 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
 
       await DatastoreServices.fetchUserById(user.userId);
 
-      await DatastoreServices.checkRequiredData(user.userId)
+      await DatastoreServices.checkRequiredData(uid: user.userId)
           .then((value) async {
         if (value == null) {
           await DatastoreServices.fetchUserById(user.userId).then((value) {

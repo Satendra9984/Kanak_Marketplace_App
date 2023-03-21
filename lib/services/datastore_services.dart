@@ -9,7 +9,6 @@ import 'package:tasvat/models/gold_models/address_response.dart';
 class DatastoreServices {
   static final _instance = Amplify.API;
 
-
   // _________________________________________________TRANSACTION OPERATIONS___________________________________________
 
   // add pending transaction
@@ -21,21 +20,20 @@ class DatastoreServices {
         .mutate(request: pendingTransactionMutation)
         .response
         .then((pendingTx) async {
-          if (pendingTx.data == null) {
-            return;
-          }
-          tx = pendingTx.data!;
-        });
+      if (pendingTx.data == null) {
+        return;
+      }
+      tx = pendingTx.data!;
+    });
     return tx;
   }
 
   // mark successful transaction
-  static Future<Transaction?> markSuccessfulPurchase({
-    required Transaction transaction,
-    required String gpTxId,
-    required double balance,
-    required String txId
-  }) async {
+  static Future<Transaction?> markSuccessfulPurchase(
+      {required Transaction transaction,
+      required String gpTxId,
+      required double balance,
+      required String txId}) async {
     Transaction? result;
     final req = ModelMutations.update(transaction.copyWith(
       txId: txId,
@@ -53,13 +51,8 @@ class DatastoreServices {
     return result;
   }
 
-  // mark failed transaction
-  static Future<Transaction?> 
-
   // get the next required details
-  static Future<String?> checkRequiredData({
-    required String uid
-  }) async {
+  static Future<String?> checkRequiredData({required String uid}) async {
     String? nextRequiredDetails;
     final request = ModelQueries.get(User.classType, uid);
     await _instance.query(request: request).response.then((result) async {
@@ -162,11 +155,10 @@ class DatastoreServices {
     });
     return list;
   }
-  
+
   // fetch all bank accounts of user
-  static Future<List<BankAccount>> getBankAccountsOfUser({
-    required String userId
-  }) async {
+  static Future<List<BankAccount>> getBankAccountsOfUser(
+      {required String userId}) async {
     var list = <BankAccount>[];
     _instance
         .query(
@@ -257,7 +249,7 @@ class DatastoreServices {
     });
     return createdAcc;
   }
-  
+
   // update KYC details of user
   static Future<User?> updateKycDetails(
       {required Map<String, dynamic> details, required User user}) async {

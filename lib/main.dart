@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasvat/screens/buy/bloc/buy_bloc.dart';
 import 'package:tasvat/screens/home_screen.dart';
 import 'package:tasvat/screens/login/bloc/login_bloc.dart';
 import 'package:tasvat/screens/onboarding/onboarding_page.dart';
@@ -52,6 +53,9 @@ class _TasvatState extends ConsumerState<Tasvat> {
           BlocProvider(
             create: (context) => SignUpBloc(),
           ),
+          BlocProvider(
+            create: (context) => BuyBloc()
+          )
         ],
         child: const MaterialApp(
           home: OnBoardingPage(),

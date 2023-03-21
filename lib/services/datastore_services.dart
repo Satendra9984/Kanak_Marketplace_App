@@ -9,8 +9,57 @@ import 'package:tasvat/models/gold_models/address_response.dart';
 class DatastoreServices {
   static final _instance = Amplify.API;
 
+
+  // _________________________________________________TRANSACTION OPERATIONS___________________________________________
+
+  // add pending transaction
+  static Future<Transaction?> addPendingTransaction(
+      {required Transaction transaction}) async {
+    Transaction? tx;
+    final pendingTransactionMutation = ModelMutations.create(transaction);
+    await _instance
+        .mutate(request: pendingTransactionMutation)
+        .response
+        .then((pendingTx) async {
+          if (pendingTx.data == null) {
+            return;
+          }
+          tx = pendingTx.data!;
+        });
+    return tx;
+  }
+
+  // mark successful transaction
+  static Future<Transaction?> markSuccessfulPurchase({
+    required Transaction transaction,
+    required String gpTxId,
+    required double balance,
+    required String txId
+  }) async {
+    Transaction? result;
+    final req = ModelMutations.update(transaction.copyWith(
+      txId: txId,
+      status: TransactionStatus.SUCCESSFUL,
+      gpTxId: gpTxId,
+      balance: balance,
+      dateTime: TemporalDateTime.now(),
+    ));
+    await _instance.mutate(request: req).response.then((updatedTx) {
+      if (updatedTx.data == null) {
+        return;
+      }
+      result = updatedTx.data;
+    });
+    return result;
+  }
+
+  // mark failed transaction
+  static Future<Transaction?> 
+
   // get the next required details
-  static Future<String?> checkRequiredData(String uid) async {
+  static Future<String?> checkRequiredData({
+    required String uid
+  }) async {
     String? nextRequiredDetails;
     final request = ModelQueries.get(User.classType, uid);
     await _instance.query(request: request).response.then((result) async {
@@ -51,6 +100,8 @@ class DatastoreServices {
     safePrint(nextRequiredDetails);
     return nextRequiredDetails;
   }
+
+  // _________________________________________________FETCH OPERATION_____________________________________________________
 
   // fetch user details
   static Future<User?> fetchUserById(String id) async {
@@ -111,34 +162,29 @@ class DatastoreServices {
     });
     return list;
   }
-
-  // update KYC details of user
-  static Future<User?> updateKycDetails(
-      {required Map<String, dynamic> details, required User user}) async {
-    final req =
-        ModelMutations.update(user.copyWith(kycDetails: jsonEncode(details)));
-    final res = await _instance.mutate(request: req).response;
-    return res.data;
-  }
-
-  // upadate gold provider details of user
-  static Future<User?> updateGPDetails(
-      {required User user, required Map<String, dynamic> details}) async {
-    final req = ModelMutations.update(
-        user.copyWith(goldProviderDetails: jsonEncode(details)));
-    final res = await _instance.mutate(request: req).response;
-    return res.data;
-  }
-
-  // buy gold
-  static Future<Transaction?> buyGold(
-      {required Transaction transaction}) async {
-    final pendingTransactionMutation = ModelMutations.create(transaction);
-    await _instance
-        .mutate(request: pendingTransactionMutation)
+  
+  // fetch all bank accounts of user
+  static Future<List<BankAccount>> getBankAccountsOfUser({
+    required String userId
+  }) async {
+    var list = <BankAccount>[];
+    _instance
+        .query(
+            request: ModelQueries.list(BankAccount.classType,
+                where: BankAccount.USERID.eq(userId)))
         .response
-        .then((pendingTx) async {});
+        .then((accounts) {
+      if (accounts.data == null || accounts.data!.items.isEmpty) {
+        return;
+      }
+      for (var acc in accounts.data!.items) {
+        list.add(acc!);
+      }
+    });
+    return list;
   }
+
+  // ________________________________________________CREATE AND UPDATE OPERATION___________________________________________
 
   // create user with wallet
   static Future<User?> createUserWithWallet(
@@ -210,5 +256,23 @@ class DatastoreServices {
       createdAcc = acc.data;
     });
     return createdAcc;
+  }
+  
+  // update KYC details of user
+  static Future<User?> updateKycDetails(
+      {required Map<String, dynamic> details, required User user}) async {
+    final req =
+        ModelMutations.update(user.copyWith(kycDetails: jsonEncode(details)));
+    final res = await _instance.mutate(request: req).response;
+    return res.data;
+  }
+
+  // upadate gold provider details of user
+  static Future<User?> updateGPDetails(
+      {required User user, required Map<String, dynamic> details}) async {
+    final req = ModelMutations.update(
+        user.copyWith(goldProviderDetails: jsonEncode(details)));
+    final res = await _instance.mutate(request: req).response;
+    return res.data;
   }
 }

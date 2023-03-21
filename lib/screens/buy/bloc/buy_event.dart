@@ -6,16 +6,19 @@ class BuyEvent extends Equatable {
 }
 
 class RateConfirmEvent extends BuyEvent {
-  final double amount;
+  final double quantity;
+  final String userId;
   final ExchangeRates exchangeRates;
   RateConfirmEvent({
+    required this.userId,
     required this.exchangeRates,
-    required this.amount
+    required this.quantity
   });
   @override
   List<Object?> get props => [
     exchangeRates,
-    amount
+    userId,
+    quantity
   ];
 }
 
@@ -71,6 +74,7 @@ class PurchaseSuccessEvent extends BuyEvent {
 }
 
 class WalletUpdateSuccessEvent extends BuyEvent {
+
   @override
   List<Object?> get props => [];
 }

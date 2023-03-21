@@ -41,6 +41,7 @@ class Transaction extends Model {
   final double? _quantity;
   final String? _blockId;
   final String? _gpTxId;
+  final double? _balance;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
   final String? _transactionReceiverId;
@@ -107,6 +108,10 @@ class Transaction extends Model {
     return _gpTxId;
   }
   
+  double? get balance {
+    return _balance;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -123,9 +128,9 @@ class Transaction extends Model {
     return _transactionSenderId;
   }
   
-  const Transaction._internal({required this.id, type, amount, status, dateTime, receiver, sender, txId, lockPrice, userId, quantity, blockId, gpTxId, createdAt, updatedAt, transactionReceiverId, transactionSenderId}): _type = type, _amount = amount, _status = status, _dateTime = dateTime, _receiver = receiver, _sender = sender, _txId = txId, _lockPrice = lockPrice, _userId = userId, _quantity = quantity, _blockId = blockId, _gpTxId = gpTxId, _createdAt = createdAt, _updatedAt = updatedAt, _transactionReceiverId = transactionReceiverId, _transactionSenderId = transactionSenderId;
+  const Transaction._internal({required this.id, type, amount, status, dateTime, receiver, sender, txId, lockPrice, userId, quantity, blockId, gpTxId, balance, createdAt, updatedAt, transactionReceiverId, transactionSenderId}): _type = type, _amount = amount, _status = status, _dateTime = dateTime, _receiver = receiver, _sender = sender, _txId = txId, _lockPrice = lockPrice, _userId = userId, _quantity = quantity, _blockId = blockId, _gpTxId = gpTxId, _balance = balance, _createdAt = createdAt, _updatedAt = updatedAt, _transactionReceiverId = transactionReceiverId, _transactionSenderId = transactionSenderId;
   
-  factory Transaction({String? id, TransactionType? type, double? amount, TransactionStatus? status, TemporalDateTime? dateTime, Wallet? receiver, Wallet? sender, String? txId, String? lockPrice, String? userId, double? quantity, String? blockId, String? gpTxId, String? transactionReceiverId, String? transactionSenderId}) {
+  factory Transaction({String? id, TransactionType? type, double? amount, TransactionStatus? status, TemporalDateTime? dateTime, Wallet? receiver, Wallet? sender, String? txId, String? lockPrice, String? userId, double? quantity, String? blockId, String? gpTxId, double? balance, String? transactionReceiverId, String? transactionSenderId}) {
     return Transaction._internal(
       id: id == null ? UUID.getUUID() : id,
       type: type,
@@ -140,6 +145,7 @@ class Transaction extends Model {
       quantity: quantity,
       blockId: blockId,
       gpTxId: gpTxId,
+      balance: balance,
       transactionReceiverId: transactionReceiverId,
       transactionSenderId: transactionSenderId);
   }
@@ -165,6 +171,7 @@ class Transaction extends Model {
       _quantity == other._quantity &&
       _blockId == other._blockId &&
       _gpTxId == other._gpTxId &&
+      _balance == other._balance &&
       _transactionReceiverId == other._transactionReceiverId &&
       _transactionSenderId == other._transactionSenderId;
   }
@@ -188,6 +195,7 @@ class Transaction extends Model {
     buffer.write("quantity=" + (_quantity != null ? _quantity!.toString() : "null") + ", ");
     buffer.write("blockId=" + "$_blockId" + ", ");
     buffer.write("gpTxId=" + "$_gpTxId" + ", ");
+    buffer.write("balance=" + (_balance != null ? _balance!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null") + ", ");
     buffer.write("transactionReceiverId=" + "$_transactionReceiverId" + ", ");
@@ -197,7 +205,7 @@ class Transaction extends Model {
     return buffer.toString();
   }
   
-  Transaction copyWith({TransactionType? type, double? amount, TransactionStatus? status, TemporalDateTime? dateTime, Wallet? receiver, Wallet? sender, String? txId, String? lockPrice, String? userId, double? quantity, String? blockId, String? gpTxId, String? transactionReceiverId, String? transactionSenderId}) {
+  Transaction copyWith({TransactionType? type, double? amount, TransactionStatus? status, TemporalDateTime? dateTime, Wallet? receiver, Wallet? sender, String? txId, String? lockPrice, String? userId, double? quantity, String? blockId, String? gpTxId, double? balance, String? transactionReceiverId, String? transactionSenderId}) {
     return Transaction._internal(
       id: id,
       type: type ?? this.type,
@@ -212,6 +220,7 @@ class Transaction extends Model {
       quantity: quantity ?? this.quantity,
       blockId: blockId ?? this.blockId,
       gpTxId: gpTxId ?? this.gpTxId,
+      balance: balance ?? this.balance,
       transactionReceiverId: transactionReceiverId ?? this.transactionReceiverId,
       transactionSenderId: transactionSenderId ?? this.transactionSenderId);
   }
@@ -234,17 +243,18 @@ class Transaction extends Model {
       _quantity = (json['quantity'] as num?)?.toDouble(),
       _blockId = json['blockId'],
       _gpTxId = json['gpTxId'],
+      _balance = (json['balance'] as num?)?.toDouble(),
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null,
       _transactionReceiverId = json['transactionReceiverId'],
       _transactionSenderId = json['transactionSenderId'];
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'type': enumToString(_type), 'amount': _amount, 'status': enumToString(_status), 'dateTime': _dateTime?.format(), 'receiver': _receiver?.toJson(), 'sender': _sender?.toJson(), 'txId': _txId, 'lockPrice': _lockPrice, 'userId': _userId, 'quantity': _quantity, 'blockId': _blockId, 'gpTxId': _gpTxId, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'transactionReceiverId': _transactionReceiverId, 'transactionSenderId': _transactionSenderId
+    'id': id, 'type': enumToString(_type), 'amount': _amount, 'status': enumToString(_status), 'dateTime': _dateTime?.format(), 'receiver': _receiver?.toJson(), 'sender': _sender?.toJson(), 'txId': _txId, 'lockPrice': _lockPrice, 'userId': _userId, 'quantity': _quantity, 'blockId': _blockId, 'gpTxId': _gpTxId, 'balance': _balance, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format(), 'transactionReceiverId': _transactionReceiverId, 'transactionSenderId': _transactionSenderId
   };
   
   Map<String, Object?> toMap() => {
-    'id': id, 'type': _type, 'amount': _amount, 'status': _status, 'dateTime': _dateTime, 'receiver': _receiver, 'sender': _sender, 'txId': _txId, 'lockPrice': _lockPrice, 'userId': _userId, 'quantity': _quantity, 'blockId': _blockId, 'gpTxId': _gpTxId, 'createdAt': _createdAt, 'updatedAt': _updatedAt, 'transactionReceiverId': _transactionReceiverId, 'transactionSenderId': _transactionSenderId
+    'id': id, 'type': _type, 'amount': _amount, 'status': _status, 'dateTime': _dateTime, 'receiver': _receiver, 'sender': _sender, 'txId': _txId, 'lockPrice': _lockPrice, 'userId': _userId, 'quantity': _quantity, 'blockId': _blockId, 'gpTxId': _gpTxId, 'balance': _balance, 'createdAt': _createdAt, 'updatedAt': _updatedAt, 'transactionReceiverId': _transactionReceiverId, 'transactionSenderId': _transactionSenderId
   };
 
   static final QueryModelIdentifier<TransactionModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<TransactionModelIdentifier>();
@@ -265,6 +275,7 @@ class Transaction extends Model {
   static final QueryField QUANTITY = QueryField(fieldName: "quantity");
   static final QueryField BLOCKID = QueryField(fieldName: "blockId");
   static final QueryField GPTXID = QueryField(fieldName: "gpTxId");
+  static final QueryField BALANCE = QueryField(fieldName: "balance");
   static final QueryField TRANSACTIONRECEIVERID = QueryField(fieldName: "transactionReceiverId");
   static final QueryField TRANSACTIONSENDERID = QueryField(fieldName: "transactionSenderId");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
@@ -356,6 +367,12 @@ class Transaction extends Model {
       key: Transaction.GPTXID,
       isRequired: false,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Transaction.BALANCE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.double)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

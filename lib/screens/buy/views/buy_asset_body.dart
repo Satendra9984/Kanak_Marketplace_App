@@ -1,21 +1,24 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasvat/providers/auth_provider.dart';
+import 'package:tasvat/providers/gold_rate_provider.dart';
+import 'package:tasvat/screens/buy/bloc/buy_bloc.dart';
 import '../../../utils/app_constants.dart';
 import 'buy_confirmation.dart';
 
-class BuyAssetBody extends StatefulWidget {
+class BuyAssetBody extends ConsumerStatefulWidget {
   final Map<String, dynamic> goldApiRateData;
-
   const BuyAssetBody({
     Key? key,
     required this.goldApiRateData,
   }) : super(key: key);
 
   @override
-  State<BuyAssetBody> createState() => _BuyAssetBodyState();
+  ConsumerState<BuyAssetBody> createState() => _BuyAssetBodyState();
 }
 
-class _BuyAssetBodyState extends State<BuyAssetBody> {
+class _BuyAssetBodyState extends ConsumerState<BuyAssetBody> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _qtyController = TextEditingController();
@@ -414,20 +417,33 @@ class _BuyAssetBodyState extends State<BuyAssetBody> {
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // PROCEED TO BUY
                     closeKeyboard(context);
                     if (_formKey.currentState != null &&
                         _formKey.currentState!.validate()) {
+
                       // PROCEED TO CONFIRMATION SCREEN
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (ctx) => BuyConfirmationScreen(
-                            quantity: _qtyController.text,
+                      await ref.read(goldRateProvider.notifier).updateRates().then((value) {
+                        final rate = ref.read(goldRateProvider);
+                        context.read<BuyBloc>().add(
+                          RateConfirmEvent(
+                            userId: ref.read(authProvider).id!,
+                            exchangeRates: rate,
+                            quantity: double.parse(_amountController.text)
+                          )
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) => BuyConfirmationScreen(
+                              quantity: _qtyController.text,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      });
+                      
+                      
                     }
                   },
                   style: ElevatedButton.styleFrom(

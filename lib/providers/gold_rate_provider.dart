@@ -5,7 +5,7 @@ import 'package:tasvat/services/gold_services.dart';
 class GoldRateNotifier extends StateNotifier<ExchangeRates> {
   GoldRateNotifier() : super(ExchangeRates());
 
-  void updateRates() async {
+  Future<void> updateRates() async {
     await GoldServices.getMetalsRate().then((rates) {
       if (rates == null) {
         return;

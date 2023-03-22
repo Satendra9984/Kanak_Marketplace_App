@@ -25,11 +25,9 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
 
   Map<dynamic, dynamic>? _state, _city;
   Future<void> getCitiesList() async {
-    debugPrint(_citiesList.toString());
     try {
-      if (_state == null) {
+      if (_state != null) {
         await GoldServices.getCityList(_state!['id']).then((value) {
-          //List<Map<dynamic, dynamic>> cityList = [];
           _citiesList = [];
           for (var city in value) {
             Map<dynamic, dynamic> cityMap = Map.from(city);
@@ -75,6 +73,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
   Future<void> _createGoldUserWithAddress() async {
     final authData = await Amplify.Auth.getCurrentUser();
     final user = ref.read(userProvider);
+    safePrint(user);
     await GoldServices.registerGoldUser(
             phone: authData.username.substring(3),
             email: user!.email!,
@@ -83,12 +82,14 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
             pincode: _pinCodeCtrl.text,
             dob: user.dob!.getDateTime().toIso8601String().split('T')[0])
         .then((goldUser) async {
+          safePrint('Gold User Creation---> ${goldUser.toString()}');
       if (goldUser == null) {
         return;
       }
       await DatastoreServices.updateGPDetails(user: user, details: goldUser)
           .then((updatedUser) async {
         if (updatedUser == null) {
+          safePrint('User with GP Details----------> ${updatedUser.toString()}');
           return;
         }
         ref.read(userProvider.notifier).updateUserDetails(
@@ -98,14 +99,16 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                 name: 'primary',
                 address: _addressCtrl.text,
                 pincode: int.parse(_pinCodeCtrl.text),
-                //TODO: Add state and city controller with dropdown
-                state: 'state',
-                city: 'city')
+                state: _state!['id'],
+                city: _city!['id']
+              )
             .then((rsp) async {
+              safePrint('Gold User Address Response----------------> ${rsp.toString()}');
           if (rsp == null) {
             return;
           }
           await DatastoreServices.addUserAddress(rsp: rsp).then((addr) {
+            safePrint('Added User Address-------------------> ${addr.toString()}');
             if (addr == null) {
               return;
             }
@@ -465,6 +468,4 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
       ),
     );
   }
-
-  Future<void> req() async {}
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -29,7 +31,6 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
   Future<void> _decideRoute() async {
     await Amplify.Auth.getCurrentUser().then((user) async {
       final expiry = await LocalDBServices.getGPTokenExpiry();
-
       if (expiry == null ||
           DateTime.now().compareTo(DateTime.parse(expiry)) > 0) {
         safePrint('Token Expired');
@@ -44,61 +45,75 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
       ref.read(authProvider.notifier).logInAndSetUser(
             user.username,
             user.userId,
-          );
+      );
 
       // sets user with user id
       ref.read(userProvider.notifier).initializeWithUser(User(id: user.userId));
-
-      await DatastoreServices.fetchUserById(user.userId);
-
-      await DatastoreServices.checkRequiredData(uid: user.userId)
-          .then((value) async {
-        if (value == null) {
-          await DatastoreServices.fetchUserById(user.userId).then((value) {
-            if (value == null) {
-              return;
-            }
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const HomeScreen()));
-          });
-        } else if (value == 'UserDetails') {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const UserDetailsPage()));
-        } else if (value == 'Address') {
-          await DatastoreServices.fetchUserById(user.userId).then((value) {
-            if (value == null) {
-              return;
-            }
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const UserAddressPage()));
-          });
-        } else if (value == 'KycDetails') {
-          await DatastoreServices.fetchUserById(user.userId).then((value) {
-            if (value == null) {
-              return;
-            }
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const UserKYCPage()));
-          });
-        } else if (value == 'BankAccount') {
-          await DatastoreServices.fetchUserById(user.userId).then((value) {
-            if (value == null) {
-              return;
-            }
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const UserBankDetailsPage()));
-          });
+  
+      await DatastoreServices.fetchUserById(user.userId).then((currUser) async {
+        if (currUser == null) {
+          return;
         }
+        ref.read(userProvider.notifier).updateUserDetails(
+          email: currUser.email,
+          phone: currUser.phone,
+          fname: currUser.fname,
+          lname: currUser.lname,
+          dob: currUser.dob!.getDateTime().toIso8601String().split('T')[0],
+          kyc: currUser.kycDetails == null ? null : jsonDecode(currUser.kycDetails!),
+          gpDetails: currUser.goldProviderDetails == null ? null : jsonDecode(currUser.goldProviderDetails!)
+        );
+        await DatastoreServices.checkRequiredData(uid: user.userId)
+          .then((value) async {
+            if (value == null) {
+              await DatastoreServices.fetchUserById(user.userId).then((value) {
+                if (value == null) {
+                  return;
+                }
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const HomeScreen()));
+              });
+            } else if (value == 'UserDetails') {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const UserDetailsPage()));
+            } else if (value == 'Address') {
+              await DatastoreServices.fetchUserById(user.userId).then((value) {
+                if (value == null) {
+                  return;
+                }
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const UserAddressPage()));
+              });
+            } else if (value == 'KycDetails') {
+              await DatastoreServices.fetchUserById(user.userId).then((value) {
+                if (value == null) {
+                  return;
+                }
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const UserKYCPage()));
+              });
+            } else if (value == 'BankAccount') {
+              await DatastoreServices.fetchUserById(user.userId).then((value) {
+                if (value == null) {
+                  return;
+                }
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const UserBankDetailsPage()));
+              });
+            }
+      }     );
+    }).     catchError((err) {
+            safePrint('No user logged in');
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const LogInPage()));
+    });     
       });
-    }).catchError((err) {
-      safePrint('No user logged in');
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LogInPage()));
-    });
+
+      
   }
 
   Future<void> _configureAmplify() async {
@@ -106,7 +121,9 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
       final auth = AmplifyAuthCognito();
       final api = AmplifyAPI(modelProvider: ModelProvider.instance);
       final storage = AmplifyStorageS3();
-      await Amplify.addPlugins([auth, api, storage]);
+      await Amplify.addPlugins([
+        auth, api, storage
+      ]);
       await Amplify.configure(amplifyconfig).then((value) async {
         safePrint('😄😄😄 Successfully Coynfigured Amplify!');
         await Amplify.Auth.getCurrentUser().then((value) {

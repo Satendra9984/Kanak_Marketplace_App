@@ -24,6 +24,7 @@ class GoldServices {
       dynamic result = await HttpServices.sendGetReq(
           '${_baseUrl}master/states?count=50',
           extraHeaders: {'Authorization': 'Bearer $token'});
+      debugPrint(result.toString());
       if (result != null) {
         list = result['result']['data'];
         return [];

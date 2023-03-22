@@ -5,6 +5,7 @@ import 'package:tasvat/screens/buy/bloc/buy_bloc.dart';
 import 'package:tasvat/screens/login/bloc/login_bloc.dart';
 import 'package:tasvat/screens/onboarding/onboarding_page.dart';
 import 'package:tasvat/screens/registration/view/user_address.dart';
+import 'package:tasvat/screens/registration/view/user_bank_details.dart';
 import 'package:tasvat/screens/signup/bloc/sign_up_bloc.dart';
 import 'package:tasvat/services/auth_services.dart';
 

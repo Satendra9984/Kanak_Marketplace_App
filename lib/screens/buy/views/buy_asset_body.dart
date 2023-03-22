@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tasvat/providers/auth_provider.dart';
 import 'package:tasvat/providers/gold_rate_provider.dart';
+import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/buy/bloc/buy_bloc.dart';
 import '../../../utils/app_constants.dart';
 import 'buy_confirmation.dart';
@@ -428,7 +428,7 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody> {
                         final rate = ref.read(goldRateProvider);
                         context.read<BuyBloc>().add(
                           RateConfirmEvent(
-                            userId: ref.read(authProvider).id!,
+                            user: ref.read(userProvider)!,
                             exchangeRates: rate,
                             quantity: double.parse(_amountController.text)
                           )

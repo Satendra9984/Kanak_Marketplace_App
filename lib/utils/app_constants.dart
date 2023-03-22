@@ -68,6 +68,8 @@ List<String> states = [
   "Puducherry"
 ];
 
+const String razorpayApiKey = 'rzp_test_nxde3wSg0ubBiN';
+
 /// STATE-CITIES
 List<Map<String, dynamic>> stateCities = [
   {"id": "1", "name": "Mumbai", "state": "Maharashtra"},

@@ -9,7 +9,7 @@ import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/screens/buy/views/buy_assets.dart';
 import 'package:tasvat/screens/dashboard/dashboard.dart';
 import 'package:tasvat/screens/portfolio/portfolio_home.dart';
-import 'package:tasvat/screens/sell/sell_assets.dart';
+import 'package:tasvat/screens/sell/views/sell_assets.dart';
 import 'package:tasvat/screens/withdraw/withdraw_assets.dart';
 import 'package:tasvat/utils/app_constants.dart';
 

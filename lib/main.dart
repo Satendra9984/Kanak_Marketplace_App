@@ -21,12 +21,8 @@ void main() {
                 authRepository: context.read<AuthRepository>(),
               ),
             ),
-            BlocProvider(
-              create: (context) => SignUpBloc()
-            ),
-            BlocProvider(
-              create: (context) => BuyBloc()
-            )
+            BlocProvider(create: (context) => SignUpBloc()),
+            BlocProvider(create: (context) => BuyBloc())
           ],
           child: const Tasvat(),
         ),
@@ -62,10 +58,10 @@ class _TasvatState extends ConsumerState<Tasvat> {
           BlocProvider(create: (context) => BuyBloc())
         ],
         child: const MaterialApp(
-          // home: OnBoardingPage(),
+          home: OnBoardingPage(),
           // home: HomeScreen(),
           // home: UserBankDetailsPage(),
-          home: UserAddressPage(),
+          // home: UserAddressPage(),
           // home: UserKYCPage(),
         ),
       ),

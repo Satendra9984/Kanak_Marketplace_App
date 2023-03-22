@@ -20,12 +20,10 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _pinCodeCtrl = TextEditingController();
   final TextEditingController _addressCtrl = TextEditingController();
-  final TextEditingController _stateCtrl = TextEditingController();
-  final TextEditingController _cityCtrl = TextEditingController();
   List<Map<dynamic, dynamic>>? _statesList;
   List<Map<dynamic, dynamic>> _citiesList = [];
 
-  Map<dynamic, dynamic>? _state, _stateId, _city, _cityId;
+  Map<dynamic, dynamic>? _state, _city;
   Future<void> getCitiesList() async {
     debugPrint(_citiesList.toString());
     try {
@@ -57,7 +55,6 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
           Map<dynamic, dynamic> state = Map.from(element);
           _statesList!.add(state);
         }
-        await getCitiesList();
         setState(() {
           _statesList;
         });
@@ -293,14 +290,14 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                                             ),
                                           );
                                         }).toList(),
-                                  onChanged: (value) {
+                                  onChanged: (value) async {
                                     setState(() {
                                       _state = value;
                                       _city = null;
                                       _citiesList = [];
                                       debugPrint(_state.toString());
                                     });
-                                    getCitiesList();
+                                    await getCitiesList();
                                   },
                                   menuMaxHeight: 400,
                                   underline: Container(),

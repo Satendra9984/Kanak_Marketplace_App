@@ -17,7 +17,6 @@ class BuyConfirmationScreen extends StatefulWidget {
 
 class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
     with TickerProviderStateMixin {
-
   @override
   void dispose() {
     context.read<BuyBloc>().clearTimer();
@@ -34,29 +33,29 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: background,
-      appBar: AppBar(
-        elevation: 0.0,
         backgroundColor: background,
-      ),
-      body: Container(
-        margin: const EdgeInsets.symmetric(vertical: 15),
-        child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 15),
-              child: Text(
-                'Buy Confirmation',
-                style: TextStyle(
-                  fontSize: title,
-                  color: text500,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Column(
+        appBar: AppBar(
+          elevation: 0.0,
+          backgroundColor: background,
+        ),
+        body: Container(
+            margin: const EdgeInsets.symmetric(vertical: 15),
+            child: Column(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Text(
+                      'Buy Confirmation',
+                      style: TextStyle(
+                        fontSize: title,
+                        color: text500,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Column(
                     // mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -87,19 +86,20 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                 const SizedBox(height: 25),
                                 RowDetailWidget(
                                     title: 'Transaction Type',
-                                    value: context.read<BuyBloc>()
-                                    .getTransaction.type.toString()
-                                  ),
+                                    value: context
+                                        .read<BuyBloc>()
+                                        .getTransaction
+                                        .type
+                                        .toString()),
                                 const SizedBox(height: 25),
                                 RowDetailWidget(
                                     title: 'Price/gram',
-                                    value:
-                                        '${['current_price']} INR/gm'),
+                                    value: '${['current_price']} INR/gm'),
                                 const SizedBox(height: 25),
                                 RowDetailWidget(
                                     title: 'Quantity',
-                                    value: '${context.read<BuyBloc>()
-                                    .getTransaction.quantity} gm'),
+                                    value:
+                                        '${context.read<BuyBloc>().getTransaction.quantity} gm'),
                               ],
                             ),
                           ),
@@ -130,9 +130,8 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                 const SizedBox(height: 25),
                                 RowDetailWidget(
                                     title: 'Final Price',
-                                    value: '${context.read<BuyBloc>()
-                                      .calculateAmountWithTax()
-                                    } INR'),
+                                    value:
+                                        '${context.read<BuyBloc>().calculateAmountWithTax()} INR'),
                                 const SizedBox(height: 25),
                                 const RowDetailWidget(
                                     title: 'Method', value: 'Cash Wallet'),
@@ -140,7 +139,7 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                             ),
                           ),
 
-                          /// timer 7 min
+                          /// timer 3 min
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 20),
@@ -168,7 +167,8 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                         children: [
                                           TextSpan(
                                             text:
-                                                '${remaining.minutes} : ${remaining.seconds} ',
+                                                '${context.watch<BuyBloc>().getController.remaining.value.minutes} : '
+                                                '${context.watch<BuyBloc>().getController.remaining.value.seconds}',
                                             style: TextStyle(
                                               color: accent1,
                                               fontSize: heading2,
@@ -192,9 +192,7 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                     // Condition for confirmation button
                                     if (state == CustomTimerState.counting)
                                       ElevatedButton(
-                                        onPressed: () async {
-                                          
-                                        },
+                                        onPressed: () async {},
                                         style: ElevatedButton.styleFrom(
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
@@ -224,9 +222,6 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                       ),
                     ],
                   )
-                ]
-              )
-            )
-        );
+                ])));
   }
 }

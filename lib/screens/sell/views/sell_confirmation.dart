@@ -6,11 +6,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/models/TransactionStatus.dart';
 import 'package:tasvat/models/TransactionType.dart';
-import 'package:tasvat/screens/sell/sell_completed_screen.dart';
+import 'package:tasvat/screens/sell/views/sell_completed_screen.dart';
 import 'package:http/http.dart' as http;
-import '../../models/Transaction.dart';
-import '../../utils/app_constants.dart';
-import '../../widgets/row_details_widget.dart';
+import '../../../models/Transaction.dart';
+import '../../../utils/app_constants.dart';
+import '../../../widgets/row_details_widget.dart';
 
 class SellConfirmationScreen extends StatefulWidget {
   final String quantity;

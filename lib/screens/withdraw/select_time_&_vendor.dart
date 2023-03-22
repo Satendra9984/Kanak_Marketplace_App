@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:tasvat/screens/buy/views/buy_completed.dart';
-import 'package:tasvat/screens/sell/sell_completed_screen.dart';
+import 'package:tasvat/screens/sell/views/sell_completed_screen.dart';
 import 'package:tasvat/screens/withdraw/book_confirmation.dart';
 import '../../models/Transaction.dart';
 import '../../utils/app_constants.dart';

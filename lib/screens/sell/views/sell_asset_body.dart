@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tasvat/screens/sell/sell_confirmation.dart';
-import '../../utils/app_constants.dart';
+import 'package:tasvat/screens/sell/views/sell_confirmation.dart';
+import '../../../utils/app_constants.dart';
 
 class SellAssetBody extends StatefulWidget {
   final Map<String, dynamic> goldApiRateData;

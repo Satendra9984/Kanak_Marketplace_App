@@ -422,17 +422,16 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody> {
                     closeKeyboard(context);
                     if (_formKey.currentState != null &&
                         _formKey.currentState!.validate()) {
-
                       // PROCEED TO CONFIRMATION SCREEN
-                      await ref.read(goldRateProvider.notifier).updateRates().then((value) {
+                      await ref
+                          .read(goldRateProvider.notifier)
+                          .updateRates()
+                          .then((value) {
                         final rate = ref.read(goldRateProvider);
-                        context.read<BuyBloc>().add(
-                          RateConfirmEvent(
+                        context.read<BuyBloc>().add(RateConfirmEvent(
                             user: ref.read(userProvider)!,
                             exchangeRates: rate,
-                            quantity: double.parse(_amountController.text)
-                          )
-                        );
+                            quantity: double.parse(_qtyController.text)));
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -442,8 +441,6 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody> {
                           ),
                         );
                       });
-                      
-                      
                     }
                   },
                   style: ElevatedButton.styleFrom(

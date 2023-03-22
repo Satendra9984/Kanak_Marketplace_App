@@ -29,7 +29,6 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
   Future<void> _decideRoute() async {
     await Amplify.Auth.getCurrentUser().then((user) async {
       final expiry = await LocalDBServices.getGPTokenExpiry();
-
       if (expiry == null ||
           DateTime.now().compareTo(DateTime.parse(expiry)) > 0) {
         safePrint('Token Expired');
@@ -44,7 +43,7 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
       ref.read(authProvider.notifier).logInAndSetUser(
             user.username,
             user.userId,
-          );
+      );
 
       // sets user with user id
       ref.read(userProvider.notifier).initializeWithUser(User(id: user.userId));

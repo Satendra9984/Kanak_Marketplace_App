@@ -59,7 +59,6 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
       setState(() {
         _statesList;
       });
-      // debugPrint(_statesList.toString());
     } else {
       return;
     }

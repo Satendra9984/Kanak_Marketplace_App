@@ -61,10 +61,10 @@ class _TasvatState extends ConsumerState<Tasvat> {
           BlocProvider(create: (context) => BuyBloc())
         ],
         child: const MaterialApp(
-          // home: OnBoardingPage(),
+          home: OnBoardingPage(),
           // home: HomeScreen(),
           // home: UserBankDetailsPage(),
-          home: UserAddressPage(),
+          // home: UserAddressPage(),
           // home: UserKYCPage(),
         ),
       ),

@@ -79,7 +79,6 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       await DatastoreServices.markFailedPayment(
         transaction: _transaction
       );
-      onRateConfirmEventHandler();
     });
 
     // when gold purchase is successful

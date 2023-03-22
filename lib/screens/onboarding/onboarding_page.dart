@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/amplifyconfiguration.dart';
 import 'package:tasvat/models/ModelProvider.dart';
-import 'package:tasvat/models/auth_model.dart';
 import 'package:tasvat/providers/auth_provider.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/home_screen.dart';
@@ -52,7 +51,7 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
 
       await DatastoreServices.fetchUserById(user.userId);
 
-      await DatastoreServices.checkRequiredData(user.userId)
+      await DatastoreServices.checkRequiredData(uid: user.userId)
           .then((value) async {
         if (value == null) {
           await DatastoreServices.fetchUserById(user.userId).then((value) {

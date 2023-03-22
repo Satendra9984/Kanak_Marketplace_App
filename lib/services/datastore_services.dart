@@ -9,7 +9,11 @@ import 'package:tasvat/models/gold_models/address_response.dart';
 class DatastoreServices {
   static final _instance = Amplify.API;
 
-
+  
+  
+  
+  
+  
   // _________________________________________________TRANSACTION OPERATIONS___________________________________________
 
   // add pending transaction
@@ -31,17 +35,11 @@ class DatastoreServices {
 
   // mark successful transaction
   static Future<Transaction?> markSuccessfulPurchase({
-    required Transaction transaction,
-    required String gpTxId,
-    required double balance,
-    required String txId
+    required Transaction transaction
   }) async {
     Transaction? result;
     final req = ModelMutations.update(transaction.copyWith(
-      txId: txId,
       status: TransactionStatus.SUCCESSFUL,
-      gpTxId: gpTxId,
-      balance: balance,
       dateTime: TemporalDateTime.now(),
     ));
     await _instance.mutate(request: req).response.then((updatedTx) {
@@ -54,7 +52,110 @@ class DatastoreServices {
   }
 
   // mark failed transaction
-  static Future<Transaction?> 
+  static Future<Transaction?> markFailedPurchase({
+    required Transaction transaction
+  }) async {
+    Transaction? result;
+    final req = ModelMutations.update(transaction.copyWith(
+      status: TransactionStatus.FAILED,
+      txId: transaction.txId,
+      failType: FailType.PURCHASEFAIL
+    ));
+    await _instance.mutate(request: req).response.then((res) {
+      if (res.data == null) {
+        return;
+      }
+      result = res.data;
+    });
+    return result;
+  }
+
+  // mark failed payment
+  static Future<Transaction?> markFailedPayment({
+    required Transaction transaction
+  }) async {
+    Transaction? result;
+    final req = ModelMutations.update(transaction.copyWith(
+      status: TransactionStatus.FAILED,
+      failType: FailType.PAYMENTFAIL
+    ));
+    await _instance.mutate(request: req).response.then((res) {
+      if (res.data == null) {
+        return;
+      }
+      result = res.data;
+    });
+    return result;
+  }
+
+  // mark payment success
+  static Future<Transaction?> markSuccessfulPayment({
+    required Transaction transaction,
+    required String txId
+  }) async {
+    Transaction? result;
+    final req = ModelMutations.update(transaction.copyWith(
+      txId: txId
+    ));
+    await _instance.mutate(request: req).response.then((res) {
+      if (res.data == null) {
+        return;
+      }
+      result = res.data;
+    });
+    return result;
+  }
+  
+  // update wallet gold balance
+  static Future<Wallet?> updateWalletGoldBalance({
+    required String id,
+    required double balance
+  }) async {
+    Wallet? result;
+    _instance.query(request: ModelQueries.get(Wallet.classType, id)).response.then((wallet) async {
+      if (wallet.data == null) {
+        return;
+      }
+      final req = ModelMutations.update(wallet.data!.copyWith(
+        gold_balance: balance
+      ));
+      await _instance.mutate(request: req).response.then((res) {
+        if (res.data == null) {
+          return;
+        }
+        result = res.data;
+      });
+    });
+    return result;
+  }
+
+  // mark wallet update fail
+  static Future<Transaction?> markWalletUpdateFail({
+    required Transaction transaction
+  }) async {
+    Transaction? result;
+    final req = ModelMutations.update(transaction.copyWith(
+      status: TransactionStatus.FAILED,
+      failType: FailType.WALLETUPDATEFAIL
+    ));
+    await _instance.mutate(request: req).response.then((res) {
+      if (res.data == null) {
+        return;
+      }
+      result = res.data;
+    });
+    return result;
+  }
+
+  
+  
+  
+  
+  
+  
+  
+  
+  // _________________________________________________SPECIAL CHECKS OPERATION_____________________________________________________
 
   // get the next required details
   static Future<String?> checkRequiredData({
@@ -101,6 +202,13 @@ class DatastoreServices {
     return nextRequiredDetails;
   }
 
+  
+  
+  
+  
+  
+  
+  
   // _________________________________________________FETCH OPERATION_____________________________________________________
 
   // fetch user details
@@ -184,6 +292,15 @@ class DatastoreServices {
     return list;
   }
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
   // ________________________________________________CREATE AND UPDATE OPERATION___________________________________________
 
   // create user with wallet

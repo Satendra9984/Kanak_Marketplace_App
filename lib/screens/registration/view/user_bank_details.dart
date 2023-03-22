@@ -18,7 +18,6 @@ class UserBankDetailsPage extends StatefulWidget {
 class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   // bool _showPassword = false;
-  final TextEditingController _bankIdCtrl = TextEditingController();
   final TextEditingController _accountNameCtrl = TextEditingController();
   final TextEditingController _accountNumberCtrl = TextEditingController();
   final TextEditingController _ifscCodeCtrl = TextEditingController();
@@ -128,7 +127,6 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
                       if (accountNoValid == false) {
                         return 'Please enter a valid Account Number';
                       }
-
                       return null;
                     },
                     style: TextStyle(
@@ -140,6 +138,7 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                
 
                 /// ifsc code
                 Text(
@@ -185,6 +184,52 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                
+                Text(
+                  'Account Number',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    // color: text150,
+                  ),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: TextInputType.number,
+                    controller: _accountNumberCtrl,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter account number';
+                      } else if (value.length > 18) {
+                        return 'Bank Id should not be greater than 18 characters';
+                      } else if (value.length < 9) {
+                        return 'Bank Id should not be lesser than 9 characters';
+                      }
+
+                      bool accountNoValid =
+                          RegExp(r'^\d{9,18}$').hasMatch(value);
+                      if (accountNoValid == false) {
+                        return 'Please enter a valid Account Number';
+                      }
+                      return null;
+                    },
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: accent2,
+                    ),
+                    decoration: getInputDecoration('0112345678'),
+                  ),
+                ),
               ],
             ),
           ),

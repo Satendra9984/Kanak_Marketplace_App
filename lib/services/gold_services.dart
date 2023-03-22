@@ -5,7 +5,6 @@ import 'package:tasvat/models/gold_models/address_response.dart';
 import 'package:tasvat/models/gold_models/buy_info_model.dart';
 import 'package:tasvat/models/gold_models/rate_model.dart';
 import 'package:tasvat/models/gold_models/sell_info_model.dart';
-import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/local_db_services.dart';
 import 'package:tasvat/services/rest_services.dart';
 
@@ -70,19 +69,20 @@ class GoldServices {
   }
 
   // buy gold
-  static Future<BuyInfo?> buyGold(
-      {required User user,
+  static Future<BuyInfo?> buyGold({
+      required User user,
       required Transaction transaction,
-      required ExchangeRates rates}) async {
+      required ExchangeRates rates
+    }) async {
     BuyInfo? info;
     final authToken = await LocalDBServices.getGPAccessToken();
     await HttpServices.sendPostReq('${_baseUrl}buy', body: {
-      'lockPrice': int.parse(rates.gBuy!),
-      'metalType': 'gold',
-      'quantity': transaction.amount,
-      'merchantTransactionId': transaction.id,
-      'userName': user.fname! + user.lname!,
-      'uniqueId': transaction.id,
+      'lockPrice': int.parse(rates.gBuy!), // number
+      'metalType': 'gold', // string
+      'quantity': transaction.quantity, //
+      'merchantTransactionId': transaction.txId,
+      'userName': "${user.fname!} ${user.lname!}",
+      'uniqueId': user.id,
       'blockId': rates.blockId,
       'mobileNumber': user.phone,
       'emailId': user.email

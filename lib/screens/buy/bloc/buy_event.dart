@@ -7,17 +7,17 @@ class BuyEvent extends Equatable {
 
 class RateConfirmEvent extends BuyEvent {
   final double quantity;
-  final String userId;
+  final User user;
   final ExchangeRates exchangeRates;
   RateConfirmEvent({
-    required this.userId,
+    required this.user,
     required this.exchangeRates,
     required this.quantity
   });
   @override
   List<Object?> get props => [
     exchangeRates,
-    userId,
+    user,
     quantity
   ];
 }

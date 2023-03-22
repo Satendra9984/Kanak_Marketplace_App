@@ -11,7 +11,7 @@ class AddMoneyScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: background,
         elevation: 0.0,
-        title: Text('Add money'),
+        title: const Text('Add money'),
       ),
       body: Column(),
     );

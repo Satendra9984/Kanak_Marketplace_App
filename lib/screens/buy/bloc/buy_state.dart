@@ -24,6 +24,12 @@ class BuyCompletedState extends BuyState {
 }
 
 class BuyErrorState extends BuyState {
+  final FailType type;
+  BuyErrorState({
+    required this.type
+  });
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [
+    type
+  ];
 }

@@ -22,13 +22,14 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
   final TextEditingController _addressCtrl = TextEditingController();
   final TextEditingController _stateCtrl = TextEditingController();
   final TextEditingController _cityCtrl = TextEditingController();
-  List<Map<dynamic, dynamic>> _statesList = [], _citiesList = [];
+  List<Map<dynamic, dynamic>>? _statesList;
+  List<Map<dynamic, dynamic>> _citiesList = [];
 
   Map<dynamic, dynamic>? _state, _stateId, _city, _cityId;
   Future<void> getCitiesList() async {
     debugPrint(_citiesList.toString());
     try {
-      if (_state != null) {
+      if (_state == null) {
         await GoldServices.getCityList(_state!['id']).then((value) {
           //List<Map<dynamic, dynamic>> cityList = [];
           _citiesList = [];
@@ -48,20 +49,22 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
   }
 
   Future<void> _initializeStatesList() async {
-    if (_statesList.isEmpty) {
-      List<dynamic> states = await GoldServices.getStateCityList();
-
-      for (var element in states) {
-        Map<dynamic, dynamic> state = Map.from(element);
-        _statesList.add(state);
+    try {
+      if (_statesList == null) {
+        List<dynamic> states = await GoldServices.getStateCityList();
+        _statesList = [];
+        for (var element in states) {
+          Map<dynamic, dynamic> state = Map.from(element);
+          _statesList!.add(state);
+        }
+        await getCitiesList();
+        setState(() {
+          _statesList;
+        });
+        debugPrint(_statesList.toString());
       }
-      await getCitiesList();
-      setState(() {
-        _statesList;
-      });
-      // debugPrint(_statesList.toString());
-    } else {
-      return;
+    } catch (e) {
+      _statesList = [];
     }
   }
 
@@ -279,15 +282,17 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                                   value: _state == null || _state!.isEmpty
                                       ? null
                                       : _state,
-                                  items: _statesList.map((state) {
-                                    return DropdownMenuItem(
-                                      value: state,
-                                      child: Text(
-                                        state['name'],
-                                        style: TextStyle(color: accent2),
-                                      ),
-                                    );
-                                  }).toList(),
+                                  items: _statesList == null
+                                      ? []
+                                      : _statesList!.map((state) {
+                                          return DropdownMenuItem(
+                                            value: state,
+                                            child: Text(
+                                              state['name'],
+                                              style: TextStyle(color: accent2),
+                                            ),
+                                          );
+                                        }).toList(),
                                   onChanged: (value) {
                                     setState(() {
                                       _state = value;
@@ -304,9 +309,8 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                                   borderRadius: BorderRadius.circular(10),
                                   icon: Icon(
                                     Icons.arrow_drop_down,
-                                    color: _statesList.isNotEmpty
-                                        ? accent2
-                                        : text100,
+                                    color:
+                                        _statesList != null ? accent2 : text100,
                                   ),
                                 );
                               } else {
@@ -356,77 +360,77 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                 ),
                 const SizedBox(height: 5),
                 FormField(
-                    initialValue: _city,
-                    validator: (city) {
-                      if (_state == null) {
-                        return 'First Select State';
-                      } else if (city == null) {
-                        return 'Select City';
-                      }
-                      return null;
-                    },
-                    builder: (formState) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: text100,
-                            ),
-                            child: DropdownButton<Map<dynamic, dynamic>>(
-                              hint: Text(
-                                'New Delhi',
-                                style: TextStyle(
-                                  color: accentBG,
-                                ),
+                  initialValue: _city,
+                  validator: (city) {
+                    if (_state == null) {
+                      return 'First Select State';
+                    } else if (city == null) {
+                      return 'Select City';
+                    }
+                    return null;
+                  },
+                  builder: (formState) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: text100,
+                          ),
+                          child: DropdownButton<Map<dynamic, dynamic>>(
+                            hint: Text(
+                              'New Delhi',
+                              style: TextStyle(
+                                color: accentBG,
                               ),
-                              value: _city != null ? _city! : null,
-                              items: _citiesList.map((city) {
-                                return DropdownMenuItem<Map<dynamic, dynamic>>(
-                                  value: city,
-                                  child: Text(
-                                    city['name'],
-                                    style: TextStyle(color: accent2),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                if (value != null) {
-                                  setState(() {
-                                    _city = value;
-                                  });
-                                }
-                              },
-                              menuMaxHeight: 400,
-                              underline: Container(),
-                              dropdownColor: text150,
-                              isExpanded: true,
-                              borderRadius: BorderRadius.circular(10),
-                              icon: Icon(
-                                Icons.arrow_drop_down,
-                                color:
-                                    _citiesList.isNotEmpty ? accent2 : text100,
+                            ),
+                            value: _city != null ? _city! : null,
+                            items: _citiesList.map((city) {
+                              return DropdownMenuItem<Map<dynamic, dynamic>>(
+                                value: city,
+                                child: Text(
+                                  city['name'],
+                                  style: TextStyle(color: accent2),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null) {
+                                setState(() {
+                                  _city = value;
+                                });
+                              }
+                            },
+                            menuMaxHeight: 400,
+                            underline: Container(),
+                            dropdownColor: text150,
+                            isExpanded: true,
+                            borderRadius: BorderRadius.circular(10),
+                            icon: Icon(
+                              Icons.arrow_drop_down,
+                              color: _citiesList.isNotEmpty ? accent2 : text100,
+                            ),
+                          ),
+                        ),
+                        if (formState.hasError)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 5),
+                            child: Text(
+                              formState.errorText.toString(),
+                              style: TextStyle(
+                                color: error,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
-                          if (formState.hasError)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 5),
-                              child: Text(
-                                formState.errorText.toString(),
-                                style: TextStyle(
-                                  color: error,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                        ],
-                      );
-                    }),
+                      ],
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -464,4 +468,6 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
       ),
     );
   }
+
+  Future<void> req() async {}
 }

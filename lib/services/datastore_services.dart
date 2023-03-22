@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:tasvat/models/ModelProvider.dart';
@@ -25,11 +23,11 @@ class DatastoreServices {
         .mutate(request: pendingTransactionMutation)
         .response
         .then((pendingTx) async {
-          if (pendingTx.data == null) {
-            return;
-          }
-          tx = pendingTx.data!;
-        });
+      if (pendingTx.data == null) {
+        return;
+      }
+      tx = pendingTx.data!;
+    });
     return tx;
   }
 
@@ -158,9 +156,7 @@ class DatastoreServices {
   // _________________________________________________SPECIAL CHECKS OPERATION_____________________________________________________
 
   // get the next required details
-  static Future<String?> checkRequiredData({
-    required String uid
-  }) async {
+  static Future<String?> checkRequiredData({required String uid}) async {
     String? nextRequiredDetails;
     final request = ModelQueries.get(User.classType, uid);
     await _instance.query(request: request).response.then((result) async {
@@ -270,11 +266,10 @@ class DatastoreServices {
     });
     return list;
   }
-  
+
   // fetch all bank accounts of user
-  static Future<List<BankAccount>> getBankAccountsOfUser({
-    required String userId
-  }) async {
+  static Future<List<BankAccount>> getBankAccountsOfUser(
+      {required String userId}) async {
     var list = <BankAccount>[];
     _instance
         .query(
@@ -374,7 +369,7 @@ class DatastoreServices {
     });
     return createdAcc;
   }
-  
+
   // update KYC details of user
   static Future<User?> updateKycDetails(
       {required Map<String, dynamic> details, required User user}) async {

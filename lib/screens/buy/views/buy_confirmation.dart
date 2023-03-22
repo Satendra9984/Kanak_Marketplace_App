@@ -27,6 +27,14 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
 
   @override
   void initState() {
+    context.read<BuyBloc>().addController(
+      CustomTimerController(
+        vsync: this,
+        begin: const Duration(seconds: 0),
+        end: const Duration(seconds: 300)
+      )
+    );
+
     context.read<BuyBloc>().getController.start();
     super.initState();
   }

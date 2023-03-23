@@ -90,7 +90,9 @@ class GoldServices {
       required String userId,
       required String name,
       required String pincode,
-      required String dob}) async {
+      required String city,
+      required String dob
+    }) async {
     Map<String, dynamic>? details;
     final authToken = await LocalDBServices.getGPAccessToken();
     await HttpServices.sendPostReq('${_baseUrl}users', extraHeaders: {
@@ -101,13 +103,14 @@ class GoldServices {
       'uniqueId': userId,
       'userName': name,
       'userPincode': pincode,
+      'userCity': city,
       'dateOfBirth': dob
     }).then((value) {
       if (value == null || !value.containsKey('statusCode')) {
         return;
       }
       if (value['statusCode'] == 201) {
-        details = value['result'];
+        details = value['result']['data'];
       }
     });
     return details;

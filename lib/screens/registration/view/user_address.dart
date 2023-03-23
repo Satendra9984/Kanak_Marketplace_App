@@ -77,6 +77,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
     await GoldServices.registerGoldUser(
             phone: authData.username.substring(3),
             email: user!.email!,
+            city: _city!['id'],
             userId: authData.userId,
             name: '${user.fname!} ${user.lname!}',
             pincode: _pinCodeCtrl.text,
@@ -88,8 +89,8 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
       }
       await DatastoreServices.updateGPDetails(user: user, details: goldUser)
           .then((updatedUser) async {
+        safePrint('User with GP Details----------> ${updatedUser.toString()}');
         if (updatedUser == null) {
-          safePrint('User with GP Details----------> ${updatedUser.toString()}');
           return;
         }
         ref.read(userProvider.notifier).updateUserDetails(

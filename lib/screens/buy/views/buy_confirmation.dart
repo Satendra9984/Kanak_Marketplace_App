@@ -35,6 +35,8 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
       )
     );
 
+    // context.read<BuyBloc>().getController.
+
     context.read<BuyBloc>().getController.start();
     super.initState();
   }

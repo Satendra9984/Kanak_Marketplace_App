@@ -373,18 +373,30 @@ class DatastoreServices {
   // update KYC details of user
   static Future<User?> updateKycDetails(
       {required Map<String, dynamic> details, required User user}) async {
-    final req =
-        ModelMutations.update(user.copyWith(kycDetails: jsonEncode(details)));
-    final res = await _instance.mutate(request: req).response;
-    return res.data;
+    User? result;
+    final req = ModelMutations.update(
+        user.copyWith(kycDetails: jsonEncode(details)));
+    await _instance.mutate(request: req).response.then((res) {
+      if (res.data == null) {
+        return;
+      }
+      result = res.data;
+    });
+    return result;
   }
 
   // upadate gold provider details of user
   static Future<User?> updateGPDetails(
       {required User user, required Map<String, dynamic> details}) async {
+    User? result;
     final req = ModelMutations.update(
         user.copyWith(goldProviderDetails: jsonEncode(details)));
-    final res = await _instance.mutate(request: req).response;
-    return res.data;
+    await _instance.mutate(request: req).response.then((res) {
+      if (res.data == null) {
+        return;
+      }
+      result = res.data;
+    });
+    return result;
   }
 }

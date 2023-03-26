@@ -5,21 +5,23 @@ class BuyEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class TimerReady extends BuyEvent {
+  final int duration;
+  TimerReady({required this.duration});
+}
+
+class TimerStop extends BuyEvent {}
+
 class RateConfirmEvent extends BuyEvent {
   final double quantity;
   final User user;
   final ExchangeRates exchangeRates;
-  RateConfirmEvent({
-    required this.user,
-    required this.exchangeRates,
-    required this.quantity
-  });
+  RateConfirmEvent(
+      {required this.user,
+      required this.exchangeRates,
+      required this.quantity});
   @override
-  List<Object?> get props => [
-    exchangeRates,
-    user,
-    quantity
-  ];
+  List<Object?> get props => [exchangeRates, user, quantity];
 }
 
 class ConfirmButtonPressedEvent extends BuyEvent {

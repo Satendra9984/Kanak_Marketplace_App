@@ -3,15 +3,15 @@ import 'package:tasvat/screens/registration/view/user_kyc_page.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 
-class UserBankRegistrationPage extends StatefulWidget {
-  const UserBankRegistrationPage({super.key});
+class UpdateUserBankDetailsPage extends StatefulWidget {
+  const UpdateUserBankDetailsPage({super.key});
 
   @override
-  State<UserBankRegistrationPage> createState() =>
-      _UserBankRegistrationPageState();
+  State<UpdateUserBankDetailsPage> createState() =>
+      _UpdateUserBankDetailsPageState();
 }
 
-class _UserBankRegistrationPageState extends State<UserBankRegistrationPage> {
+class _UpdateUserBankDetailsPageState extends State<UpdateUserBankDetailsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _accountNameCtrl = TextEditingController();
   final TextEditingController _accountNumberCtrl = TextEditingController();
@@ -238,7 +238,7 @@ class _UserBankRegistrationPageState extends State<UserBankRegistrationPage> {
             child: ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  await submitUserBankDetails();
+                  await updateUserBankDetails();
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -250,32 +250,11 @@ class _UserBankRegistrationPageState extends State<UserBankRegistrationPage> {
                 backgroundColor: accent1,
               ),
               child: Text(
-                'Submit',
+                'Update',
                 style: TextStyle(
                   color: background,
                   fontSize: heading2,
                   fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-
-          /// skip button
-          Container(
-            margin: const EdgeInsets.only(bottom: 10),
-            child: TextButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (ctx) => const UserKYCPage(),
-                  ),
-                );
-              },
-              child: Text(
-                'Skip for now',
-                style: TextStyle(
-                  color: accent2,
-                  fontSize: 16,
                 ),
               ),
             ),
@@ -285,7 +264,7 @@ class _UserBankRegistrationPageState extends State<UserBankRegistrationPage> {
     );
   }
 
-  Future<void> submitUserBankDetails() async {
+  Future<void> updateUserBankDetails() async {
     // TODO: SUBMIT USER ADDRESS DETAILS
   }
 }

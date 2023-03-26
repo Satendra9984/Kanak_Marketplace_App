@@ -8,16 +8,15 @@ import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UserAddressRegistrationPage extends ConsumerStatefulWidget {
+class AddUserAddressPage extends ConsumerStatefulWidget {
   final String? email;
-  const UserAddressRegistrationPage({super.key, this.email});
+  const AddUserAddressPage({super.key, this.email});
 
   @override
-  ConsumerState<UserAddressRegistrationPage> createState() =>
-      _UserAddressPageState();
+  ConsumerState<AddUserAddressPage> createState() => _UserAddressPageState();
 }
 
-class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
+class _UserAddressPageState extends ConsumerState<AddUserAddressPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _pinCodeCtrl = TextEditingController();
   final TextEditingController _addressCtrl = TextEditingController();
@@ -147,7 +146,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
                 /// use details text
                 Align(
                   child: Text(
-                    'User Address',
+                    'Add Address',
                     style: TextStyle(
                       color: text500,
                       fontSize: title,

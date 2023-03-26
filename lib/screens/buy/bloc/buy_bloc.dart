@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:amplify_core/amplify_core.dart';
 import 'package:custom_timer/custom_timer.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,39 +13,43 @@ import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
 import 'package:tasvat/utils/app_constants.dart';
 
+import '../../../models/ticker.dart';
 part 'buy_event.dart';
 part 'buy_state.dart';
 
 class BuyBloc extends Bloc<BuyEvent, BuyState> {
   late CustomTimerController _timerController;
+  late Ticker _timer;
+  StreamSubscription<int>? timerSubscription;
   late Transaction _transaction;
   late User _user;
   late ExchangeRates _rates;
   late Razorpay _razorpay;
-  BuyBloc() : super(BuyInitial()) {
 
+  // T get timer => _timer;
+
+  BuyBloc() : super(BuyInitial()) {
     // starting event for buy confirm screen
     on<RateConfirmEvent>((event, emit) async {
       _rates = event.exchangeRates;
       _user = event.user;
       _transaction = Transaction(
-        blockId: event.exchangeRates.blockId,
-        lockPrice: event.exchangeRates.gBuy,
-        type: TransactionType.BUY,
-        status: TransactionStatus.PENDING,
-        quantity: event.quantity,
-        dateTime: TemporalDateTime.now(),
-        transactionReceiverId: '6f6d07c8-9dab-485d-9423-4b16152af571',
-        transactionSenderId: event.user.id
-      );
+          blockId: event.exchangeRates.blockId,
+          lockPrice: event.exchangeRates.gBuy,
+          type: TransactionType.BUY,
+          status: TransactionStatus.PENDING,
+          quantity: event.quantity,
+          dateTime: TemporalDateTime.now(),
+          transactionReceiverId: '6f6d07c8-9dab-485d-9423-4b16152af571',
+          transactionSenderId: event.user.id);
+
       _razorpayInit();
     });
 
     // when user presses the confirm button
     on<ConfirmButtonPressedEvent>((event, emit) async {
-      await DatastoreServices.addPendingTransaction(
-        transaction: _transaction
-      ).then((tx) {
+      await DatastoreServices.addPendingTransaction(transaction: _transaction)
+          .then((tx) {
         _checkOutPayment(_user, calculateAmountWithTax());
         emit(BuyProccessing(progress: 0));
       });
@@ -52,19 +58,16 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
     // when payment is successful
     on<PaymentSuccessEvent>((event, emit) async {
       await DatastoreServices.markSuccessfulPayment(
-        transaction: _transaction,
-        txId: event.response.paymentId!
-      ).then((tx) async {
+              transaction: _transaction, txId: event.response.paymentId!)
+          .then((tx) async {
         if (tx == null) {
           safePrint('Error Marking txId');
           return;
         }
         _transaction = tx;
         await GoldServices.buyGold(
-          user: _user,
-          transaction: _transaction,
-          rates: _rates
-        ).then((info) {
+                user: _user, transaction: _transaction, rates: _rates)
+            .then((info) {
           if (info == null) {
             add(PurchaseErrorEvent());
             return;
@@ -76,27 +79,23 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
     // when gold purchase fails
     on<PaymentErrorEvent>((event, emit) async {
-      await DatastoreServices.markFailedPayment(
-        transaction: _transaction
-      );
+      await DatastoreServices.markFailedPayment(transaction: _transaction);
     });
 
     // when gold purchase is successful
     on<PurchaseSuccessEvent>((event, emit) async {
       _transaction = _transaction.copyWith(
-        gpTxId: event.info.transactionId,
-        balance: double.parse(event.info.goldBalance)
-      );
-      await DatastoreServices.markSuccessfulPurchase(
-        transaction: _transaction
-      ).then((tx) async {
+          gpTxId: event.info.transactionId,
+          balance: double.parse(event.info.goldBalance));
+      await DatastoreServices.markSuccessfulPurchase(transaction: _transaction)
+          .then((tx) async {
         if (tx == null) {
           safePrint('Cannot mark Transaction Successful');
           return;
         }
         await DatastoreServices.updateWalletGoldBalance(
-          id: _user.userWalletId!, balance: tx.balance!
-        ).then((wallet) {
+                id: _user.userWalletId!, balance: tx.balance!)
+            .then((wallet) {
           if (wallet == null) {
             add(WalletUpdateFailedEvent());
             return;
@@ -108,18 +107,16 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
     // when gold purchase failed
     on<PurchaseErrorEvent>((event, emit) async {
-      await DatastoreServices.markFailedPurchase(
-        transaction: _transaction
-      ).then((value) {
+      await DatastoreServices.markFailedPurchase(transaction: _transaction)
+          .then((value) {
         emit(BuyErrorState(type: FailType.PURCHASEFAIL));
       });
     });
 
     // when gold adding to wallet is failed
     on<WalletUpdateFailedEvent>((event, emit) async {
-      await DatastoreServices.markWalletUpdateFail(
-        transaction: _transaction
-      ).then((value) {
+      await DatastoreServices.markWalletUpdateFail(transaction: _transaction)
+          .then((value) {
         emit(BuyErrorState(type: FailType.WALLETUPDATEFAIL));
       });
     });
@@ -139,10 +136,8 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
     for (Tax tax in _rates.taxes!) {
       taxRate += double.parse(tax.taxPerc);
     }
-    return _transaction.quantity! 
-          * double.parse(_rates.gBuy!) * taxRate / 100;
+    return _transaction.quantity! * double.parse(_rates.gBuy!) * taxRate / 100;
   }
-    
 
   _checkOutPayment(User user, double amount) {
     _razorpay.open({
@@ -150,10 +145,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       'description': 'Gold Purchase',
       'name': 'Tasvat Private Ltd.',
       'key': razorpayApiKey,
-      'prefill': {
-        'contact': user.phone,
-        'email': user.email
-      },
+      'prefill': {'contact': user.phone, 'email': user.email},
       'external': {
         'wallet': ['paytm', 'phonepe']
       }
@@ -162,22 +154,35 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
   _razorpayInit() {
     _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, (PaymentSuccessResponse response) {
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
+        (PaymentSuccessResponse response) {
       add(PaymentSuccessEvent(response: response));
     });
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, (PaymentFailureResponse response) {
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
+        (PaymentFailureResponse response) {
       add(PaymentErrorEvent(response: response));
     });
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, (ExternalWalletResponse resposne) {
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
+        (ExternalWalletResponse resposne) {
       safePrint(resposne.walletName);
     });
   }
 
   void addController(CustomTimerController controller) {
-    _timerController = controller;
+    // Will be called from the UI
+    // _timerController = controller;
+    timerSubscription?.cancel();
+    _timer = Ticker();
   }
 
   ExchangeRates get getRates => _rates;
   CustomTimerController get getController => _timerController;
   Transaction get getTransaction => _transaction;
+
+  @override
+  Future<void> close() {
+    // TODO: implement close
+    timerSubscription?.cancel();
+    return super.close();
+  }
 }

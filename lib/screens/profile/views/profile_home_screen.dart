@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/screens/profile/views/account_details.dart';
+import 'package:tasvat/screens/profile/views/user_banks_list_screen.dart';
 import 'package:tasvat/utils/app_constants.dart';
 
 import '../../add_money/views/add_money_screen.dart';
+import 'address_list_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -29,6 +31,12 @@ class ProfileScreen extends StatelessWidget {
       body: Column(
         children: [
           ListTile(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (ctx) => const AccountDetailsScreen()),
+              );
+            },
             leading: CircleAvatar(
               backgroundColor: accentBG,
               child: Icon(
@@ -157,6 +165,13 @@ class ProfileScreen extends StatelessWidget {
 
           /// Bank details
           ListTile(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (ctx) => const UserBanksListScreen()),
+              );
+            },
             leading: CircleAvatar(
               backgroundColor: background,
               child: Icon(
@@ -166,6 +181,39 @@ class ProfileScreen extends StatelessWidget {
             ),
             title: Text(
               'Bank Details',
+              style: TextStyle(
+                fontSize: heading2,
+                fontWeight: FontWeight.w500,
+                color: text500,
+              ),
+            ),
+            subtitle: Text(
+              'Banks & AutoPay mandates',
+              style: TextStyle(
+                fontSize: caption,
+                fontWeight: FontWeight.w300,
+                color: text500,
+              ),
+            ),
+          ),
+
+          /// ALL addresses
+          ListTile(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (ctx) => const AddressListScreen()),
+              );
+            },
+            leading: CircleAvatar(
+              backgroundColor: background,
+              child: Icon(
+                Icons.edit_location,
+                color: text400,
+              ),
+            ),
+            title: Text(
+              'Address Details',
               style: TextStyle(
                 fontSize: heading2,
                 fontWeight: FontWeight.w500,

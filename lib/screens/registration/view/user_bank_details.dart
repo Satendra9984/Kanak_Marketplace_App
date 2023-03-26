@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/registration/view/user_kyc_page.dart';
+import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
 
 import '../../../utils/app_constants.dart';
@@ -334,10 +335,37 @@ class _UserBankDetailsPageState extends ConsumerState<UserBankDetailsPage> {
   }
 
   Future<void> submitUserBankDetails(User user) async {
-    await GoldServices.addGoldUserAddress(
-      user: user, 
-      name: 'primary',
-      address: _addrCtrl.text,
-      pincode: _, state: state, city: city)
+    await GoldServices.createBankAccount(
+      userId: user.id,
+      accName: _accountNameCtrl.text,
+      accNo: _accountNumberCtrl.text,
+      ifsc: _ifscCodeCtrl.text,
+    ).then((acc) async {
+      if (acc == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Something went wrong!'))
+        );
+        return;
+      }
+      await DatastoreServices.addBankAccount(account: BankAccount(
+        userID: acc.uniqueId,
+        bankId: acc.bankId,
+        id: acc.bankId,
+        accName: acc.accountName,
+        accNo: acc.accountNumber,
+        ifsc: acc.ifscCode
+      )).then((val) {
+        if (val == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Something went wrong!'))
+          );
+          return;
+        }
+        ref.read(userProvider.notifier).addBankAccount(account: val);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Successfully Added Bank Account!'))
+        );
+      });
+    });
   }
 }

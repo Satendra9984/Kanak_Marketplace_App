@@ -385,6 +385,22 @@ class DatastoreServices {
     });
   }
 
+  // set default bank id
+  static Future<User?> updateDefaultBankId({
+    required User user,
+    required String bankId
+  }) async {
+    User? updatedUser;
+    final req = ModelMutations.update(user.copyWith(defaultBankId: bankId));
+    await _instance.mutate(request: req).response.then((value) {
+      if (value.data == null) {
+        return;
+      }
+      updatedUser = value.data;
+    });
+    return updatedUser;
+  }
+
   // update KYC details of user
   static Future<User?> updateKycDetails(
       {required Map<String, dynamic> details, required User user}) async {

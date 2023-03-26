@@ -22,4 +22,5 @@ class BuyTimer extends StateNotifier<Timer> {
 }
 
 final timerProvider =
-    StateNotifierProvider<BuyTimer, Timer>((ref) => BuyTimer());
+  StateNotifierProvider<BuyTimer, Timer>((ref) => BuyTimer()
+);

@@ -1,26 +1,29 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:tasvat/screens/login/view/pages/login_page.dart';
-import 'package:tasvat/screens/login/view/pages/otp_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasvat/models/ModelProvider.dart';
+import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/registration/view/user_kyc_page.dart';
+import 'package:tasvat/services/gold_services.dart';
 
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 
-class UserBankDetailsPage extends StatefulWidget {
+class UserBankDetailsPage extends ConsumerStatefulWidget {
   const UserBankDetailsPage({super.key});
 
   @override
-  State<UserBankDetailsPage> createState() => _UserBankDetailsPageState();
+  ConsumerState<UserBankDetailsPage> createState() => _UserBankDetailsPageState();
 }
 
-class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
+class _UserBankDetailsPageState extends ConsumerState<UserBankDetailsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   // bool _showPassword = false;
   final TextEditingController _accountNameCtrl = TextEditingController();
   final TextEditingController _accountNumberCtrl = TextEditingController();
   final TextEditingController _ifscCodeCtrl = TextEditingController();
+  final TextEditingController _addrCtrl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -138,8 +141,6 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                
-
                 /// ifsc code
                 Text(
                   'IFSC Code',
@@ -184,14 +185,52 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                
+                /// ifsc code
+                Text(
+                  'Address',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    // color: text150,
+                  ),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: TextInputType.number,
+                    controller: _addrCtrl,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter adrress of the bank';
+                      } else if (value.length < 4) {
+                        return 'Invalid Address';
+                      }
+                      return null;
+                    },
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: accent2,
+                    ),
+                    decoration: getInputDecoration('Kalyani, 741235'),
+                  ),
+                ),
+                const SizedBox(height: 10),
                 Text(
                   'Account Number',
                   style: TextStyle(
                     color: text500,
                     fontSize: body2,
                     fontWeight: FontWeight.w500,
-                  ),
+                  ), 
                 ),
                 Container(
                   margin:
@@ -244,7 +283,10 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
             child: ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  await submitUserBankDetails();
+                  final user = ref.read(userProvider);
+                  await submitUserBankDetails(
+                    user!
+                  );
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -291,7 +333,11 @@ class _UserBankDetailsPageState extends State<UserBankDetailsPage> {
     );
   }
 
-  Future<void> submitUserBankDetails() async {
-    // TODO: SUBMIT USER ADDRESS DETAILS
+  Future<void> submitUserBankDetails(User user) async {
+    await GoldServices.addGoldUserAddress(
+      user: user, 
+      name: 'primary',
+      address: _addrCtrl.text,
+      pincode: _, state: state, city: city)
   }
 }

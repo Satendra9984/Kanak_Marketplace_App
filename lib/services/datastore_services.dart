@@ -370,6 +370,21 @@ class DatastoreServices {
     return createdAcc;
   }
 
+  static Future<void> testApi() async {
+    final req = ModelMutations.create(Wallet(
+      address: 'test@tasvat',
+      balance: 20000,
+      gold_balance: 20
+    ));
+    await _instance.mutate(request: req).response.then((value) {
+      if (value.data == null) {
+        safePrint('Error');
+        return;
+      }
+      safePrint(value.data?.toJson());
+    });
+  }
+
   // update KYC details of user
   static Future<User?> updateKycDetails(
       {required Map<String, dynamic> details, required User user}) async {
@@ -396,6 +411,21 @@ class DatastoreServices {
         return;
       }
       result = res.data;
+    });
+    return result;
+  }
+
+  // update particular address
+  static Future<Address?> updateAddress({
+    required Address addr
+  }) async {
+    Address? result;
+    final req = ModelMutations.update(addr);
+    await _instance.mutate(request: req).response.then((value) {
+      if (value.data == null) {
+        return;
+      }
+      result = value.data;
     });
     return result;
   }

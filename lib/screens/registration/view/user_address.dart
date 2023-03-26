@@ -8,16 +8,15 @@ import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UserAddressRegistrationPage extends ConsumerStatefulWidget {
+class UserAddressPage extends ConsumerStatefulWidget {
   final String? email;
-  const UserAddressRegistrationPage({super.key, this.email});
+  const UserAddressPage({super.key, this.email});
 
   @override
-  ConsumerState<UserAddressRegistrationPage> createState() =>
-      _UserAddressPageState();
+  ConsumerState<UserAddressPage> createState() => _UserAddressPageState();
 }
 
-class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
+class _UserAddressPageState extends ConsumerState<UserAddressPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _pinCodeCtrl = TextEditingController();
   final TextEditingController _addressCtrl = TextEditingController();
@@ -78,20 +77,20 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
     await GoldServices.registerGoldUser(
             phone: authData.username.substring(3),
             email: user!.email!,
+            city: _city!['id'],
             userId: authData.userId,
             name: '${user.fname!} ${user.lname!}',
             pincode: _pinCodeCtrl.text,
             dob: user.dob!.getDateTime().toIso8601String().split('T')[0])
         .then((goldUser) async {
-      safePrint('Gold User Creation---> ${goldUser.toString()}');
+          safePrint('Gold User Creation---> ${goldUser.toString()}');
       if (goldUser == null) {
         return;
       }
       await DatastoreServices.updateGPDetails(user: user, details: goldUser)
           .then((updatedUser) async {
+        safePrint('User with GP Details----------> ${updatedUser.toString()}');
         if (updatedUser == null) {
-          safePrint(
-              'User with GP Details----------> ${updatedUser.toString()}');
           return;
         }
         ref.read(userProvider.notifier).updateUserDetails(
@@ -102,16 +101,15 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
                 address: _addressCtrl.text,
                 pincode: int.parse(_pinCodeCtrl.text),
                 state: _state!['id'],
-                city: _city!['id'])
+                city: _city!['id']
+              )
             .then((rsp) async {
-          safePrint(
-              'Gold User Address Response----------------> ${rsp.toString()}');
+              safePrint('Gold User Address Response----------------> ${rsp.toString()}');
           if (rsp == null) {
             return;
           }
           await DatastoreServices.addUserAddress(rsp: rsp).then((addr) {
-            safePrint(
-                'Added User Address-------------------> ${addr.toString()}');
+            safePrint('Added User Address-------------------> ${addr.toString()}');
             if (addr == null) {
               return;
             }

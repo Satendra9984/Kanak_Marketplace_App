@@ -70,10 +70,10 @@ type User @model @auth(rules: [{allow: public}]) {
   email: AWSEmail
   phone: AWSPhone
   wallet: Wallet @hasOne
-  goldProviderDetails: AWSJSON
+  goldProviderDetails: String
   bankAccounts: [BankAccount] @hasMany(indexName: "byUser", fields: ["id"])
   address: [Address] @hasMany(indexName: "byUser", fields: ["id"])
-  kycDetails: AWSJSON
+  kycDetails: String
   dob: AWSDate
 }
  

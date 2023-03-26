@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -30,7 +29,11 @@ class OnBoardingPage extends ConsumerStatefulWidget {
 class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
   Future<void> _decideRoute() async {
     await Amplify.Auth.getCurrentUser().then((user) async {
+      
+
+      // checks if token expired
       final expiry = await LocalDBServices.getGPTokenExpiry();
+      safePrint('---------> ${user.userId} ____________ $expiry');
       if (expiry == null ||
           DateTime.now().compareTo(DateTime.parse(expiry)) > 0) {
         safePrint('Token Expired');
@@ -38,85 +41,71 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const LogInPage()));
         });
-
         return;
       }
       // sets auth provider with user id
       ref.read(authProvider.notifier).logInAndSetUser(
             user.username,
             user.userId,
-          );
+      );
 
       // sets user with user id
       ref.read(userProvider.notifier).initializeWithUser(User(id: user.userId));
-
+  
       await DatastoreServices.fetchUserById(user.userId).then((currUser) async {
         if (currUser == null) {
+          Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const UserDetailsPage()));
           return;
         }
-        ref.read(userProvider.notifier).updateUserDetails(
-            email: currUser.email,
-            phone: currUser.phone,
-            fname: currUser.fname,
-            lname: currUser.lname,
-            dob: currUser.dob!.getDateTime().toIso8601String().split('T')[0],
-            kyc: currUser.kycDetails == null
-                ? null
-                : jsonDecode(currUser.kycDetails!),
-            gpDetails: currUser.goldProviderDetails == null
-                ? null
-                : jsonDecode(currUser.goldProviderDetails!));
+        ref.read(userProvider.notifier).syncDetails(
+          user: currUser
+        );
         await DatastoreServices.checkRequiredData(uid: user.userId)
-            .then((value) async {
-          if (value == null) {
-            await DatastoreServices.fetchUserById(user.userId).then((value) {
-              if (value == null) {
-                return;
-              }
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const HomeScreen()));
-            });
-          } else if (value == 'UserDetails') {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const UserDetailsPage()));
-          } else if (value == 'Address') {
-            await DatastoreServices.fetchUserById(user.userId).then((value) {
-              if (value == null) {
-                return;
-              }
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          const UserAddressRegistrationPage()));
-            });
-          } else if (value == 'KycDetails') {
-            await DatastoreServices.fetchUserById(user.userId).then((value) {
-              if (value == null) {
-                return;
-              }
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const UserKYCPage()));
-            });
-          } else if (value == 'BankAccount') {
-            await DatastoreServices.fetchUserById(user.userId).then((value) {
-              if (value == null) {
-                return;
-              }
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const UserBankRegistrationPage()));
-            });
-          }
-        });
-      }).catchError((err) {
-        safePrint('No user logged in');
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const LogInPage()));
-      });
+          .then((value) async {
+            if (value == null) {
+              await DatastoreServices.fetchUserById(user.userId).then((value) {
+                if (value == null) {
+                  return;
+                }
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const HomeScreen()));
+              });
+            } else if (value == 'Address') {
+              await DatastoreServices.fetchUserById(user.userId).then((value) {
+                if (value == null) {
+                  return;
+                }
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const UserAddressPage()));
+              });
+            } else if (value == 'KycDetails') {
+              await DatastoreServices.fetchUserById(user.userId).then((value) {
+                if (value == null) {
+                  return;
+                }
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const UserKYCPage()));
+              });
+            } else if (value == 'BankAccount') {
+              await DatastoreServices.fetchUserById(user.userId).then((value) {
+                if (value == null) {
+                  return;
+                }
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const UserBankDetailsPage()));
+              });
+            }
+          });
+        });  
+    }).catchError((err) {
+        Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) => const LogInPage())
+        );
     });
   }
 
@@ -124,20 +113,29 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
     try {
       final auth = AmplifyAuthCognito();
       final api = AmplifyAPI(modelProvider: ModelProvider.instance);
-      final storage = AmplifyStorageS3();
-      await Amplify.addPlugins([auth, api, storage]);
+      // final storage = AmplifyStorageS3();
+      await Amplify.addPlugins([
+        auth, api
+      ]);
       await Amplify.configure(amplifyconfig).then((value) async {
-        safePrint('😄😄😄 Successfully Configured Amplify!');
-        await Amplify.Auth.getCurrentUser().then((value) {
-          safePrint('--> ${value.username}, ${value.userId}');
-        });
+        safePrint('😄😄😄 Successfully Coynfigured Amplify!');
+        // await Amplify.Auth.getCurrentUser().then((value) {
+        //   safePrint('XXXXXXXXXXXXXXXXX  $value');
+
+        //   safePrint('--> ${value.username}, ${value.userId}');
+        // }).catchError((err) {
+        //   safePrint('XXXXXXXXXXXXXXXXX  $err');
+
+        // });
       });
+    } on AmplifyAlreadyConfiguredException catch (e) {
+      safePrint(e);
     } on Exception catch (e) {
       safePrint(e);
     }
   }
 
-  Future<void> _initialize() async {
+  void _initialize() async {
     await _configureAmplify().then((value) async {
       await _decideRoute();
     });
@@ -145,28 +143,24 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
 
   @override
   void initState() {
-    // _initialize();
     super.initState();
+    _initialize();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: background,
-      body: FutureBuilder(
-          future: _initialize(),
-          builder: (context, snap) {
-            return Center(
-              child: Text(
-                'Tasvat',
-                style: TextStyle(
-                  fontSize: 45,
-                  fontWeight: FontWeight.bold,
-                  color: accent2,
-                ),
-              ),
-            );
-          }),
+      body: Center(
+        child: Text(
+          'Tasvat',
+          style: TextStyle(
+            fontSize: 45,
+            fontWeight: FontWeight.bold,
+            color: accent2,
+          ),
+        ),
+      ),
     );
   }
 }

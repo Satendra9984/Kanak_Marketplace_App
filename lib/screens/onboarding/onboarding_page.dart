@@ -29,8 +29,6 @@ class OnBoardingPage extends ConsumerStatefulWidget {
 class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
   Future<void> _decideRoute() async {
     await Amplify.Auth.getCurrentUser().then((user) async {
-      
-
       // checks if token expired
       final expiry = await LocalDBServices.getGPTokenExpiry();
       safePrint('---------> ${user.userId} ____________ $expiry');
@@ -47,65 +45,63 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
       ref.read(authProvider.notifier).logInAndSetUser(
             user.username,
             user.userId,
-      );
+          );
 
       // sets user with user id
       ref.read(userProvider.notifier).initializeWithUser(User(id: user.userId));
-  
+
       await DatastoreServices.fetchUserById(user.userId).then((currUser) async {
         if (currUser == null) {
           Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const UserDetailsPage()));
+              MaterialPageRoute(builder: (context) => const UserDetailsPage()));
           return;
         }
-        ref.read(userProvider.notifier).syncDetails(
-          user: currUser
-        );
+        ref.read(userProvider.notifier).syncDetails(user: currUser);
         await DatastoreServices.checkRequiredData(uid: user.userId)
-          .then((value) async {
-            if (value == null) {
-              await DatastoreServices.fetchUserById(user.userId).then((value) {
-                if (value == null) {
-                  return;
-                }
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const HomeScreen()));
-              });
-            } else if (value == 'Address') {
-              await DatastoreServices.fetchUserById(user.userId).then((value) {
-                if (value == null) {
-                  return;
-                }
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const UserAddressPage()));
-              });
-            } else if (value == 'KycDetails') {
-              await DatastoreServices.fetchUserById(user.userId).then((value) {
-                if (value == null) {
-                  return;
-                }
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const UserKYCPage()));
-              });
-            } else if (value == 'BankAccount') {
-              await DatastoreServices.fetchUserById(user.userId).then((value) {
-                if (value == null) {
-                  return;
-                }
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const UserBankDetailsPage()));
-              });
-            }
-          });
-        });  
+            .then((value) async {
+          if (value == null) {
+            await DatastoreServices.fetchUserById(user.userId).then((value) {
+              if (value == null) {
+                return;
+              }
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const HomeScreen()));
+            });
+          } else if (value == 'Address') {
+            await DatastoreServices.fetchUserById(user.userId).then((value) {
+              if (value == null) {
+                return;
+              }
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const UserAddressRegistrationPage()));
+            });
+          } else if (value == 'KycDetails') {
+            await DatastoreServices.fetchUserById(user.userId).then((value) {
+              if (value == null) {
+                return;
+              }
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const UserKYCPage()));
+            });
+          } else if (value == 'BankAccount') {
+            await DatastoreServices.fetchUserById(user.userId).then((value) {
+              if (value == null) {
+                return;
+              }
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UserBankRegistrationPage()));
+            });
+          }
+        });
+      });
     }).catchError((err) {
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) => const LogInPage())
-        );
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const LogInPage()));
     });
   }
 
@@ -114,9 +110,7 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
       final auth = AmplifyAuthCognito();
       final api = AmplifyAPI(modelProvider: ModelProvider.instance);
       // final storage = AmplifyStorageS3();
-      await Amplify.addPlugins([
-        auth, api
-      ]);
+      await Amplify.addPlugins([auth, api]);
       await Amplify.configure(amplifyconfig).then((value) async {
         safePrint('😄😄😄 Successfully Coynfigured Amplify!');
         // await Amplify.Auth.getCurrentUser().then((value) {

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tasvat/screens/profile/views/update_user_address.dart';
+import 'package:tasvat/screens/profile/views/address_views/update_user_address.dart';
 import 'package:tasvat/screens/registration/view/user_address.dart';
 import 'package:tasvat/services/gold_services.dart';
 import 'package:tasvat/services/rest_services.dart';
@@ -130,6 +130,13 @@ class _AddressListScreenState extends State<AddressListScreen> {
             borderRadius: BorderRadius.circular(15),
           ),
           child: ListTile(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (ctx) => const UpdateUserAddressPage()),
+              );
+            },
             leading: Icon(
               Icons.location_city,
               color: text400,
@@ -156,17 +163,17 @@ class _AddressListScreenState extends State<AddressListScreen> {
               },
               itemBuilder: (BuildContext context) {
                 return [
-                  PopupMenuItem(
-                    onTap: () {},
-                    value: 'Edit',
-                    child: Row(
-                      children: const [
-                        Icon(Icons.edit, color: Colors.green),
-                        SizedBox(width: 10),
-                        Text('Edit'),
-                      ],
-                    ),
-                  ),
+                  // PopupMenuItem(
+                  //   onTap: () {},
+                  //   value: 'Edit',
+                  //   child: Row(
+                  //     children: const [
+                  //       Icon(Icons.edit, color: Colors.green),
+                  //       SizedBox(width: 10),
+                  //       Text('Edit'),
+                  //     ],
+                  //   ),
+                  // ),
                   PopupMenuItem(
                     onTap: () async {
                       await deleteUserAddress().then((value) {

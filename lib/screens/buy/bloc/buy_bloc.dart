@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:amplify_core/amplify_core.dart';
 import 'package:custom_timer/custom_timer.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,14 +11,13 @@ import 'package:tasvat/models/gold_models/rate_model.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
 import 'package:tasvat/utils/app_constants.dart';
-
 import '../../../models/ticker.dart';
 part 'buy_event.dart';
 part 'buy_state.dart';
 
 class BuyBloc extends Bloc<BuyEvent, BuyState> {
   late CustomTimerController _timerController;
-  late Ticker _timer;
+  // late Ticker _timer;
   StreamSubscription<int>? timerSubscription;
   late Transaction _transaction;
   late User _user;
@@ -170,9 +168,9 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
   void addController(CustomTimerController controller) {
     // Will be called from the UI
-    // _timerController = controller;
-    timerSubscription?.cancel();
-    _timer = Ticker();
+    _timerController = controller;
+    // timerSubscription?.cancel();
+    // _timer = Ticker();
   }
 
   ExchangeRates get getRates => _rates;

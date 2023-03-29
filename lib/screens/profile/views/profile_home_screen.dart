@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/screens/profile/views/account_details.dart';
-import 'package:tasvat/screens/profile/views/user_banks_list_screen.dart';
+import 'package:tasvat/screens/profile/views/bank_views/user_banks_list_screen.dart';
 import 'package:tasvat/utils/app_constants.dart';
 
 import '../../add_money/views/add_money_screen.dart';
-import 'address_list_screen.dart';
+import 'address_views/address_list_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);

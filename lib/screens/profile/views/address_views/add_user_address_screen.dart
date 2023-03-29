@@ -4,19 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
-import '../../../utils/app_constants.dart';
-import '../../../utils/ui_functions.dart';
+import '../../../../utils/app_constants.dart';
+import '../../../../utils/ui_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UpdateUserAddressPage extends ConsumerStatefulWidget {
+class AddUserAddressPage extends ConsumerStatefulWidget {
   final String? email;
-  const UpdateUserAddressPage({super.key, this.email});
+  const AddUserAddressPage({super.key, this.email});
 
   @override
-  ConsumerState<UpdateUserAddressPage> createState() => _UserAddressPageState();
+  ConsumerState<AddUserAddressPage> createState() => _UserAddressPageState();
 }
 
-class _UserAddressPageState extends ConsumerState<UpdateUserAddressPage> {
+class _UserAddressPageState extends ConsumerState<AddUserAddressPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _pinCodeCtrl = TextEditingController();
   final TextEditingController _addressCtrl = TextEditingController();
@@ -80,7 +80,8 @@ class _UserAddressPageState extends ConsumerState<UpdateUserAddressPage> {
             userId: authData.userId,
             name: '${user.fname!} ${user.lname!}',
             pincode: _pinCodeCtrl.text,
-            dob: user.dob!.getDateTime().toIso8601String().split('T')[0])
+            dob: user.dob!.getDateTime().toIso8601String().split('T')[0],
+            city: '')
         .then((goldUser) async {
       safePrint('Gold User Creation---> ${goldUser.toString()}');
       if (goldUser == null) {
@@ -146,7 +147,7 @@ class _UserAddressPageState extends ConsumerState<UpdateUserAddressPage> {
                 /// use details text
                 Align(
                   child: Text(
-                    'User Address',
+                    'Add Address',
                     style: TextStyle(
                       color: text500,
                       fontSize: title,

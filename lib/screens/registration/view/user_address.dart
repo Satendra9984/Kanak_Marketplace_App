@@ -8,15 +8,16 @@ import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UserAddressPage extends ConsumerStatefulWidget {
+class UserAddressRegistrationPage extends ConsumerStatefulWidget {
   final String? email;
-  const UserAddressPage({super.key, this.email});
+  const UserAddressRegistrationPage({super.key, this.email});
 
   @override
-  ConsumerState<UserAddressPage> createState() => _UserAddressPageState();
+  ConsumerState<UserAddressRegistrationPage> createState() =>
+      _UserAddressPageState();
 }
 
-class _UserAddressPageState extends ConsumerState<UserAddressPage> {
+class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _pinCodeCtrl = TextEditingController();
   final TextEditingController _addressCtrl = TextEditingController();
@@ -83,7 +84,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
             pincode: _pinCodeCtrl.text,
             dob: user.dob!.getDateTime().toIso8601String().split('T')[0])
         .then((goldUser) async {
-          safePrint('Gold User Creation---> ${goldUser.toString()}');
+      safePrint('Gold User Creation---> ${goldUser.toString()}');
       if (goldUser == null) {
         return;
       }
@@ -101,15 +102,16 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                 address: _addressCtrl.text,
                 pincode: int.parse(_pinCodeCtrl.text),
                 state: _state!['id'],
-                city: _city!['id']
-              )
+                city: _city!['id'])
             .then((rsp) async {
-              safePrint('Gold User Address Response----------------> ${rsp.toString()}');
+          safePrint(
+              'Gold User Address Response----------------> ${rsp.toString()}');
           if (rsp == null) {
             return;
           }
           await DatastoreServices.addUserAddress(rsp: rsp).then((addr) {
-            safePrint('Added User Address-------------------> ${addr.toString()}');
+            safePrint(
+                'Added User Address-------------------> ${addr.toString()}');
             if (addr == null) {
               return;
             }

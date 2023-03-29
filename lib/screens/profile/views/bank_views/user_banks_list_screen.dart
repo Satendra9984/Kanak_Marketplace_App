@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tasvat/screens/profile/views/update_user_bank.dart';
+import 'package:tasvat/screens/profile/views/bank_views/update_user_bank.dart';
 import 'package:tasvat/screens/registration/view/user_bank_details.dart';
 import 'package:tasvat/services/gold_services.dart';
-import '../../../utils/app_constants.dart';
+import '../../../../utils/app_constants.dart';
 
 class UserBanksListScreen extends StatelessWidget {
   const UserBanksListScreen({Key? key}) : super(key: key);
@@ -98,6 +98,13 @@ class UserBanksListScreen extends StatelessWidget {
           // rowDetailBank('Ifsc Code', address['ifscCode'].toString()),
           // rowDetailBank('Status', address['status'].toString()),
           ListTile(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (ctx) => const UpdateUserBankDetailsPage()),
+              );
+            },
             leading: Icon(
               Icons.account_balance_outlined,
               color: text400,
@@ -124,17 +131,17 @@ class UserBanksListScreen extends StatelessWidget {
               },
               itemBuilder: (BuildContext context) {
                 return [
-                  PopupMenuItem(
-                    onTap: () {},
-                    value: 'Edit',
-                    child: Row(
-                      children: const [
-                        Icon(Icons.edit, color: Colors.green),
-                        SizedBox(width: 10),
-                        Text('Edit'),
-                      ],
-                    ),
-                  ),
+                  // PopupMenuItem(
+                  //   onTap: () {},
+                  //   value: 'Edit',
+                  //   child: Row(
+                  //     children: const [
+                  //       Icon(Icons.edit, color: Colors.green),
+                  //       SizedBox(width: 10),
+                  //       Text('Edit'),
+                  //     ],
+                  //   ),
+                  // ),
                   PopupMenuItem(
                     onTap: () async {},
                     value: 'Delete',

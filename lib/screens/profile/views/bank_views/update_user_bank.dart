@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tasvat/screens/registration/view/user_kyc_page.dart';
-import '../../../utils/app_constants.dart';
-import '../../../utils/ui_functions.dart';
+import '../../../../utils/app_constants.dart';
+import '../../../../utils/ui_functions.dart';
 
 class UpdateUserBankDetailsPage extends StatefulWidget {
   const UpdateUserBankDetailsPage({super.key});

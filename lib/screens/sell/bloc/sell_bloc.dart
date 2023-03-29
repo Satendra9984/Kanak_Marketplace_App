@@ -17,7 +17,6 @@ class SellBloc extends Bloc<SellEvent, SellState> {
 
     });
     on<ConfirmButtonPressed>((event, emit) async {
-      await f
       await GoldServices.sellGold(user: _user, bankId: , transaction: transaction, rate: rate)
     });
   }

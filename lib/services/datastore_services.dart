@@ -207,44 +207,41 @@ class DatastoreServices {
   
   // _________________________________________________FETCH OPERATION_____________________________________________________
 
-  // fetch user details
+  // fetch full user details
   static Future<User?> fetchUserById(String id) async {
     User? fetchedUser;
     final request = ModelQueries.get(User.classType, id);
-    await _instance.query(request: request).response.then((user) {
+    await _instance.query(request: request).response.then((user) async {
       if (user.data == null) {
         return;
       }
       fetchedUser = user.data;
+      final req = ModelQueries.list(
+        BankAccount.classType, where: BankAccount.USERID.eq(id)
+      );
+      await _instance.query(request: req).response.then((banks) async {
+        if (banks.data == null) {
+          return;
+        }
+        if (banks.data?.items != null && banks.data?.items.isNotEmpty == true) {
+          List<BankAccount> bankList = banks.data!.items.map((e) => e!).toList();
+          fetchedUser = user.data!.copyWith(bankAccounts: bankList);
+        }
+        final req = ModelQueries.list(
+          Address.classType, where: Address.USERID.eq(id)
+        );
+        await _instance.query(request: req).response.then((addrs) {
+          if (addrs.data == null) {
+            return;
+          }
+          if (addrs.data?.items != null && addrs.data?.items.isNotEmpty == true) {
+            List<Address> addrsList = addrs.data!.items.map((e) => e!).toList();
+            fetchedUser = user.data!.copyWith(address: addrsList);
+          }
+        });
+      });
     });
-    // String getUser = 'getUser';
-    // String graphQlDoc = '''query GetUser(\$id: ID!) {
-    //   $getUser(id: \$id) {
-    //     id
-    //     wallet {
-    //       id
-    //     }
-    //     address {
-    //       items {
-    //         id
-    //       }
-    //     }
-    //     bankAccounts {
-    //       items {
-    //         id
-    //       }
-    //     }
-    //   }
-    // }''';
-    // final getUserReq = GraphQLRequest<User>(
-    //   document: graphQlDoc,
-    //   modelType: User.classType,
-    //   decodePath: getUser,
-    //   variables: <String, String>{'id': id}
-    // );
-    // await Amplify.API.query(request: getUserReq).response.then((value) {
-    //   safePrint('+++++> ${value.data}');
-    // });
+
     return fetchedUser;
   }
 

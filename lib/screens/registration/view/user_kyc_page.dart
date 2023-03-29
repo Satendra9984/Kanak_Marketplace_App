@@ -1,15 +1,11 @@
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:tasvat/providers/auth_provider.dart';
+import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
 import '../../../utils/app_constants.dart';
@@ -62,18 +58,6 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
   XFile? _image;
   String? f;
 
-  Future<void> _uploadPanCardImage() async {
-    try {} catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-
-  Future<void> _uploadAadharCardImage() async {
-    try {} catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-
   @override
   void initState() {
     _dob = getEndDate();
@@ -82,7 +66,7 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authProvider);
+    final user = ref.watch(userProvider);
     return Scaffold(
       backgroundColor: background,
       body: Form(
@@ -303,7 +287,7 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
                     return Column(
                       children: [
                         ImageUploadButtonWidget(
-                          uploadPath: 'tasvatusercontent/pan/${user.id}',
+                          uploadPath: 'tasvatusercontent/pan/${user!.id}',
                           title: 'Pan',
                           onUploaded: (image) {
                             if (image != null) {
@@ -348,9 +332,34 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2.5),
             child: ElevatedButton(
               onPressed: () async {
-                await GoldServices.addKycDetails(file: File(_image!.path), panNo: 'panNo', dob: 'dob', name: 'name');
+                
                 if (_formKey.currentState!.validate()) {
-                  // todo: complete KYC
+                  await GoldServices.addKycDetails(
+                    file: File(_image!.path),
+                    panNo: _panCtrl.text,
+                    dob: _dob!.toIso8601String().split('T')[0],
+                    name: _nameCtrl.text
+                  ).then((details) async {
+                    if (details == null) {
+                      return;
+                    }
+                    await DatastoreServices.updateKycDetails(
+                      details: details, user: user!
+                    ).then((value) {
+                      if (value == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Something went wrong'))
+                        );
+                        return;
+                      }
+                      ref.read(userProvider.notifier).updateUserDetails(
+                        kyc: value.kycDetails
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Successfully updated KYC details'))
+                      );
+                    });
+                  });
                 }
               },
               style: ElevatedButton.styleFrom(

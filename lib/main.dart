@@ -63,11 +63,11 @@ class _TasvatState extends ConsumerState<Tasvat> {
           )
         ],
         child: const MaterialApp(
-          // home: OnBoardingPage(),
+          home: OnBoardingPage(),
           // home: HomeScreen(),
           // home: UserBankDetailsPage(),
           // home: UserAddressPage(),
-          home: UserKYCPage(),
+          // home: UserKYCPage(),
         ),
       ),
     );

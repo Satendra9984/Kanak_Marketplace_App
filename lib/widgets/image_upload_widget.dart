@@ -1,13 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:amplify_core/amplify_core.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tasvat/services/datastore_services.dart';
 import '../utils/app_constants.dart';
 
 class ImageUploadButtonWidget extends StatefulWidget {

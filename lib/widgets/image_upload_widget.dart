@@ -12,9 +12,11 @@ import '../utils/app_constants.dart';
 
 class ImageUploadButtonWidget extends StatefulWidget {
   final String uploadPath, title;
+  final int? maxSize;
   final Function(XFile? image) onUploaded;
   const ImageUploadButtonWidget({
     Key? key,
+    this.maxSize,
     required this.uploadPath,
     required this.title,
     required this.onUploaded,
@@ -51,22 +53,34 @@ class _ImageUploadButtonWidgetState extends State<ImageUploadButtonWidget> {
 
   Future<void> _uploadImage() async {
     try {
-      await ImagePicker().pickImage(source: ImageSource.gallery).then(
+      await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        
+      ).then(
         (XFile? pickedImage) async {
-          if (pickedImage != null) {
-            // set file name
-            _imageName = pickedImage.name;
-            _imagePath = pickedImage.path;
-            // SET BYTES TO IMAGE VARIABLE
-            _imageBytes = await pickedImage.readAsBytes();
-
-            setState(() {
-              _imageName;
-              _imageBytes;
-              _uploadState = UploadState.success;
-            });
-            widget.onUploaded(pickedImage);
+          if (pickedImage == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('No file chosen'))
+            );
+            return;
           }
+          if ( File(pickedImage.path).lengthSync() / 1024 / 1024 > 5) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Cannot attach file over 5 MB'))
+            );
+            return;
+          }
+          _imageName = pickedImage.name;
+          _imagePath = pickedImage.path;
+          // SET BYTES TO IMAGE VARIABLE
+          _imageBytes = await pickedImage.readAsBytes();
+
+          setState(() {
+            _imageName;
+            _imageBytes;
+            _uploadState = UploadState.success;
+          });
+          widget.onUploaded(pickedImage);
         },
       );
     } catch (e) {

@@ -12,6 +12,7 @@ type Address @model @auth(rules: [{allow: public}]) {
   phone: AWSPhone
   email: AWSEmail
   address: String
+  status: Boolean
 }
 
 type BankAccount @model @auth(rules: [{allow: public}]) {
@@ -22,6 +23,7 @@ type BankAccount @model @auth(rules: [{allow: public}]) {
   addressId: String
   accName: String
   userID: ID! @index(name: "byUser")
+  status: Boolean
 }
 
 enum TransactionStatus {
@@ -75,5 +77,6 @@ type User @model @auth(rules: [{allow: public}]) {
   address: [Address] @hasMany(indexName: "byUser", fields: ["id"])
   kycDetails: String
   dob: AWSDate
+  defaultBankId: String
 }
  

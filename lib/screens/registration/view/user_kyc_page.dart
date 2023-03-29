@@ -10,6 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tasvat/providers/auth_provider.dart';
+import 'package:tasvat/services/datastore_services.dart';
+import 'package:tasvat/services/gold_services.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/ui_functions.dart';
 import '../../../widgets/image_upload_widget.dart';
@@ -58,6 +60,7 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
   }
 
   XFile? _image;
+  String? f;
 
   Future<void> _uploadPanCardImage() async {
     try {} catch (e) {
@@ -304,10 +307,15 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
                           title: 'Pan',
                           onUploaded: (image) {
                             if (image != null) {
+                              _image?.length().then((val) {
+                                safePrint('............');
+                                safePrint(val / 1024 / 1024);
+                              });
                               setState(() {
                                 _image = image;
                                 debugPrint('image uploaded');
                               });
+                              safePrint(_image?.path);
                             }
                           },
                         ),
@@ -340,6 +348,7 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2.5),
             child: ElevatedButton(
               onPressed: () async {
+                await GoldServices.addKycDetails(file: File(_image!.path), panNo: 'panNo', dob: 'dob', name: 'name');
                 if (_formKey.currentState!.validate()) {
                   // todo: complete KYC
                 }

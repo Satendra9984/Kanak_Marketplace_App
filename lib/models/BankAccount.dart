@@ -34,6 +34,7 @@ class BankAccount extends Model {
   final String? _addressId;
   final String? _accName;
   final String? _userID;
+  final bool? _status;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -83,6 +84,10 @@ class BankAccount extends Model {
     }
   }
   
+  bool? get status {
+    return _status;
+  }
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -91,9 +96,9 @@ class BankAccount extends Model {
     return _updatedAt;
   }
   
-  const BankAccount._internal({required this.id, bankId, accNo, ifsc, addressId, accName, required userID, createdAt, updatedAt}): _bankId = bankId, _accNo = accNo, _ifsc = ifsc, _addressId = addressId, _accName = accName, _userID = userID, _createdAt = createdAt, _updatedAt = updatedAt;
+  const BankAccount._internal({required this.id, bankId, accNo, ifsc, addressId, accName, required userID, status, createdAt, updatedAt}): _bankId = bankId, _accNo = accNo, _ifsc = ifsc, _addressId = addressId, _accName = accName, _userID = userID, _status = status, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory BankAccount({String? id, String? bankId, String? accNo, String? ifsc, String? addressId, String? accName, required String userID}) {
+  factory BankAccount({String? id, String? bankId, String? accNo, String? ifsc, String? addressId, String? accName, required String userID, bool? status}) {
     return BankAccount._internal(
       id: id == null ? UUID.getUUID() : id,
       bankId: bankId,
@@ -101,7 +106,8 @@ class BankAccount extends Model {
       ifsc: ifsc,
       addressId: addressId,
       accName: accName,
-      userID: userID);
+      userID: userID,
+      status: status);
   }
   
   bool equals(Object other) {
@@ -118,7 +124,8 @@ class BankAccount extends Model {
       _ifsc == other._ifsc &&
       _addressId == other._addressId &&
       _accName == other._accName &&
-      _userID == other._userID;
+      _userID == other._userID &&
+      _status == other._status;
   }
   
   @override
@@ -136,6 +143,7 @@ class BankAccount extends Model {
     buffer.write("addressId=" + "$_addressId" + ", ");
     buffer.write("accName=" + "$_accName" + ", ");
     buffer.write("userID=" + "$_userID" + ", ");
+    buffer.write("status=" + (_status != null ? _status!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -143,7 +151,7 @@ class BankAccount extends Model {
     return buffer.toString();
   }
   
-  BankAccount copyWith({String? bankId, String? accNo, String? ifsc, String? addressId, String? accName, String? userID}) {
+  BankAccount copyWith({String? bankId, String? accNo, String? ifsc, String? addressId, String? accName, String? userID, bool? status}) {
     return BankAccount._internal(
       id: id,
       bankId: bankId ?? this.bankId,
@@ -151,7 +159,8 @@ class BankAccount extends Model {
       ifsc: ifsc ?? this.ifsc,
       addressId: addressId ?? this.addressId,
       accName: accName ?? this.accName,
-      userID: userID ?? this.userID);
+      userID: userID ?? this.userID,
+      status: status ?? this.status);
   }
   
   BankAccount.fromJson(Map<String, dynamic> json)  
@@ -162,15 +171,16 @@ class BankAccount extends Model {
       _addressId = json['addressId'],
       _accName = json['accName'],
       _userID = json['userID'],
+      _status = json['status'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'bankId': _bankId, 'accNo': _accNo, 'ifsc': _ifsc, 'addressId': _addressId, 'accName': _accName, 'userID': _userID, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'bankId': _bankId, 'accNo': _accNo, 'ifsc': _ifsc, 'addressId': _addressId, 'accName': _accName, 'userID': _userID, 'status': _status, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
-    'id': id, 'bankId': _bankId, 'accNo': _accNo, 'ifsc': _ifsc, 'addressId': _addressId, 'accName': _accName, 'userID': _userID, 'createdAt': _createdAt, 'updatedAt': _updatedAt
+    'id': id, 'bankId': _bankId, 'accNo': _accNo, 'ifsc': _ifsc, 'addressId': _addressId, 'accName': _accName, 'userID': _userID, 'status': _status, 'createdAt': _createdAt, 'updatedAt': _updatedAt
   };
 
   static final QueryModelIdentifier<BankAccountModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<BankAccountModelIdentifier>();
@@ -181,6 +191,7 @@ class BankAccount extends Model {
   static final QueryField ADDRESSID = QueryField(fieldName: "addressId");
   static final QueryField ACCNAME = QueryField(fieldName: "accName");
   static final QueryField USERID = QueryField(fieldName: "userID");
+  static final QueryField STATUS = QueryField(fieldName: "status");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "BankAccount";
     modelSchemaDefinition.pluralName = "BankAccounts";
@@ -236,6 +247,12 @@ class BankAccount extends Model {
       key: BankAccount.USERID,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: BankAccount.STATUS,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.bool)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

@@ -426,26 +426,25 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
                         _formKey.currentState!.validate()) {
                       // PROCEED TO CONFIRMATION SCREEN
 
-                      // context.read<BuyBloc>().addController();
-
-                      // await ref
-                      //     .read(goldRateProvider.notifier)
-                      //     .updateRates()
-                      //     .then((value) {
-                      //   final rate = ref.read(goldRateProvider);
-                      //   debugPrint(rate.toString());
-                      //   context.read<BuyBloc>().add(RateConfirmEvent(
-                      //       user: ref.read(userProvider)!,
-                      //       exchangeRates: rate,
-                      //       quantity: double.parse(_qtyController.text)));
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (ctx) => BuyConfirmationScreen(
-                      //       quantity: _qtyController.text,
-                      //     ),
-                      //   ),
-                      // );
+                      await ref
+                          .read(goldRateProvider.notifier)
+                          .updateRates()
+                          .then(
+                        (value) {
+                          final rate = ref.read(goldRateProvider);
+                          debugPrint(rate.toString());
+                          context.read<BuyBloc>().add(RateConfirmEvent(
+                              user: ref.read(userProvider)!,
+                              exchangeRates: rate,
+                              quantity: double.parse(_qtyController.text)));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (ctx) => const BuyConfirmationScreen(),
+                            ),
+                          );
+                        },
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(

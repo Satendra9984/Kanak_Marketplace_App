@@ -37,7 +37,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
           setState(() {
             _citiesList;
           });
-          debugPrint('citiesList: $_state');
+          // debugPrint('citiesList: $_state');
         });
       }
     } catch (e) {
@@ -57,7 +57,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
         setState(() {
           _statesList;
         });
-        debugPrint(_statesList.toString());
+        // debugPrint(_statesList.toString());
       }
     } catch (e) {
       _statesList = [];
@@ -79,15 +79,18 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
             phone: authData.username.substring(3),
             email: user!.email!,
             city: _city!['id'],
+            state: _state!['id'],
             userId: authData.userId,
             name: '${user.fname!} ${user.lname!}',
-            pincode: _pinCodeCtrl.text,
+            pincode: int.parse(_pinCodeCtrl.text),
             dob: user.dob!.getDateTime().toIso8601String().split('T')[0])
         .then((goldUser) async {
       safePrint('Gold User Creation---> ${goldUser.toString()}');
       if (goldUser == null) {
         return;
       }
+
+      /// Updating in the Tasvat Database
       await DatastoreServices.updateGPDetails(user: user, details: goldUser)
           .then((updatedUser) async {
         safePrint('User with GP Details----------> ${updatedUser.toString()}');
@@ -403,6 +406,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
                               if (value != null) {
                                 setState(() {
                                   _city = value;
+                                  debugPrint('city: ---------> $_city');
                                 });
                               }
                             },

@@ -161,16 +161,14 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       add(PaymentErrorEvent(response: response));
     });
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
-        (ExternalWalletResponse resposne) {
-      safePrint(resposne.walletName);
+        (ExternalWalletResponse response) {
+      safePrint(response.walletName);
     });
   }
 
   void addController(CustomTimerController controller) {
     // Will be called from the UI
     _timerController = controller;
-    // timerSubscription?.cancel();
-    // _timer = Ticker();
   }
 
   ExchangeRates get getRates => _rates;

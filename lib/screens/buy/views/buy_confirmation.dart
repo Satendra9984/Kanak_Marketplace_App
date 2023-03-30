@@ -2,6 +2,7 @@ import 'package:custom_timer/custom_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasvat/screens/buy/bloc/buy_bloc.dart';
+import 'package:tasvat/screens/buy/views/buy_completed.dart';
 import '../../../utils/app_constants.dart';
 import '../../../widgets/row_details_widget.dart';
 
@@ -42,12 +43,21 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
         backgroundColor: background,
       ),
       body: BlocConsumer<BuyBloc, BuyState>(
-        listener: (context, buyState) {},
+        listener: (context, buyState) {
+          if (buyState is BuyCompletedState || buyState is BuyErrorState) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) => BuyCompletedScreen(
+                    buyOrderDetails: context.read<BuyBloc>().getTransaction),
+              ),
+            );
+          }
+        },
         builder: (context, buyState) {
-          if(buyState is BuyProccessing ){
-            return Center(child: CircularProgressIndicator(
-              color: accent2
-            ),);
+          if (buyState is BuyProccessing) {
+            return Center(
+              child: CircularProgressIndicator(color: accent2),
+            );
           }
           return Container(
             margin: const EdgeInsets.symmetric(vertical: 15),
@@ -200,8 +210,15 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                   if (state == CustomTimerState.counting)
                                     ElevatedButton(
                                       onPressed: () async {
-                                        // TODO: GET TRANSACTION
-                                        context.read<BuyBloc>().add(ConfirmButtonPressedEvent(transaction: ));
+                                        // Proceed for Transaction
+
+                                        context.read<BuyBloc>().add(
+                                              ConfirmButtonPressedEvent(
+                                                transaction: context
+                                                    .read<BuyBloc>()
+                                                    .getTransaction,
+                                              ),
+                                            );
                                       },
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(

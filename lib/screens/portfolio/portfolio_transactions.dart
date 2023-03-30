@@ -172,7 +172,7 @@ class PortfolioTransactions extends StatelessWidget {
         context,
         MaterialPageRoute(
           builder: (ctx) => BuyCompletedScreen(
-            buyOrderDetails: transactionDetails,
+            transactionDetails: transactionDetails,
           ),
         ),
       );

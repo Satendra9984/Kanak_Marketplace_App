@@ -142,7 +142,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       'amount': amount,
       'description': 'Gold Purchase',
       'name': 'Tasvat Private Ltd.',
-      'key': razorpayApiKey,
+      'key': 'rzp_test_nxde3wSg0ubBiN',
       'prefill': {'contact': user.phone, 'email': user.email},
       'external': {
         'wallet': ['paytm', 'phonepe']

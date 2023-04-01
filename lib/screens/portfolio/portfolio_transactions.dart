@@ -2,6 +2,7 @@ import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/screens/buy/views/buy_completed.dart';
+import 'package:tasvat/screens/portfolio/transaction_status.dart';
 import 'package:tasvat/screens/sell/views/sell_completed_screen.dart';
 import 'package:tasvat/screens/withdraw/withdraw_completed.dart';
 
@@ -14,20 +15,21 @@ class PortfolioTransactions extends StatelessWidget {
     Transaction(
         id: '123456789',
         type: TransactionType.BUY,
-        dateTime: TemporalDateTime.fromString('2023-03-05'),
+        dateTime: TemporalDateTime.now(),
         amount: 12),
     Transaction(
-        id: '123456789',
-        type: TransactionType.SELL,
-        amount: 5,
-        status: TransactionStatus.PENDING,
-        dateTime: TemporalDateTime.fromString('2023-03-05')),
+      id: '123456789',
+      type: TransactionType.SELL,
+      amount: 5,
+      status: TransactionStatus.PENDING,
+      dateTime: TemporalDateTime.now(),
+    ),
     Transaction(
       id: '123456789',
       type: TransactionType.EXCHANGE,
       amount: 8,
       status: TransactionStatus.PENDING,
-      dateTime: TemporalDateTime.fromString('2023-03-05'),
+      dateTime: TemporalDateTime.now(),
     ),
   ];
 
@@ -167,16 +169,16 @@ class PortfolioTransactions extends StatelessWidget {
 
   void _navigateToCompletedScreen(
       BuildContext context, Transaction transactionDetails, String id) {
-    if (transactionDetails.type == 'Buy') {
+    if (transactionDetails.type == TransactionType.BUY) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (ctx) => BuyCompletedScreen(
-            transactionDetails: transactionDetails,
+          builder: (ctx) => TransactionStatusScreen(
+            buyOrderDetails: transactionDetails,
           ),
         ),
       );
-    } else if (transactionDetails.type == 'Sell') {
+    } else if (transactionDetails.type == TransactionType.SELL) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -185,7 +187,7 @@ class PortfolioTransactions extends StatelessWidget {
           ),
         ),
       );
-    } else if (transactionDetails.type == 'Withdraw') {
+    } else if (transactionDetails.type == TransactionType.EXCHANGE) {
       Navigator.push(
         context,
         MaterialPageRoute(

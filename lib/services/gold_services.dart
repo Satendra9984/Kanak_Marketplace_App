@@ -328,7 +328,7 @@ class GoldServices {
     return bank;
   }
 
-  // buy gold
+  /// ------------------------ Buy Gold ------------------------------
   static Future<BuyInfo?> buyGold(
       {required User user,
       required Transaction transaction,
@@ -357,6 +357,8 @@ class GoldServices {
     });
     return info;
   }
+
+  static Future<List<Map<String, dynamic>>?> getBuyList() async {}
 
   // sell gold
   static Future<SellInfo?> sellGold(
@@ -504,4 +506,6 @@ class GoldServices {
     // });
     return result;
   }
+
+  /// --------------------------
 }

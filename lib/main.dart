@@ -58,8 +58,8 @@ class _TasvatState extends ConsumerState<Tasvat> {
         ],
         child: MaterialApp(
           theme: ThemeData.dark(),
-          home: const OnBoardingPage(),
-          // home: const HomeScreen(),
+          // home: const OnBoardingPage(),
+          home: const HomeScreen(),
           // home: UserBankDetailsPage(),
           // home: UserAddressPage(),
           // home: UserKYCPage(),

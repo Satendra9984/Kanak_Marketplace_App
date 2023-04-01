@@ -1,3 +1,4 @@
+import 'package:custom_timer/custom_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +19,8 @@ class BuyAssetBody extends ConsumerStatefulWidget {
   ConsumerState<BuyAssetBody> createState() => _BuyAssetBodyState();
 }
 
-class _BuyAssetBodyState extends ConsumerState<BuyAssetBody> {
+class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _qtyController = TextEditingController();
@@ -407,14 +409,14 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 /// CASH BALANCE
-                Text(
-                  'Cash Balance: 12,000.00 ₹',
-                  style: TextStyle(
-                    fontSize: body2,
-                    color: text300,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                // Text(
+                //   'Cash Balance: 12,000.00 ₹',
+                //   style: TextStyle(
+                //     fontSize: body2,
+                //     color: text300,
+                //     fontWeight: FontWeight.w500,
+                //   ),
+                // ),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () async {
@@ -422,28 +424,27 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody> {
                     closeKeyboard(context);
                     if (_formKey.currentState != null &&
                         _formKey.currentState!.validate()) {
-
                       // PROCEED TO CONFIRMATION SCREEN
-                      await ref.read(goldRateProvider.notifier).updateRates().then((value) {
-                        final rate = ref.read(goldRateProvider);
-                        context.read<BuyBloc>().add(
-                          RateConfirmEvent(
-                            user: ref.read(userProvider)!,
-                            exchangeRates: rate,
-                            quantity: double.parse(_amountController.text)
-                          )
-                        );
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (ctx) => BuyConfirmationScreen(
-                              quantity: _qtyController.text,
+
+                      await ref
+                          .read(goldRateProvider.notifier)
+                          .updateRates()
+                          .then(
+                        (value) {
+                          final rate = ref.read(goldRateProvider);
+                          debugPrint(rate.toString());
+                          context.read<BuyBloc>().add(RateConfirmEvent(
+                              user: ref.read(userProvider)!,
+                              exchangeRates: rate,
+                              quantity: double.parse(_qtyController.text)));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (ctx) => const BuyConfirmationScreen(),
                             ),
-                          ),
-                        );
-                      });
-                      
-                      
+                          );
+                        },
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(

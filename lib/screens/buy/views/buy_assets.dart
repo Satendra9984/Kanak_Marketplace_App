@@ -13,7 +13,7 @@ class BuyAssets extends StatefulWidget {
 
 class _BuyAssetsState extends State<BuyAssets> {
   Stream<http.Response> _getPriceDataStream() async* {
-    yield* Stream.periodic(const Duration(seconds: 30), (_) {
+    yield* Stream.periodic(const Duration(seconds: 1), (_) {
       return http.get(
         Uri.parse('https://partners-staging.safegold.com/v1/buy-price'),
         headers: {

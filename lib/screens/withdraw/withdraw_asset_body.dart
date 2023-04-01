@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tasvat/screens/sell/sell_confirmation.dart';
+import 'package:tasvat/screens/sell/views/sell_confirmation.dart';
 import 'package:tasvat/screens/withdraw/book_confirmation.dart';
 import '../../utils/app_constants.dart';
 

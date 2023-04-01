@@ -2,7 +2,7 @@ import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/screens/buy/views/buy_completed.dart';
-import 'package:tasvat/screens/sell/sell_completed_screen.dart';
+import 'package:tasvat/screens/sell/views/sell_completed_screen.dart';
 import 'package:tasvat/screens/withdraw/withdraw_completed.dart';
 
 import '../../utils/app_constants.dart';
@@ -172,7 +172,7 @@ class PortfolioTransactions extends StatelessWidget {
         context,
         MaterialPageRoute(
           builder: (ctx) => BuyCompletedScreen(
-            buyOrderDetails: transactionDetails,
+            transactionDetails: transactionDetails,
           ),
         ),
       );

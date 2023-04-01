@@ -1,28 +1,22 @@
-import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tasvat/models/ModelProvider.dart';
-import 'package:tasvat/providers/user_provider.dart';
-import 'package:tasvat/services/datastore_services.dart';
-import 'package:tasvat/services/gold_services.dart';
-import '../../../utils/app_constants.dart';
-import '../../../utils/ui_functions.dart';
+import 'package:tasvat/screens/registration/view/user_kyc_page.dart';
+import '../../../../utils/app_constants.dart';
+import '../../../../utils/ui_functions.dart';
 
-class UserBankRegistrationPage extends ConsumerStatefulWidget {
-  const UserBankRegistrationPage({super.key});
+class UpdateUserBankDetailsPage extends StatefulWidget {
+  const UpdateUserBankDetailsPage({super.key});
 
   @override
-  ConsumerState<UserBankRegistrationPage> createState() =>
-      _UserBankRegistrationPageState();
+  State<UpdateUserBankDetailsPage> createState() =>
+      _UpdateUserBankDetailsPageState();
 }
 
-class _UserBankRegistrationPageState extends ConsumerState<UserBankRegistrationPage> {
+class _UpdateUserBankDetailsPageState extends State<UpdateUserBankDetailsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _accountNameCtrl = TextEditingController();
   final TextEditingController _accountNumberCtrl = TextEditingController();
   final TextEditingController _ifscCodeCtrl = TextEditingController();
-  final TextEditingController _addressCtrl = TextEditingController();
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,19 +154,19 @@ class _UserBankRegistrationPageState extends ConsumerState<UserBankRegistrationP
                   ),
                   child: TextFormField(
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.number,
                     controller: _ifscCodeCtrl,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter the IFSC Code';
-                      } else if (value.length < 11 ) {
+                      } else if (value.length < 11 || value.length < 11) {
                         return 'IFSC Code must be equal 11 character';
                       }
-                      // bool ifscValid =
-                      //     RegExp(r'/^[A-Za-z]{4}[0-9]{7}$/').hasMatch(value);
-                      // if (ifscValid == false) {
-                      //   return 'Please enter a valid IFSC Code';
-                      // }
+                      bool ifscValid =
+                          RegExp(r'/^[A-Za-z]{4}[0-9]{6,7}$/').hasMatch(value);
+                      if (ifscValid == false) {
+                        return 'Please enter a valid IFSC Code';
+                      }
                       return null;
                     },
                     style: TextStyle(
@@ -184,45 +178,7 @@ class _UserBankRegistrationPageState extends ConsumerState<UserBankRegistrationP
                   ),
                 ),
                 const SizedBox(height: 10),
-                /// ifsc code
-                Text(
-                  'Address',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    // color: text150,
-                  ),
-                  child: TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.text,
-                    controller: _addressCtrl,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter adrress of the bank';
-                      } else if (value.length < 4) {
-                        return 'Invalid Address';
-                      }
-                      return null;
-                    },
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: accent2,
-                    ),
-                    decoration: getInputDecoration('Kalyani, 741235'),
-                  ),
-                ),
-                const SizedBox(height: 10),
+
                 Text(
                   'Account Number',
                   style: TextStyle(
@@ -282,11 +238,7 @@ class _UserBankRegistrationPageState extends ConsumerState<UserBankRegistrationP
             child: ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  final user = ref.read(userProvider);
-                  safePrint(user);
-                  await submitUserBankDetails(
-                    user!
-                  );
+                  await updateUserBankDetails();
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -298,33 +250,11 @@ class _UserBankRegistrationPageState extends ConsumerState<UserBankRegistrationP
                 backgroundColor: accent1,
               ),
               child: Text(
-                'Submit',
+                'Update',
                 style: TextStyle(
                   color: background,
                   fontSize: heading2,
                   fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-
-          /// skip button
-          Container(
-            margin: const EdgeInsets.only(bottom: 10),
-            child: TextButton(
-              onPressed: () {
-                GoldServices.sessionLogIn();
-                // Navigator.of(context).pushReplacement(
-                //   MaterialPageRoute(
-                //     builder: (ctx) => const UserKYCPage(),
-                //   ),
-                // );
-              },
-              child: Text(
-                'Skip for now',
-                style: TextStyle(
-                  color: accent2,
-                  fontSize: 16,
                 ),
               ),
             ),
@@ -334,38 +264,7 @@ class _UserBankRegistrationPageState extends ConsumerState<UserBankRegistrationP
     );
   }
 
-  Future<void> submitUserBankDetails(User user) async {
-    await GoldServices.createBankAccount(
-      userId: user.id,
-      accName: _accountNameCtrl.text,
-      accNo: _accountNumberCtrl.text,
-      ifsc: _ifscCodeCtrl.text,
-    ).then((acc) async {
-      if (acc == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Something went wrong!'))
-        );
-        return;
-      }
-      safePrint(acc);
-      await DatastoreServices.addBankAccount(account: BankAccount(
-        userID: acc.uniqueId,
-        bankId: acc.userBankId,
-        accName: acc.accountName,
-        accNo: acc.accountNumber,
-        ifsc: acc.ifscCode
-      )).then((val) {
-        if (val == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Something went wrong!'))
-          );
-          return;
-        }
-        ref.read(userProvider.notifier).addBankAccount(account: val);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Successfully Added Bank Account!'))
-        );
-      });
-    });
+  Future<void> updateUserBankDetails() async {
+    // TODO: SUBMIT USER ADDRESS DETAILS
   }
 }

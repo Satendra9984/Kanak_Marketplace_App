@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tasvat/screens/home_screen.dart';
-import '../../models/Transaction.dart';
-import '../../utils/app_constants.dart';
-import '../../widgets/row_details_widget.dart';
+import '../../../models/Transaction.dart';
+import '../../../utils/app_constants.dart';
+import '../../../widgets/row_details_widget.dart';
 
 class SellCompletedScreen extends StatelessWidget {
   final Transaction buyOrderDetails;

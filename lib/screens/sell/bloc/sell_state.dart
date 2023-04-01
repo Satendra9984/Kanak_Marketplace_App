@@ -1,9 +1,7 @@
 part of 'sell_bloc.dart';
 
-abstract class SellState extends Equatable {
-  @override
-  List<Object> get props => [];
-}
+@immutable
+abstract class SellState extends Equatable {}
 
 class SellInitial extends SellState {
   @override

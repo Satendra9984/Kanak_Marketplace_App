@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:tasvat/screens/sell/sell_asset_body.dart';
+import 'package:tasvat/screens/sell/views/sell_asset_body.dart';
 import 'package:tasvat/utils/app_constants.dart';
 import 'package:http/http.dart' as http;
 

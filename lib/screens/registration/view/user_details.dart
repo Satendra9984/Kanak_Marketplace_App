@@ -41,26 +41,23 @@ class _UserDetailsPageState extends ConsumerState<UserDetailsPage> {
       userId: authData.userId,
       fname: _fNameCtrl.text,
       lname: _lNameCtrl.text,
-      
     ).then((user) {
       if (user == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Something went wrong!'))
-        );
+            const SnackBar(content: Text('Something went wrong!')));
         return;
       }
       ref.read(userProvider.notifier).syncDetails(user: user);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Successfully added your details!'))
-      );
-      Navigator.pushReplacement(context, MaterialPageRoute(
-        builder: (context) => const UserAddressPage()
-      ));
+          const SnackBar(content: Text('Successfully added your details!')));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const UserAddressRegistrationPage()));
     }).catchError((err) {
       safePrint(err);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(err.toString()))
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(err.toString())));
     });
   }
 
@@ -331,7 +328,9 @@ class _UserDetailsPageState extends ConsumerState<UserDetailsPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                _dob == null ? 'yyyy-mm-dd' : _dob!.toIso8601String().split('T')[0],
+                                _dob == null
+                                    ? 'yyyy-mm-dd'
+                                    : _dob!.toIso8601String().split('T')[0],
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 16,

@@ -2,23 +2,21 @@ import 'dart:convert';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/providers/user_provider.dart';
-import 'package:tasvat/screens/registration/view/user_bank_details.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
-import '../../../utils/app_constants.dart';
-import '../../../utils/ui_functions.dart';
+import '../../../../utils/app_constants.dart';
+import '../../../../utils/ui_functions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UserAddressRegistrationPage extends ConsumerStatefulWidget {
+class AddUserAddressPage extends ConsumerStatefulWidget {
   final String? email;
-  const UserAddressRegistrationPage({super.key, this.email});
+  const AddUserAddressPage({super.key, this.email});
 
   @override
-  ConsumerState<UserAddressRegistrationPage> createState() =>
-      _UserAddressPageState();
+  ConsumerState<AddUserAddressPage> createState() => _UserAddressPageState();
 }
 
-class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
+class _UserAddressPageState extends ConsumerState<AddUserAddressPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _pinCodeCtrl = TextEditingController();
   final TextEditingController _addressCtrl = TextEditingController();
@@ -38,7 +36,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
           setState(() {
             _citiesList;
           });
-          // debugPrint('citiesList: $_state');
+          debugPrint('citiesList: $_state');
         });
       }
     } catch (e) {
@@ -58,7 +56,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
         setState(() {
           _statesList;
         });
-        // debugPrint(_statesList.toString());
+        debugPrint(_statesList.toString());
       }
     } catch (e) {
       _statesList = [];
@@ -77,29 +75,28 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
     final user = ref.read(userProvider);
     safePrint(user);
     await GoldServices.registerGoldUser(
-            phone: authData.username.substring(3),
-            email: user!.email!,
-            city: _city!['id'],
-            state: _state!['id'],
-            userId: user.id,
-            name: '${user.fname!} ${user.lname!}',
-            pincode: int.parse(_pinCodeCtrl.text),
-            dob: user.dob!.getDateTime().toIso8601String().split('T')[0])
-        .then((goldUser) async {
+      phone: authData.username.substring(3),
+      email: user!.email!,
+      userId: authData.userId,
+      name: '${user.fname!} ${user.lname!}',
+      pincode: int.parse(_pinCodeCtrl.text),
+      dob: user.dob!.getDateTime().toIso8601String().split('T')[0],
+      city: _city!['id'],
+      state: _state!['id'],
+    ).then((goldUser) async {
       safePrint('Gold User Creation---> ${goldUser.toString()}');
       if (goldUser == null) {
         return;
       }
-
-      /// Updating in the Tasvat Database
       await DatastoreServices.updateGPDetails(user: user, details: goldUser)
           .then((updatedUser) async {
-        safePrint('User with GP Details----------> ${updatedUser.toString()}');
         if (updatedUser == null) {
+          safePrint(
+              'User with GP Details----------> ${updatedUser.toString()}');
           return;
         }
         ref.read(userProvider.notifier).updateUserDetails(
-            gpDetails: updatedUser.goldProviderDetails!);
+            gpDetails: jsonDecode(updatedUser.goldProviderDetails!));
         await GoldServices.addGoldUserAddress(
                 user: user,
                 name: 'primary',
@@ -108,28 +105,19 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
                 state: _state!['id'],
                 city: _city!['id'])
             .then((rsp) async {
-              safePrint('Gold User Address Response----------------> ${rsp?.toJson()}');
+          safePrint(
+              'Gold User Address Response----------------> ${rsp.toString()}');
           if (rsp == null) {
             return;
           }
-          await DatastoreServices.addUserAddress(rsp: rsp, userId: user.id).then((addr) {
-            safePrint('Added User Address-------------------> ${addr?.toJson()}');
+          await DatastoreServices.addUserAddress(rsp: rsp).then((addr) {
+            safePrint(
+                'Added User Address-------------------> ${addr.toString()}');
             if (addr == null) {
               return;
             }
             ref.read(userProvider.notifier).addUserAddress(address: addr);
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-              const UserBankRegistrationPage()
-            ));
-          }).catchError((err) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(err.toString()))
-            );
           });
-        }).catchError((err) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(err.toString()))
-          );
         });
       });
     });
@@ -160,7 +148,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
                 /// use details text
                 Align(
                   child: Text(
-                    'User Address',
+                    'Add Address',
                     style: TextStyle(
                       color: text500,
                       fontSize: title,
@@ -416,7 +404,6 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
                               if (value != null) {
                                 setState(() {
                                   _city = value;
-                                  debugPrint('city: ---------> $_city');
                                 });
                               }
                             },

@@ -14,28 +14,22 @@ class BuyConfirmationScreen extends StatefulWidget {
   State<BuyConfirmationScreen> createState() => _BuyConfirmationScreenState();
 }
 
-class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
-    with TickerProviderStateMixin {
+class _BuyConfirmationScreenState extends State<BuyConfirmationScreen> {
+  
   @override
   void dispose() {
-    context.read<BuyBloc>().clearTimer();
     context.read<BuyBloc>().close();
     super.dispose();
   }
 
   @override
   void initState() {
-    context.read<BuyBloc>().addController(CustomTimerController(
-        vsync: this,
-        begin: const Duration(seconds: 0),
-        end: const Duration(seconds: 180)));
-
-    context.read<BuyBloc>().getController.start();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final remainingTime = context.read<BuyBloc>().remainingTime;
     return Scaffold(
       backgroundColor: background,
       appBar: AppBar(
@@ -113,12 +107,12 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                               const SizedBox(height: 25),
                               RowDetailWidget(
                                   title: 'Price/gram',
-                                  value: '${['current_price']} INR/gm'),
+                                  value: '${context.read<BuyBloc>().getTransaction.lockPrice} INR/gm'),
                               const SizedBox(height: 25),
                               RowDetailWidget(
                                   title: 'Quantity',
                                   value:
-                                      '${context.read<BuyBloc>().getTransaction.quantity} gm'),
+                                      '${context.watch<BuyBloc>().getTransaction.quantity} gm'),
                             ],
                           ),
                         ),
@@ -166,11 +160,7 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                             color: background,
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          child: CustomTimer(
-                            controller: context.read<BuyBloc>().getController,
-                            builder: (CustomTimerState state,
-                                CustomTimerRemainingTime remaining) {
-                              return Column(
+                          child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   RichText(
@@ -184,7 +174,7 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                       children: [
                                         TextSpan(
                                           text:
-                                              '${remaining.minutes} : ${remaining.seconds} ',
+                                              '$remainingTime',
                                           style: TextStyle(
                                             color: accent1,
                                             fontSize: heading2,
@@ -206,11 +196,11 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                   /// confirm button
                                   const SizedBox(height: 20),
                                   // Condition for confirmation button
-                                  if (state == CustomTimerState.counting)
+                                  if (context.read<BuyBloc>().remainingTime != 0)
                                     ElevatedButton(
                                       onPressed: () async {
-                                        // Proceed for Transaction
 
+                                        // Proceed for Transaction
                                         context.read<BuyBloc>().add(
                                               ConfirmButtonPressedEvent(
                                                 transaction: context
@@ -240,9 +230,7 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
                                       ),
                                     ),
                                 ],
-                              );
-                            },
-                          ),
+                              )
                         ),
                       ],
                     ),

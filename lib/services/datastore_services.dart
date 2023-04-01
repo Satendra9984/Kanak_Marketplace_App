@@ -207,44 +207,71 @@ class DatastoreServices {
   
   // _________________________________________________FETCH OPERATION_____________________________________________________
 
-  // fetch user details
+
+  static Future<int?> getUserVersion({
+    required String userId
+  }) async {
+    int? version;
+    const String getUserQuery = """
+      query GetUser(\$id: ID!) {
+        getUser(id: \$id) {
+          _version
+        }
+      }
+    """;
+    try {
+      final response = await _instance.query(
+        request: GraphQLRequest<String>(
+          document: getUserQuery,
+          variables: {
+            'id': userId
+          },
+        ),
+      ).response;
+      version = jsonDecode(
+        response.data!
+      )['getUser']['_version'];
+    } catch (e) {
+      safePrint('Failed to retrieve user record: $e');
+    }
+    return version;
+  }
+
+  // fetch full user details
   static Future<User?> fetchUserById(String id) async {
     User? fetchedUser;
     final request = ModelQueries.get(User.classType, id);
-    await _instance.query(request: request).response.then((user) {
+    await _instance.query(request: request).response.then((user) async {
       if (user.data == null) {
         return;
       }
       fetchedUser = user.data;
+      final req = ModelQueries.list(
+        BankAccount.classType, where: BankAccount.USERID.eq(id)
+      );
+      await _instance.query(request: req).response.then((banks) async {
+        if (banks.data == null) {
+          return;
+        }
+        if (banks.data?.items != null && banks.data?.items.isNotEmpty == true) {
+          List<BankAccount> bankList = banks.data!.items.map((e) => e!).toList();
+          fetchedUser = user.data!.copyWith(bankAccounts: bankList);
+        }
+        final req = ModelQueries.list(
+          Address.classType, where: Address.USERID.eq(id)
+        );
+        await _instance.query(request: req).response.then((addrs) {
+          if (addrs.data == null) {
+            return;
+          }
+          if (addrs.data?.items != null && addrs.data?.items.isNotEmpty == true) {
+            List<Address> addrsList = addrs.data!.items.map((e) => e!).toList();
+            fetchedUser = user.data!.copyWith(address: addrsList);
+          }
+        });
+      });
     });
-    // String getUser = 'getUser';
-    // String graphQlDoc = '''query GetUser(\$id: ID!) {
-    //   $getUser(id: \$id) {
-    //     id
-    //     wallet {
-    //       id
-    //     }
-    //     address {
-    //       items {
-    //         id
-    //       }
-    //     }
-    //     bankAccounts {
-    //       items {
-    //         id
-    //       }
-    //     }
-    //   }
-    // }''';
-    // final getUserReq = GraphQLRequest<User>(
-    //   document: graphQlDoc,
-    //   modelType: User.classType,
-    //   decodePath: getUser,
-    //   variables: <String, String>{'id': id}
-    // );
-    // await Amplify.API.query(request: getUserReq).response.then((value) {
-    //   safePrint('+++++> ${value.data}');
-    // });
+
     return fetchedUser;
   }
 
@@ -286,7 +313,6 @@ class DatastoreServices {
     });
     return list;
   }
-
   
   
   
@@ -333,24 +359,30 @@ class DatastoreServices {
   }
 
   // add address of user
-  static Future<Address?> addUserAddress(
-      {required UserAddressResponse rsp}) async {
+  static Future<Address?> addUserAddress({
+        required UserAddressResponse rsp,
+        required String userId
+    }) async {
     Address? createdAddr;
     final addr = Address(
         id: rsp.userAddressId,
         pincode: rsp.pincode,
-        phone: rsp.mobileNumber,
+        phone: '+91${rsp.mobileNumber}',
         name: rsp.name,
         address: rsp.address,
-        email: rsp.address,
-        userID: rsp.userAccountId);
+        email: rsp.email,
+        userID: userId
+    );
     final addressAddReq =
         _instance.mutate(request: ModelMutations.create(addr));
     await addressAddReq.response.then((value) {
+      safePrint(value.data?.toJson());
       if (value.data == null) {
         return;
       }
-      createdAddr = addr;
+      createdAddr = value.data;
+    }).catchError((err) {
+      safePrint(err.toString());
     });
     return createdAddr;
   }
@@ -359,30 +391,17 @@ class DatastoreServices {
   static Future<BankAccount?> addBankAccount(
       {required BankAccount account}) async {
     BankAccount? createdAcc;
+    safePrint(account);
     final bankAccountReq =
         _instance.mutate(request: ModelMutations.create(account));
     await bankAccountReq.response.then((acc) {
+      safePrint(acc);
       if (acc.data == null) {
         return;
       }
       createdAcc = acc.data;
     });
     return createdAcc;
-  }
-
-  static Future<void> testApi() async {
-    final req = ModelMutations.create(Wallet(
-      address: 'test@tasvat',
-      balance: 20000,
-      gold_balance: 20
-    ));
-    await _instance.mutate(request: req).response.then((value) {
-      if (value.data == null) {
-        safePrint('Error');
-        return;
-      }
-      safePrint(value.data?.toJson());
-    });
   }
 
   // set default bank id
@@ -405,13 +424,39 @@ class DatastoreServices {
   static Future<User?> updateKycDetails(
       {required Map<String, dynamic> details, required User user}) async {
     User? result;
-    final req = ModelMutations.update(
-        user.copyWith(kycDetails: jsonEncode(details)));
-    await _instance.mutate(request: req).response.then((res) {
-      if (res.data == null) {
-        return;
+    await getUserVersion(userId: user.id).then((version) async {
+      safePrint(version);
+      const String updateQuery = """
+        mutation UpdateUser(\$id: ID!, \$kycDetails: String!, \$version: Int!) {
+          updateUser(input: {id: \$id, kycDetails: \$kycDetails, _version: \$version}) {
+            id
+            _version
+            kycDetails
+          }
+        }
+      """;
+      final variables = {
+        "id": user.id,
+        "kycDetails": jsonEncode(details),
+        "version": version
+      };     
+      try {
+        final response = await _instance.mutate(
+          request: GraphQLRequest<String>(
+            document: updateQuery,
+            variables: variables,
+          ),
+        ).response;
+        if (response.data == null) {
+          return;
+        }
+        result = user.copyWith(
+          kycDetails: jsonDecode(response.data!)['updateUser']['kycDetails']
+        );
+        safePrint(result!.kycDetails);
+      } catch (e) {
+        safePrint('Update failed: $e');
       }
-      result = res.data;
     });
     return result;
   }
@@ -420,13 +465,39 @@ class DatastoreServices {
   static Future<User?> updateGPDetails(
       {required User user, required Map<String, dynamic> details}) async {
     User? result;
-    final req = ModelMutations.update(
-        user.copyWith(goldProviderDetails: jsonEncode(details)));
-    await _instance.mutate(request: req).response.then((res) {
-      if (res.data == null) {
-        return;
+    await getUserVersion(userId: user.id).then((version) async {
+      safePrint(version);
+      const String updateQuery = """
+        mutation UpdateUser(\$id: ID!, \$goldProviderDetails: String!, \$version: Int!) {
+          updateUser(input: {id: \$id, goldProviderDetails: \$goldProviderDetails, _version: \$version}) {
+            id
+            _version
+            goldProviderDetails
+          }
+        }
+      """;
+      final variables = {
+        "id": user.id,
+        "goldProviderDetails": jsonEncode(details),
+        "version": version
+      };     
+      try {
+        final response = await _instance.mutate(
+          request: GraphQLRequest<String>(
+            document: updateQuery,
+            variables: variables,
+          ),
+        ).response;
+        if (response.data == null) {
+          return;
+        }
+        result = user.copyWith(
+          goldProviderDetails: jsonDecode(response.data!)['updateUser']['goldProviderDetails']
+        );
+        safePrint(result!.goldProviderDetails);
+      } catch (e) {
+        safePrint('Update failed: $e');
       }
-      result = res.data;
     });
     return result;
   }

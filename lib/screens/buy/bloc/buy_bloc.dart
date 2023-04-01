@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:amplify_core/amplify_core.dart';
-import 'package:custom_timer/custom_timer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -10,27 +9,32 @@ import 'package:tasvat/models/gold_models/buy_info_model.dart';
 import 'package:tasvat/models/gold_models/rate_model.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
-import 'package:tasvat/utils/app_constants.dart';
-import '../../../models/ticker.dart';
+
 part 'buy_event.dart';
 part 'buy_state.dart';
 
 class BuyBloc extends Bloc<BuyEvent, BuyState> {
-  late CustomTimerController _timerController;
-  // late Ticker _timer;
-  StreamSubscription<int>? timerSubscription;
   late Transaction _transaction;
   late User _user;
   late ExchangeRates _rates;
   late Razorpay _razorpay;
-
-  // T get timer => _timer;
+  late Timer _timer;
+  int _timeRemaining = 270;
 
   BuyBloc() : super(BuyInitial()) {
     // starting event for buy confirm screen
     on<RateConfirmEvent>((event, emit) async {
       _rates = event.exchangeRates;
       _user = event.user;
+      // _timer = Timer.periodic(
+      //   const Duration(seconds: 1), (timer) {
+      //     if (_timeRemaining > 0) {
+      //       _timeRemaining--;
+      //       print(_timeRemaining);
+      //     } else {
+      //       _timer.cancel();
+      //     }
+      //   });
       _transaction = Transaction(
           blockId: event.exchangeRates.blockId,
           lockPrice: event.exchangeRates.gBuy,
@@ -125,10 +129,6 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
     });
   }
 
-  clearTimer() {
-    _timerController.dispose();
-  }
-
   double calculateAmountWithTax() {
     double taxRate = 100;
     for (Tax tax in _rates.taxes!) {
@@ -137,7 +137,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
     return _transaction.quantity! * double.parse(_rates.gBuy!) * taxRate / 100;
   }
 
-  _checkOutPayment(User user, double amount) {
+  _checkOutPayment(User user, double amount) async {
     _razorpay.open({
       'amount': amount,
       'description': 'Gold Purchase',
@@ -145,7 +145,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       'key': 'rzp_test_nxde3wSg0ubBiN',
       'prefill': {'contact': user.phone, 'email': user.email},
       'external': {
-        'wallet': ['paytm', 'phonepe']
+        'wallet': ['paytm']
       }
     });
   }
@@ -166,19 +166,13 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
     });
   }
 
-  void addController(CustomTimerController controller) {
-    // Will be called from the UI
-    _timerController = controller;
-  }
-
   ExchangeRates get getRates => _rates;
-  CustomTimerController get getController => _timerController;
+  int get remainingTime => _timeRemaining;
   Transaction get getTransaction => _transaction;
 
   @override
-  Future<void> close() {
-    // TODO: implement close
-    timerSubscription?.cancel();
-    return super.close();
+  Future<void> close() async {
+    super.close();
+    // _timer.cancel();
   }
 }

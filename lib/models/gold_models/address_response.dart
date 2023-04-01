@@ -33,7 +33,7 @@ class UserAddressResponse {
       address: json['address'],
       stateId: json['stateId'],
       cityId: json['cityId'],
-      pincode: json['pincode'],
+      pincode: int.parse(json['pincode']),
       status: json['status'],
     );
   }

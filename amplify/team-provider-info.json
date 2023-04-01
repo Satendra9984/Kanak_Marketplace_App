@@ -24,6 +24,10 @@
           "deploymentBucketName": "amplify-tasvat-staging-81356-deployment",
           "s3Key": "amplify-builds/registerusertrigger-756677367550486f5658-build.zip"
         }
+      },
+      "api": {
+        "Tasvat": {},
+        "tasvatrestapi": {}
       }
     }
   }

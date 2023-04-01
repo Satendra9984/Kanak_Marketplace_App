@@ -4,23 +4,29 @@ import 'package:tasvat/models/ModelProvider.dart';
 
 class UserNotifier extends StateNotifier<User?> {
   UserNotifier() : super(null);
+
+  // initialize a user with only id
   void initializeWithUser(User user) {
     state = user;
   }
+
+  // sync user data
   void syncDetails({
     required User user
   }) {
     state = user;
     safePrint(user.toString());
   }
+
+  // update user with details
   void updateUserDetails({
     String? email,
     String? phone,
     String? fname,
     String? lname,
     String? dob,
-    Map<String, dynamic>? kyc,
-    Map<String, dynamic>? gpDetails
+    String? kyc,
+    String? gpDetails
   }) {
     state = state?.copyWith(
       email: email,

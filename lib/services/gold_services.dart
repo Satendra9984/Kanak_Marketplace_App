@@ -498,7 +498,7 @@ class GoldServices {
         if (value == null) {
           return;
         }
-        result = value;
+        result = value['result']['data'];
       });
     return result;
   }

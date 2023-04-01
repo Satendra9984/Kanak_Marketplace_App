@@ -1,6 +1,5 @@
 part of 'sell_bloc.dart';
 
-@immutable
 abstract class SellState extends Equatable {}
 
 class SellInitial extends SellState {

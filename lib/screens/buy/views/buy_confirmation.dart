@@ -47,8 +47,7 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen>
           if (buyState is BuyCompletedState || buyState is BuyErrorState) {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (ctx) => BuyCompletedScreen(
-                    transactionDetails: context.read<BuyBloc>().getTransaction),
+                builder: (ctx) => const BuyCompletedScreen(),
               ),
             );
           }

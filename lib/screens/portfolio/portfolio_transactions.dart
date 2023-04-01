@@ -167,16 +167,14 @@ class PortfolioTransactions extends StatelessWidget {
 
   void _navigateToCompletedScreen(
       BuildContext context, Transaction transactionDetails, String id) {
-    if (transactionDetails.type == 'Buy') {
+    if (transactionDetails.type == TransactionType.BUY) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (ctx) => BuyCompletedScreen(
-            transactionDetails: transactionDetails,
-          ),
+          builder: (ctx) => const BuyCompletedScreen(),
         ),
       );
-    } else if (transactionDetails.type == 'Sell') {
+    } else if (transactionDetails.type == TransactionType.SELL) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -185,7 +183,7 @@ class PortfolioTransactions extends StatelessWidget {
           ),
         ),
       );
-    } else if (transactionDetails.type == 'Withdraw') {
+    } else if (transactionDetails.type == TransactionType.EXCHANGE) {
       Navigator.push(
         context,
         MaterialPageRoute(

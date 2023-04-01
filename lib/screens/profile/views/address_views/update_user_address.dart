@@ -113,7 +113,7 @@ class _UserAddressPageState extends ConsumerState<UpdateUserAddressPage> {
           if (rsp == null) {
             return;
           }
-          await DatastoreServices.addUserAddress(rsp: rsp).then((addr) {
+          await DatastoreServices.addUserAddress(rsp: rsp, userId: user.id).then((addr) {
             safePrint(
                 'Added User Address-------------------> ${addr.toString()}');
             if (addr == null) {

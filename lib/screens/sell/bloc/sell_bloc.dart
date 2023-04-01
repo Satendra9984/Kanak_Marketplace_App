@@ -1,8 +1,5 @@
-import 'dart:async';
-
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/models/gold_models/rate_model.dart';
 

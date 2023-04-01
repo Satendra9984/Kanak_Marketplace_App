@@ -12,12 +12,10 @@ class SellBloc extends Bloc<SellEvent, SellState> {
   late Transaction _transaction;
   late ExchangeRates _rates;
   SellBloc() : super(SellInitial()) {
-    on<SellInitEvent>((event, emit) {
-      emit(SellInitial());
+    on<SellConfirmEvent>((event, emit) {
 
     });
     on<ConfirmButtonPressed>((event, emit) async {
-      await GoldServices.sellGold(user: _user, bankId: , transaction: transaction, rate: rate)
     });
   }
 }

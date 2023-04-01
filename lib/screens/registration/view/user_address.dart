@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/providers/user_provider.dart';
+import 'package:tasvat/screens/registration/view/user_bank_details.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
 import '../../../utils/app_constants.dart';
@@ -78,7 +79,8 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
             phone: authData.username.substring(3),
             email: user!.email!,
             city: _city!['id'],
-            userId: authData.userId,
+            state: _state!['id'],
+            userId: user.id,
             name: '${user.fname!} ${user.lname!}',
             pincode: _pinCodeCtrl.text,
             dob: user.dob!.getDateTime().toIso8601String().split('T')[0])
@@ -94,7 +96,7 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
           return;
         }
         ref.read(userProvider.notifier).updateUserDetails(
-            gpDetails: jsonDecode(updatedUser.goldProviderDetails!));
+            gpDetails: updatedUser.goldProviderDetails!);
         await GoldServices.addGoldUserAddress(
                 user: user,
                 name: 'primary',
@@ -104,17 +106,28 @@ class _UserAddressPageState extends ConsumerState<UserAddressPage> {
                 city: _city!['id']
               )
             .then((rsp) async {
-              safePrint('Gold User Address Response----------------> ${rsp.toString()}');
+              safePrint('Gold User Address Response----------------> ${rsp?.toJson()}');
           if (rsp == null) {
             return;
           }
-          await DatastoreServices.addUserAddress(rsp: rsp).then((addr) {
-            safePrint('Added User Address-------------------> ${addr.toString()}');
+          await DatastoreServices.addUserAddress(rsp: rsp, userId: user.id).then((addr) {
+            safePrint('Added User Address-------------------> ${addr?.toJson()}');
             if (addr == null) {
               return;
             }
             ref.read(userProvider.notifier).addUserAddress(address: addr);
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+              const UserBankDetailsPage()
+            ));
+          }).catchError((err) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(err.toString()))
+            );
           });
+        }).catchError((err) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(err.toString()))
+          );
         });
       });
     });

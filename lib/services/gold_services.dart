@@ -95,10 +95,12 @@ class GoldServices {
       required String name,
       required String pincode,
       required String city,
+      required String state,
       required String dob
     }) async {
     Map<String, dynamic>? details;
     final authToken = await LocalDBServices.getGPAccessToken();
+    safePrint(authToken);
     await HttpServices.sendPostReq('${_baseUrl}users', extraHeaders: {
       'Authorization': 'Bearer $authToken'
     }, body: {
@@ -106,7 +108,8 @@ class GoldServices {
       'emailId': email,
       'uniqueId': userId,
       'userName': name,
-      'userPincode': pincode,
+      'userPincode': int.parse(pincode),
+      'userState': state,
       'userCity': city,
       'dateOfBirth': dob
     }).then((value) {
@@ -128,13 +131,12 @@ class GoldServices {
     required String userId
   }) async {
     UserBank? bank;
-    final authToken = LocalDBServices.getGPAccessToken();
-    await HttpServices.sendPostReq('users/$userId/banks',
+    final authToken = await LocalDBServices.getGPAccessToken();
+    await HttpServices.sendPostReq('${_baseUrl}users/$userId/banks',
       extraHeaders: {
         'Authorization': 'Bearer $authToken'
       },
       body: {
-        'bankId': 'nXMbmVBG',
         'accountNumber': accNo,
         'accountName': accName,
         'ifscCode': ifsc,
@@ -145,10 +147,11 @@ class GoldServices {
         return;
       }
       if (!value.containsKey('statusCode')
-        || value['statusCode'] == 200) {
+        || value['statusCode'] != 200) {
         return;
       }
       bank = UserBank.fromJson(value['result']['data']);
+      safePrint(bank);
     });
     return bank;
   }
@@ -274,7 +277,7 @@ class GoldServices {
   }) async {
     UserAddressResponse? rsp;
     final authToken = await LocalDBServices.getGPAccessToken();
-    await HttpServices.sendPostReq('users/${user.id}/address', body: {
+    await HttpServices.sendPostReq('${_baseUrl}users/${user.id}/address', body: {
       'name': name,
       'mobileNumber': phone ?? user.phone!.substring(3),
       'address': address,
@@ -284,7 +287,7 @@ class GoldServices {
       'city': city
     },
     extraHeaders: {
-      'Authorization': 'Beare $authToken'
+      'Authorization': 'Bearer $authToken'
     }
     ).then((addr) async {
       if (addr == null) {
@@ -294,6 +297,7 @@ class GoldServices {
         return;
       }
       rsp = UserAddressResponse.fromJson(addr['result']['data']);
+      safePrint(rsp!.toJson());
     });
     return rsp;
   }
@@ -328,18 +332,6 @@ class GoldServices {
         }
         result = value;
       });
-    // await HttpServices.sendPostReq('${_baseUrl}users/test2/kyc',
-    // extraHeaders: {
-    //   'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiOGFmMDY1Mzk2OGJmYzkwOWJhZTFlZDkyMjJlZmEyZjI4ZjIyM2U0NmQ4YTRiODBmNjZhODJlY2IxMDQzZjllZTk3OGExZDg4MDNiNmM2YTkiLCJpYXQiOjE2Nzk3MTM2OTcsIm5iZiI6MTY3OTcxMzY5NywiZXhwIjoxNjgyMzA1Njk3LCJzdWIiOiI1MDAwMDk0MyIsInNjb3BlcyI6W119.DBVImHw5xQdIt4lk5kD6wejl86QPXG7ZZ-AwOGc_JDyLNcm9DgafvMMejnnDGcH2K0ZHgo0sOPYBThpSrtckouMqUiZ_KRl-X3XQFg8WDzOnpWww6_uK6Hjq77p_DGBxD_cJXZGA99jIK4ZAw0lS2NnGqRV-rdK16msap0MYQ9jco-mQS1uHO_Xv0Ef1i-FnaLD_YzrRydf4Ttb0FJN5jbqJ4s02JZhE5GZ2HL9JPrGcgyBA4LAh3XrwE56is7iYcumQFIGrw09BXhMSonlmbXfGNi_h2HzcKAEaU1sDgvzJQ7E4E-eUiniZD6f-C4I0nenWT5v2WYL4wsrb3M_5EsV2yGlAwFbjjJpGD-dEiwRHNrZ7_SczNbYRh8EYa3rhGqiEbioy8xFa83uRFWNq981xkQu-Za2WAmuifVyrpT0JRGlvIc-h0bA84BOkJ7l5meiOHbrOi9YFDVabvkoPCU0NwWnGwRSaqlWRYDowrIfZYY2TkIBXqno4_GxDTXq70WDDD08zig6yxgJvU_HccWs8aC9J4pELQCSxjRm4XAC6azTfOs3dh4slphOMmu5a6-qiNdMeSfioXgVuz-UMmqZPabJ8Pc07MpSmEbd094u2vU5-clYdgy2U9uwAjM23aWwZ_DDEZkFdaHrxP-BLRyr9601UrYmvFUxkB4SrkSs'
-    // },
-    // body: {
-    //   'panAttachment': file.readAsBytesSync(),
-    //   'name': 'Bakhri',
-    //   'panNumber': 'BXALL0541A',
-    //   'dateOfBirth': '2003-02-21',
-    //   'nameAsPerPan': 'Sattu',
-    //   'status': 'pending'
-    // });
     return result;
   }
 }

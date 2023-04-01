@@ -162,19 +162,19 @@ class _UserBankDetailsPageState extends ConsumerState<UserBankDetailsPage> {
                   ),
                   child: TextFormField(
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.text,
                     controller: _ifscCodeCtrl,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter the IFSC Code';
-                      } else if (value.length < 11 || value.length < 11) {
+                      } else if (value.length < 11 ) {
                         return 'IFSC Code must be equal 11 character';
                       }
-                      bool ifscValid =
-                          RegExp(r'/^[A-Za-z]{4}[0-9]{6,7}$/').hasMatch(value);
-                      if (ifscValid == false) {
-                        return 'Please enter a valid IFSC Code';
-                      }
+                      // bool ifscValid =
+                      //     RegExp(r'/^[A-Za-z]{4}[0-9]{7}$/').hasMatch(value);
+                      // if (ifscValid == false) {
+                      //   return 'Please enter a valid IFSC Code';
+                      // }
                       return null;
                     },
                     style: TextStyle(
@@ -206,7 +206,7 @@ class _UserBankDetailsPageState extends ConsumerState<UserBankDetailsPage> {
                   ),
                   child: TextFormField(
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.text,
                     controller: _addrCtrl,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -285,6 +285,7 @@ class _UserBankDetailsPageState extends ConsumerState<UserBankDetailsPage> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   final user = ref.read(userProvider);
+                  safePrint(user);
                   await submitUserBankDetails(
                     user!
                   );
@@ -314,11 +315,12 @@ class _UserBankDetailsPageState extends ConsumerState<UserBankDetailsPage> {
             margin: const EdgeInsets.only(bottom: 10),
             child: TextButton(
               onPressed: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (ctx) => const UserKYCPage(),
-                  ),
-                );
+                GoldServices.sessionLogIn();
+                // Navigator.of(context).pushReplacement(
+                //   MaterialPageRoute(
+                //     builder: (ctx) => const UserKYCPage(),
+                //   ),
+                // );
               },
               child: Text(
                 'Skip for now',
@@ -347,10 +349,10 @@ class _UserBankDetailsPageState extends ConsumerState<UserBankDetailsPage> {
         );
         return;
       }
+      safePrint(acc);
       await DatastoreServices.addBankAccount(account: BankAccount(
         userID: acc.uniqueId,
-        bankId: acc.bankId,
-        id: acc.bankId,
+        bankId: acc.userBankId,
         accName: acc.accountName,
         accNo: acc.accountNumber,
         ifsc: acc.ifscCode

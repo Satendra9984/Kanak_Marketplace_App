@@ -45,6 +45,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
                 }
                 safePrint('Done');
                 emit(state.copyWith(status: LoginStatus.success));
+              }).catchError((err) {
+                safePrint(err);
               });
           
         }).catchError((err) async {

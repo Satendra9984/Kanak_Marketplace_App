@@ -358,6 +358,9 @@ class _UserKYCPageState extends ConsumerState<UserKYCPage> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Successfully updated KYC details'))
                       );
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const HomeScreen(),
+                      ));
                     });
                   });
                 }

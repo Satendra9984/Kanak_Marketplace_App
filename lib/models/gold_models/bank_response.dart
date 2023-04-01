@@ -1,8 +1,8 @@
+import 'package:amplify_flutter/amplify_flutter.dart';
+
 class UserBank {
   String userBankId;
   String uniqueId;
-  dynamic bankId;
-  dynamic bankName;
   String accountNumber;
   String accountName;
   String ifscCode;
@@ -11,8 +11,6 @@ class UserBank {
   UserBank({
     required this.userBankId,
     required this.uniqueId,
-    this.bankId,
-    this.bankName,
     required this.accountNumber,
     required this.accountName,
     required this.ifscCode,
@@ -20,11 +18,10 @@ class UserBank {
   });
 
   factory UserBank.fromJson(Map<String, dynamic> json) {
+    safePrint(json);
     return UserBank(
       userBankId: json['userBankId'],
       uniqueId: json['uniqueId'],
-      bankId: json['bankId'],
-      bankName: json['bankName'],
       accountNumber: json['accountNumber'],
       accountName: json['accountName'],
       ifscCode: json['ifscCode'],
@@ -36,8 +33,6 @@ class UserBank {
     final Map<String, dynamic> data = {};
     data['userBankId'] = userBankId;
     data['uniqueId'] = uniqueId;
-    data['bankId'] = bankId;
-    data['bankName'] = bankName;
     data['accountNumber'] = accountNumber;
     data['accountName'] = accountName;
     data['ifscCode'] = ifscCode;

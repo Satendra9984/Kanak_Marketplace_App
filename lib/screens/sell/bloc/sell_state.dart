@@ -6,21 +6,15 @@ abstract class SellState extends Equatable {
 }
 
 class SellInitial extends SellState {
-  final ExchangeRates rates;
-  final User user;
-  final ExchangeRates transaction;
-  SellInitial({
-    required this.transaction,
-    required this.rates,
-    required this.user
-  });
   @override
-  List<Object> get props => [
-    rates, user, transaction
-  ];
+  List<Object> get props => [];
 }
 
 class SellProgress extends SellState {
+  final double progress;
+  SellProgress({
+    required this.progress
+  });
   @override
   List<Object> get props => [];
 }

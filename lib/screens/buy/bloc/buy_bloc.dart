@@ -139,13 +139,16 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
   _checkOutPayment(User user, double amount) async {
     _razorpay.open({
-      'amount': amount,
+      'amount': (amount * 100).toInt(),
       'description': 'Gold Purchase',
       'name': 'Tasvat Private Ltd.',
       'key': 'rzp_test_nxde3wSg0ubBiN',
-      'prefill': {'contact': user.phone, 'email': user.email},
+      'prefill': {
+        'contact': '7029096692',
+        'email': 'subhadeepchowdhury41@gmail.com'
+      },
       'external': {
-        'wallet': ['paytm']
+        'wallet': ['paytm', 'gpay']
       }
     });
   }
@@ -169,7 +172,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
   ExchangeRates get getRates => _rates;
   int get remainingTime => _timeRemaining;
   Transaction get getTransaction => _transaction;
-
+  Razorpay get razorpay => _razorpay;
   @override
   Future<void> close() async {
     super.close();

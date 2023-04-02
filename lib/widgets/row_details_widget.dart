@@ -19,15 +19,15 @@ class RowDetailWidget extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            fontSize: 17,
-            color: text300,
+            fontSize: 14,
+            color: text400,
             fontWeight: FontWeight.w600,
           ),
         ),
         Text(
           value,
           style: TextStyle(
-            fontSize: heading2,
+            fontSize: 14,
             color: text500,
             fontWeight: FontWeight.w500,
           ),

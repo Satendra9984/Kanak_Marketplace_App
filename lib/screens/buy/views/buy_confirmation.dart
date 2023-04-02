@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasvat/screens/buy/bloc/buy_bloc.dart';
 import 'package:tasvat/screens/buy/views/buy_completed.dart';
+import '../../../services/datastore_services.dart';
 import '../../../utils/app_constants.dart';
 import '../../../widgets/row_details_widget.dart';
 
@@ -15,7 +16,6 @@ class BuyConfirmationScreen extends StatefulWidget {
 }
 
 class _BuyConfirmationScreenState extends State<BuyConfirmationScreen> {
-  
   @override
   void dispose() {
     context.read<BuyBloc>().close();
@@ -107,7 +107,8 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen> {
                               const SizedBox(height: 25),
                               RowDetailWidget(
                                   title: 'Price/gram',
-                                  value: '${context.read<BuyBloc>().getTransaction.lockPrice} INR/gm'),
+                                  value:
+                                      '${context.read<BuyBloc>().getTransaction.lockPrice} INR/gm'),
                               const SizedBox(height: 25),
                               RowDetailWidget(
                                   title: 'Quantity',
@@ -153,85 +154,80 @@ class _BuyConfirmationScreenState extends State<BuyConfirmationScreen> {
 
                         /// timer 180 sec
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 20),
-                          margin: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: background,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  RichText(
-                                    text: TextSpan(
-                                      text: 'Current Rate is valid for only  ',
-                                      style: TextStyle(
-                                        color: text400,
-                                        fontSize: body1,
-                                        fontWeight: FontWeight.w500,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 20),
+                            margin: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: background,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RichText(
+                                  text: TextSpan(
+                                    text: 'Current Rate is valid for only  ',
+                                    style: TextStyle(
+                                      color: text400,
+                                      fontSize: body1,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: '$remainingTime',
+                                        style: TextStyle(
+                                          color: accent1,
+                                          fontSize: heading2,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
-                                      children: [
-                                        TextSpan(
-                                          text:
-                                              '$remainingTime',
-                                          style: TextStyle(
-                                            color: accent1,
-                                            fontSize: heading2,
-                                            fontWeight: FontWeight.w500,
-                                          ),
+                                      TextSpan(
+                                        text: ' minutes',
+                                        style: TextStyle(
+                                          color: text400,
+                                          fontSize: body1,
+                                          fontWeight: FontWeight.w500,
                                         ),
-                                        TextSpan(
-                                          text: ' minutes',
-                                          style: TextStyle(
-                                            color: text400,
-                                            fontSize: body1,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                /// confirm button
+                                const SizedBox(height: 20),
+                                // Condition for confirmation button
+                                if (context.read<BuyBloc>().remainingTime != 0)
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      context.read<BuyBloc>().add(
+                                            ConfirmButtonPressedEvent(
+                                              transaction: context
+                                                  .read<BuyBloc>()
+                                                  .getTransaction,
+                                            ),
+                                          );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      minimumSize:
+                                          const Size(double.infinity, 50.0),
+                                      maximumSize:
+                                          const Size(double.infinity, 60.0),
+                                      backgroundColor: accent1,
+                                    ),
+                                    child: Text(
+                                      'Confirm',
+                                      style: TextStyle(
+                                        color: background,
+                                        fontSize: heading2,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
-
-                                  /// confirm button
-                                  const SizedBox(height: 20),
-                                  // Condition for confirmation button
-                                  if (context.read<BuyBloc>().remainingTime != 0)
-                                    ElevatedButton(
-                                      onPressed: () async {
-
-                                        // Proceed for Transaction
-                                        context.read<BuyBloc>().add(
-                                              ConfirmButtonPressedEvent(
-                                                transaction: context
-                                                    .read<BuyBloc>()
-                                                    .getTransaction,
-                                              ),
-                                            );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                        ),
-                                        minimumSize:
-                                            const Size(double.infinity, 50.0),
-                                        maximumSize:
-                                            const Size(double.infinity, 60.0),
-                                        backgroundColor: accent1,
-                                      ),
-                                      child: Text(
-                                        'Confirm',
-                                        style: TextStyle(
-                                          color: background,
-                                          fontSize: heading2,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              )
-                        ),
+                              ],
+                            )),
                       ],
                     ),
                   ],

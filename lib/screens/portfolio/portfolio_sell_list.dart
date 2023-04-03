@@ -161,7 +161,7 @@ class PortfolioSellTransactions extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        // TODO: ADD IN WITHDRAW ORDER LIST ARROW BUTTON
+                        /// ADD IN WITHDRAW ORDER LIST ARROW BUTTON
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (ctx) {
@@ -184,37 +184,5 @@ class PortfolioSellTransactions extends StatelessWidget {
         );
       },
     );
-  }
-
-  void _navigateToCompletedScreen(
-      BuildContext context, Transaction transactionDetails, String id) {
-    if (transactionDetails.type == TransactionType.BUY) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => TransactionStatusScreen(
-            buyOrderDetails: transactionDetails,
-          ),
-        ),
-      );
-    } else if (transactionDetails.type == TransactionType.SELL) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => SellCompletedScreen(
-            buyOrderDetails: transactionDetails,
-          ),
-        ),
-      );
-    } else if (transactionDetails.type == TransactionType.EXCHANGE) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => WithdrawCompletedScreen(
-            buyOrderDetails: transactionDetails,
-          ),
-        ),
-      );
-    }
   }
 }

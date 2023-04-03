@@ -197,14 +197,14 @@ class PortfolioBuyTransactions extends StatelessWidget {
         ),
       );
     } else if (transactionDetails.type == TransactionType.SELL) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => SellCompletedScreen(
-            buyOrderDetails: transactionDetails,
-          ),
-        ),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (ctx) => SellCompletedScreen(
+      //       buyOrderDetails: transactionDetails,
+      //     ),
+      //   ),
+      // );
     } else if (transactionDetails.type == TransactionType.EXCHANGE) {
       Navigator.push(
         context,

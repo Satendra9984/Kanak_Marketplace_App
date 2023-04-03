@@ -53,7 +53,7 @@ class _SellAssetsState extends State<SellAssets> {
         ),
       ),
       body: Container(
-        alignment: Alignment.center,
+        // alignment: Alignment.center,
         child: StreamBuilder(
           stream: _getPriceDataStream(),
           builder: (context, AsyncSnapshot<http.Response> response) {

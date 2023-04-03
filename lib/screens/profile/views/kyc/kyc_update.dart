@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tasvat/providers/auth_provider.dart';
-
 import '../../../../utils/app_constants.dart';
 import '../../../../utils/ui_functions.dart';
 import '../../../../widgets/image_upload_widget.dart';

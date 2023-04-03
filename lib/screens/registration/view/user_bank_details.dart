@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/providers/user_provider.dart';
+import 'package:tasvat/screens/registration/view/user_kyc_page.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
 import '../../../utils/app_constants.dart';
@@ -16,13 +17,14 @@ class UserBankRegistrationPage extends ConsumerStatefulWidget {
       _UserBankRegistrationPageState();
 }
 
-class _UserBankRegistrationPageState extends ConsumerState<UserBankRegistrationPage> {
+class _UserBankRegistrationPageState
+    extends ConsumerState<UserBankRegistrationPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _accountNameCtrl = TextEditingController();
   final TextEditingController _accountNumberCtrl = TextEditingController();
   final TextEditingController _ifscCodeCtrl = TextEditingController();
   final TextEditingController _addressCtrl = TextEditingController();
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,7 +167,7 @@ class _UserBankRegistrationPageState extends ConsumerState<UserBankRegistrationP
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter the IFSC Code';
-                      } else if (value.length < 11 ) {
+                      } else if (value.length < 11) {
                         return 'IFSC Code must be equal 11 character';
                       }
                       // bool ifscValid =
@@ -184,6 +186,7 @@ class _UserBankRegistrationPageState extends ConsumerState<UserBankRegistrationP
                   ),
                 ),
                 const SizedBox(height: 10),
+
                 /// ifsc code
                 Text(
                   'Address',
@@ -284,9 +287,7 @@ class _UserBankRegistrationPageState extends ConsumerState<UserBankRegistrationP
                 if (_formKey.currentState!.validate()) {
                   final user = ref.read(userProvider);
                   safePrint(user);
-                  await submitUserBankDetails(
-                    user!
-                  );
+                  await submitUserBankDetails(user!);
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -313,12 +314,12 @@ class _UserBankRegistrationPageState extends ConsumerState<UserBankRegistrationP
             margin: const EdgeInsets.only(bottom: 10),
             child: TextButton(
               onPressed: () {
-                GoldServices.sessionLogIn();
-                // Navigator.of(context).pushReplacement(
-                //   MaterialPageRoute(
-                //     builder: (ctx) => const UserKYCPage(),
-                //   ),
-                // );
+                // GoldServices.sessionLogIn();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (ctx) => const UserKYCPage(),
+                  ),
+                );
               },
               child: Text(
                 'Skip for now',
@@ -343,28 +344,26 @@ class _UserBankRegistrationPageState extends ConsumerState<UserBankRegistrationP
     ).then((acc) async {
       if (acc == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Something went wrong!'))
-        );
+            const SnackBar(content: Text('Something went wrong!')));
         return;
       }
       safePrint(acc);
-      await DatastoreServices.addBankAccount(account: BankAccount(
-        userID: acc.uniqueId,
-        bankId: acc.userBankId,
-        accName: acc.accountName,
-        accNo: acc.accountNumber,
-        ifsc: acc.ifscCode
-      )).then((val) {
+      await DatastoreServices.addBankAccount(
+              account: BankAccount(
+                  userID: acc.uniqueId,
+                  bankId: acc.userBankId,
+                  accName: acc.accountName,
+                  accNo: acc.accountNumber,
+                  ifsc: acc.ifscCode))
+          .then((val) {
         if (val == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Something went wrong!'))
-          );
+              const SnackBar(content: Text('Something went wrong!')));
           return;
         }
         ref.read(userProvider.notifier).addBankAccount(account: val);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Successfully Added Bank Account!'))
-        );
+            const SnackBar(content: Text('Successfully Added Bank Account!')));
       });
     });
   }

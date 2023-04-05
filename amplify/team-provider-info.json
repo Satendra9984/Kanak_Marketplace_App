@@ -19,15 +19,16 @@
       "storage": {
         "tasvatdb": {}
       },
-      "function": {
-        "registerusertrigger": {
-          "deploymentBucketName": "amplify-tasvat-staging-81356-deployment",
-          "s3Key": "amplify-builds/registerusertrigger-756677367550486f5658-build.zip"
-        }
-      },
       "api": {
-        "Tasvat": {},
-        "tasvatrestapi": {}
+        "Tasvat": {}
+      },
+      "function": {
+        "ratesync": {
+          "deploymentBucketName": "amplify-tasvat-staging-81356-deployment",
+          "s3Key": "amplify-builds/ratesync-7666694854637a41656c-build.zip",
+          "email": "subhadeepchowdhury41@gmail.com",
+          "password": "_K/PT_E~X_3[%AS1"
+        }
       }
     }
   }

@@ -2,21 +2,19 @@ import 'dart:convert';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:tasvat/models/ModelProvider.dart';
+import 'package:tasvat/models/Token.dart' as tokenModel;
 import 'package:tasvat/models/gold_models/address_response.dart';
 
 class DatastoreServices {
   static final _instance = Amplify.API;
-
-  
-  
-  
   
   
   // _________________________________________________TRANSACTION OPERATIONS___________________________________________
 
   // add pending transaction
-  static Future<Transaction?> addPendingTransaction(
-      {required Transaction transaction}) async {
+  static Future<Transaction?> addPendingTransaction({
+    required Transaction transaction
+  }) async {
     Transaction? tx;
     final pendingTransactionMutation = ModelMutations.create(transaction);
     await _instance
@@ -36,15 +34,45 @@ class DatastoreServices {
     required Transaction transaction
   }) async {
     Transaction? result;
-    final req = ModelMutations.update(transaction.copyWith(
-      status: TransactionStatus.SUCCESSFUL,
-      dateTime: TemporalDateTime.now(),
-    ));
-    await _instance.mutate(request: req).response.then((updatedTx) {
-      if (updatedTx.data == null) {
-        return;
+    await getTransactionVersion(txId: transaction.id).then((version) async {
+      safePrint(version);
+      safePrint(transaction.balance);
+      safePrint(transaction.gpTxId);
+      const String updateQuery = """
+        mutation UpdateTransaction(\$id: ID!, \$status: TransactionStatus!, \$version: Int!, \$balance: Float!, \$gpTxId: String! ) {
+          updateTransaction(input: {id: \$id, status: \$status, _version: \$version, gpTxId: \$gpTxId, balance: \$balance }) {
+            id
+            _version
+            status
+            gpTxId
+            balance
+          }
+        }
+      """;
+      final variables = {
+        "id": transaction.id,
+        "status": "SUCCESSFUL",
+        "gpTxId": transaction.gpTxId,
+        "balance": transaction.balance,
+        "version": version
+      };
+      try {
+        final response = await _instance.mutate(
+          request: GraphQLRequest<String>(
+            document: updateQuery,
+            variables: variables,
+          ),
+        ).response;
+        if (response.data == null) {
+          return;
+        }
+        result = transaction.copyWith(
+          status: TransactionStatus.SUCCESSFUL
+        );
+        safePrint(result!.status);
+      } catch (e) {
+        safePrint('Update failed: $e');
       }
-      result = updatedTx.data;
     });
     return result;
   }
@@ -54,16 +82,42 @@ class DatastoreServices {
     required Transaction transaction
   }) async {
     Transaction? result;
-    final req = ModelMutations.update(transaction.copyWith(
-      status: TransactionStatus.FAILED,
-      txId: transaction.txId,
-      failType: FailType.PURCHASEFAIL
-    ));
-    await _instance.mutate(request: req).response.then((res) {
-      if (res.data == null) {
-        return;
+    await getTransactionVersion(txId: transaction.id).then((version) async {
+      safePrint(version);
+      const String updateQuery = """
+        mutation UpdateTransaction(\$id: ID!, \$status: TransactionStatus!, \$version: Int!, \$type: FailType) {
+          updateTransaction(input: {id: \$id, status: \$status, _version: \$version, failType: \$type}) {
+            id
+            failType
+            _version
+            status
+          }
+        }
+      """;
+      final variables = {
+        "id": transaction.id,
+        "status": "FAILED",
+        "failType": "PURCHASEFAIL",
+        "version": version
+      };
+      try {
+        final response = await _instance.mutate(
+          request: GraphQLRequest<String>(
+            document: updateQuery,
+            variables: variables,
+          ),
+        ).response;
+        if (response.data == null) {
+          return;
+        }
+        result = transaction.copyWith(
+          status: TransactionStatus.FAILED,
+          failType: FailType.PURCHASEFAIL
+        );
+        safePrint(result!.status);
+      } catch (e) {
+        safePrint('Update failed: $e');
       }
-      result = res.data;
     });
     return result;
   }
@@ -73,15 +127,42 @@ class DatastoreServices {
     required Transaction transaction
   }) async {
     Transaction? result;
-    final req = ModelMutations.update(transaction.copyWith(
-      status: TransactionStatus.FAILED,
-      failType: FailType.PAYMENTFAIL
-    ));
-    await _instance.mutate(request: req).response.then((res) {
-      if (res.data == null) {
-        return;
+    await getTransactionVersion(txId: transaction.id).then((version) async {
+      safePrint(version);
+      const String updateQuery = """
+        mutation UpdateTransaction(\$id: ID!, \$status: TransactionStatus!, \$version: Int!, \$type: FailType!) {
+          updateTransaction(input: {id: \$id, status: \$status, _version: \$version, failType: \$type}) {
+            id
+            failType
+            _version
+            status
+          }
+        }
+      """;
+      final variables = {
+        "id": transaction.id,
+        "status": "FAILED",
+        "failType": "PAYMENTFAIL",
+        "version": version
+      };
+      try {
+        final response = await _instance.mutate(
+          request: GraphQLRequest<String>(
+            document: updateQuery,
+            variables: variables,
+          ),
+        ).response;
+        if (response.data == null) {
+          return;
+        }
+        result = transaction.copyWith(
+          status: TransactionStatus.FAILED,
+          failType: FailType.PAYMENTFAIL
+        );
+        safePrint(result!.status);
+      } catch (e) {
+        safePrint('Update failed: $e');
       }
-      result = res.data;
     });
     return result;
   }
@@ -92,37 +173,82 @@ class DatastoreServices {
     required String txId
   }) async {
     Transaction? result;
-    final req = ModelMutations.update(transaction.copyWith(
-      txId: txId
-    ));
-    await _instance.mutate(request: req).response.then((res) {
-      if (res.data == null) {
-        return;
+    await getTransactionVersion(txId: transaction.id).then((version) async {
+      safePrint(version);
+      const String updateQuery = """
+        mutation UpdateTransaction(\$id: ID!, \$version: Int!, \$txId: String!) {
+          updateTransaction(input: {id: \$id, _version: \$version, txId: \$txId}) {
+            id
+            txId
+            _version
+          }
+        }
+      """;
+      final variables = {
+        "id": transaction.id,
+        "txId": txId,
+        "version": version
+      };
+      try {
+        final response = await _instance.mutate(
+          request: GraphQLRequest<String>(
+            document: updateQuery,
+            variables: variables,
+          ),
+        ).response;
+        if (response.data == null) {
+          return;
+        }
+        result = transaction.copyWith(
+          failType: FailType.PURCHASEFAIL
+        );
+        safePrint(result!.status);
+      } catch (e) {
+        safePrint('Update failed: $e');
       }
-      result = res.data;
     });
     return result;
   }
   
   // update wallet gold balance
   static Future<Wallet?> updateWalletGoldBalance({
-    required String id,
+    required Wallet wallet,
     required double balance
   }) async {
     Wallet? result;
-    _instance.query(request: ModelQueries.get(Wallet.classType, id)).response.then((wallet) async {
-      if (wallet.data == null) {
-        return;
-      }
-      final req = ModelMutations.update(wallet.data!.copyWith(
-        gold_balance: balance
-      ));
-      await _instance.mutate(request: req).response.then((res) {
-        if (res.data == null) {
+    await getWalletVersion(id: wallet.id).then((version) async {
+      safePrint(version);
+      const String updateQuery = """
+        mutation UpdateWallet(\$id: ID!, \$version: Int!, \$balance: Float! ) {
+          updateWallet(input: {id: \$id, _version: \$version, balance: \$balance }) {
+            id
+            _version
+            balance
+          }
+        }
+      """;
+      final variables = {
+        "id": wallet.id,
+        "balance": balance,
+        "version": version
+      };
+      try {
+        final response = await _instance.mutate(
+          request: GraphQLRequest<String>(
+            document: updateQuery,
+            variables: variables,
+          ),
+        ).response;
+        if (response.data == null) {
           return;
         }
-        result = res.data;
-      });
+        result = wallet.copyWith(
+          gold_balance: balance
+        );
+        safePrint(result!.balance);
+      } catch (e) {
+        safePrint('Update failed: $e');
+      }
     });
     return result;
   }
@@ -237,6 +363,64 @@ class DatastoreServices {
     return version;
   }
 
+  static Future<int?> getTransactionVersion({
+    required String txId
+  }) async {
+    int? version;
+    const String getTxQuery = """
+      query GetTransaction(\$id: ID!) {
+        getTransaction(id: \$id) {
+          _version
+        }
+      }
+    """;
+    try {
+      final response = await _instance.query(
+        request: GraphQLRequest<String>(
+          document: getTxQuery,
+          variables: {
+            'id': txId
+          },
+        ),
+      ).response;
+      version = jsonDecode(
+        response.data!
+      )['getTransaction']['_version'];
+    } catch (e) {
+      safePrint('Failed to retrieve user record: $e');
+    }
+    return version;
+  }
+
+  static Future<int?> getWalletVersion({
+    required String id
+  }) async {
+    int? version;
+    const String getTxQuery = """
+      query GetWallet(\$id: ID!) {
+        getWallet(id: \$id) {
+          _version
+        }
+      }
+    """;
+    try {
+      final response = await _instance.query(
+        request: GraphQLRequest<String>(
+          document: getTxQuery,
+          variables: {
+            'id': id
+          },
+        ),
+      ).response;
+      version = jsonDecode(
+        response.data!
+      )['getWallet']['_version'];
+    } catch (e) {
+      safePrint('Failed to retrieve user record: $e');
+    }
+    return version;
+  }
+
   // fetch full user details
   static Future<User?> fetchUserById(String id) async {
     User? fetchedUser;
@@ -260,7 +444,7 @@ class DatastoreServices {
         final req = ModelQueries.list(
           Address.classType, where: Address.USERID.eq(id)
         );
-        await _instance.query(request: req).response.then((addrs) {
+        await _instance.query(request: req).response.then((addrs) async {
           if (addrs.data == null) {
             return;
           }
@@ -268,9 +452,18 @@ class DatastoreServices {
             List<Address> addrsList = addrs.data!.items.map((e) => e!).toList();
             fetchedUser = user.data!.copyWith(address: addrsList);
           }
+          final req = ModelQueries.get(Wallet.classType, user.data!.userWalletId!);
+          await _instance.query(request: req).response.then((wallet) {
+            if (wallet.data == null) {
+              return;
+            }
+            fetchedUser = user.data!.copyWith(wallet: wallet.data);
+          });
         });
       });
     });
+
+    safePrint(fetchedUser!.wallet!.toJson());
 
     return fetchedUser;
   }
@@ -314,12 +507,18 @@ class DatastoreServices {
     return list;
   }
   
-  
-  
-  
-  
-  
-  
+  // fetch token for app
+  static Future<tokenModel.Token?> getToken() async {
+    tokenModel.Token? result;
+    final req = ModelQueries.get(tokenModel.Token.classType, "ce0878d1-0da3-4e5a-a4bd-d33830165229");
+    await _instance.query(request: req).response.then((tokenRes) {
+      if (tokenRes.data == null) {
+        return;
+      }
+      result = tokenRes.data;
+    });
+    return result;
+  }
   
   
   // ________________________________________________CREATE AND UPDATE OPERATION___________________________________________

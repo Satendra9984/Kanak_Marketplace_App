@@ -24,7 +24,7 @@ class BuyCompletedScreen extends StatelessWidget {
       ),
       body: BlocBuilder<BuyBloc, BuyState>(
         builder: (ctxt, state) {
-          Transaction transaction = context.read<BuyBloc>().getTransaction;
+          Transaction transaction = state.transaction!;
           if (transaction.status == TransactionStatus.SUCCESSFUL) {
             return transactionSuccessWidget(transaction, context);
           } else if (transaction.status == TransactionStatus.PENDING) {
@@ -77,7 +77,7 @@ class BuyCompletedScreen extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () {
-                    //TODO: COPY TO CLIPBOARD
+                    
                   },
                   icon: Icon(
                     Icons.copy,
@@ -114,7 +114,7 @@ class BuyCompletedScreen extends StatelessWidget {
                       title: 'Transaction Type',
                       value: transaction.type.toString()),
                   const SizedBox(height: 25),
-                  RowDetailWidget(title: 'Price', value: '${10000} INR/gm'),
+                  const RowDetailWidget(title: 'Price', value: '${10000} INR/gm'),
                   const SizedBox(height: 25),
                   RowDetailWidget(
                       title: 'Amount', value: '${transaction.amount} gm'),

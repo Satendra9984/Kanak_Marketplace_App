@@ -342,14 +342,14 @@ class GoldServices {
     BuyInfo? info;
     final authToken = await LocalDBServices.getGPAccessToken();
     await HttpServices.sendPostReq('${_baseUrl}buy', body: {
-      'lockPrice': int.parse(rates.gBuy!), // number
+      'lockPrice': double.parse(rates.gBuy!), // number
       'metalType': 'gold', // string
       'quantity': transaction.quantity, //
       'merchantTransactionId': transaction.txId,
       'userName': "${user.fname!} ${user.lname!}",
       'uniqueId': user.id,
       'blockId': rates.blockId,
-      'mobileNumber': user.phone,
+      'mobileNumber': user.phone!.substring(3),
       'emailId': user.email
     }, extraHeaders: {
       'Authorization': 'Bearer $authToken'
@@ -416,9 +416,12 @@ class GoldServices {
   // get gold rate
   static Future<ExchangeRates?> getMetalsRate() async {
     ExchangeRates? rates;
+    // await GoldServices.sessionLogIn();
     final authToken = await LocalDBServices.getGPAccessToken();
     await HttpServices.sendGetReq('${_baseUrl}rates',
         extraHeaders: {'Authorization': 'Bearer $authToken'}).then((result) {
+          safePrint('result  000000-> $result');
+          
       if (result == null) {
         return;
       }

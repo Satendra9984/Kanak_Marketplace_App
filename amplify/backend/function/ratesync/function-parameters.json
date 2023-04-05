@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "api": {
+      "Tasvat": [
+        "Query",
+        "Mutation"
+      ]
+    }
+  },
+  "lambdaLayers": [],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "email",
+      "environmentVariableName": "email"
+    },
+    {
+      "cloudFormationParameterName": "password",
+      "environmentVariableName": "password"
+    }
+  ]
+}

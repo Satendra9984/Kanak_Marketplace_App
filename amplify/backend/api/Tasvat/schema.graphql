@@ -79,4 +79,16 @@ type User @model @auth(rules: [{allow: public}]) {
   dob: AWSDate
   defaultBankId: String
 }
- 
+
+type Token @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  token: String!
+  expiry: AWSDateTime!
+}
+
+type MarketRate @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  blockId: String!
+  sell: Float!
+  buy: Float!
+}

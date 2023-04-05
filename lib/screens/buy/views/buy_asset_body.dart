@@ -1,4 +1,3 @@
-import 'package:custom_timer/custom_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -432,7 +431,7 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
                           .then(
                         (value) {
                           final rate = ref.read(goldRateProvider);
-                          debugPrint(rate.toString());
+                          debugPrint(rate.gBuy);
                           context.read<BuyBloc>().add(RateConfirmEvent(
                               user: ref.read(userProvider)!,
                               exchangeRates: rate,

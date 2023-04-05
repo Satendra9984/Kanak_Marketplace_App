@@ -22,6 +22,8 @@
 import 'package:amplify_core/amplify_core.dart';
 import 'Address.dart';
 import 'BankAccount.dart';
+import 'MarketRate.dart';
+import 'Token.dart';
 import 'Transaction.dart';
 import 'User.dart';
 import 'Wallet.dart';
@@ -29,6 +31,8 @@ import 'Wallet.dart';
 export 'Address.dart';
 export 'BankAccount.dart';
 export 'FailType.dart';
+export 'MarketRate.dart';
+export 'Token.dart';
 export 'Transaction.dart';
 export 'TransactionStatus.dart';
 export 'TransactionType.dart';
@@ -37,9 +41,9 @@ export 'Wallet.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "9e1fd4ca3ee780d3ad2b05ae7a84667f";
+  String version = "0461bb9f628e7573318fe13e05cf3ce5";
   @override
-  List<ModelSchema> modelSchemas = [Address.schema, BankAccount.schema, Transaction.schema, User.schema, Wallet.schema];
+  List<ModelSchema> modelSchemas = [Address.schema, BankAccount.schema, MarketRate.schema, Token.schema, Transaction.schema, User.schema, Wallet.schema];
   static final ModelProvider _instance = ModelProvider();
   @override
   List<ModelSchema> customTypeSchemas = [];
@@ -52,6 +56,10 @@ class ModelProvider implements ModelProviderInterface {
         return Address.classType;
       case "BankAccount":
         return BankAccount.classType;
+      case "MarketRate":
+        return MarketRate.classType;
+      case "Token":
+        return Token.classType;
       case "Transaction":
         return Transaction.classType;
       case "User":

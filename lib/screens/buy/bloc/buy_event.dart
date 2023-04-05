@@ -16,17 +16,22 @@ class RateConfirmEvent extends BuyEvent {
   final double quantity;
   final User user;
   final ExchangeRates exchangeRates;
-  RateConfirmEvent(
-      {required this.user,
-      required this.exchangeRates,
-      required this.quantity});
+  RateConfirmEvent({
+    required this.user,
+    required this.exchangeRates,
+    required this.quantity
+  });
   @override
   List<Object?> get props => [exchangeRates, user, quantity];
 }
 
 class ConfirmButtonPressedEvent extends BuyEvent {
   final Transaction transaction;
-  ConfirmButtonPressedEvent({required this.transaction});
+  final User user;
+  ConfirmButtonPressedEvent({
+    required this.transaction,
+    required this.user
+  });
   @override
   List<Object?> get props => [transaction];
 }
@@ -39,10 +44,25 @@ class PaymentErrorEvent extends BuyEvent {
 }
 
 class PaymentSuccessEvent extends BuyEvent {
+  final User user;
   final PaymentSuccessResponse response;
-  PaymentSuccessEvent({required this.response});
+  PaymentSuccessEvent({
+    required this.response,
+    required this.user
+  });
   @override
   List<Object?> get props => [response];
+}
+
+class TickEvent extends BuyEvent {
+  final int seconds;
+  TickEvent({
+    required this.seconds
+  });
+  @override
+  List<Object?> get props => [
+    seconds
+  ];
 }
 
 class PurchaseErrorEvent extends BuyEvent {

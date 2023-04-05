@@ -1,35 +1,47 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'buy_bloc.dart';
 
+enum BuyStatus {
+  initial,
+  progress,
+  success,
+  failed,
+  timeout
+}
+
 @immutable
-abstract class BuyState extends Equatable {
-}
+class BuyState extends Equatable {
+  final Transaction? transaction;
+  final ExchangeRates? rates;
+  final int? remainingTime;
+  final BuyStatus? status;
 
-class BuyInitial extends BuyState {
-  @override
-  List<Object?> get props => [];
-}
-
-class BuyProccessing extends BuyState {
-  final double progress;
-  BuyProccessing({
-    required this.progress
+  const BuyState({
+    this.status,
+    this.transaction,
+    this.rates,
+    this.remainingTime = 270
   });
-  @override
-  List<Object?> get props => [];
-}
-
-class BuyCompletedState extends BuyState {
-  @override
-  List<Object?> get props => [];
-}
-
-class BuyErrorState extends BuyState {
-  final FailType type;
-  BuyErrorState({
-    required this.type
-  });
+  
   @override
   List<Object?> get props => [
-    type
+    transaction,
+    status,
+    rates,
+    remainingTime
   ];
+
+  BuyState copyWith({
+    Transaction? transaction,
+    ExchangeRates? rates,
+    int? remainingTime,
+    BuyStatus? status
+  }) {
+    return BuyState(
+      transaction: transaction ?? this.transaction,
+      rates: rates ?? this.rates,
+      remainingTime: remainingTime ?? this.remainingTime,
+      status: status ?? this.status
+    );
+  }
 }

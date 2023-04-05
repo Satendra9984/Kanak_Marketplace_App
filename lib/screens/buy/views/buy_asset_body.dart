@@ -85,6 +85,7 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
     return Form(
       key: _formKey,
       child: Column(
@@ -408,14 +409,14 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 /// CASH BALANCE
-                // Text(
-                //   'Cash Balance: 12,000.00 ₹',
-                //   style: TextStyle(
-                //     fontSize: body2,
-                //     color: text300,
-                //     fontWeight: FontWeight.w500,
-                //   ),
-                // ),
+                Text(
+                  'Cash Balance: ${user!.wallet!.gold_balance} ₹',
+                  style: TextStyle(
+                    fontSize: body2,
+                    color: text300,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () async {

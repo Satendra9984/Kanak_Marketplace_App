@@ -174,9 +174,12 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       'description': 'Gold Purchase',
       'name': 'Tasvat Private Ltd.',
       'key': 'rzp_test_nxde3wSg0ubBiN',
-      'prefill': {'contact': user.phone, 'email': user.email},
+      'prefill': {
+        'contact': '7029096692',
+        'email': 'subhadeepchowdhury41@gmail.com'
+      },
       'external': {
-        'wallet': ['paytm']
+        'wallet': ['paytm', 'gpay']
       }
     });
   }

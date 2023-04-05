@@ -1,29 +1,71 @@
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/models/ModelProvider.dart';
-import 'package:tasvat/screens/portfolio/portfolio_redeem_info.dart';
+import 'package:tasvat/screens/buy/views/buy_completed.dart';
 import 'package:tasvat/screens/portfolio/portfolio_sell_info.dart';
 import 'package:tasvat/screens/portfolio/transaction_status.dart';
 import 'package:tasvat/screens/sell/views/sell_completed_screen.dart';
 import 'package:tasvat/screens/withdraw/withdraw_completed.dart';
 import 'package:tasvat/services/gold_services.dart';
+
 import '../../utils/app_constants.dart';
 
-class PortfolioWithdrawTransactions extends StatelessWidget {
-  const PortfolioWithdrawTransactions({super.key});
+class PortfolioSellTransactions extends StatelessWidget {
+  PortfolioSellTransactions({super.key});
 
-  Future<List<Map<String, dynamic>>> getRedeemList() async {
-    List<Map<String, dynamic>> redeemList = [];
-    await GoldServices.getUserRedeemList().then((list) {
-      redeemList = list;
+  final List<Transaction> _transactionList = [
+    Transaction(
+        id: '123456789',
+        type: TransactionType.BUY,
+        dateTime: TemporalDateTime.now(),
+        amount: 12),
+    Transaction(
+      id: '123456789',
+      type: TransactionType.SELL,
+      amount: 5,
+      status: TransactionStatus.PENDING,
+      dateTime: TemporalDateTime.now(),
+    ),
+    Transaction(
+      id: '123456789',
+      type: TransactionType.EXCHANGE,
+      amount: 8,
+      status: TransactionStatus.PENDING,
+      dateTime: TemporalDateTime.now(),
+    ),
+  ];
+
+  IconData _getIcon(int index) {
+    if (_transactionList[index].type == TransactionType.BUY) {
+      return Icons.add;
+    } else if (_transactionList[index].type == TransactionType.SELL) {
+      return Icons.currency_exchange;
+    }
+    return Icons.file_download_outlined;
+  }
+
+  Color _getPriceColor(int index) {
+    if (_transactionList[index].type == TransactionType.BUY) {
+      return success;
+    } else if (_transactionList[index].type == TransactionType.SELL) {
+      return error;
+    }
+
+    return information;
+  }
+
+  Future<List<Map<String, dynamic>>> getSellList() async {
+    List<Map<String, dynamic>> buyList = [];
+    await GoldServices.getUserSellList().then((list) {
+      buyList = list;
     });
-    return redeemList;
+    return buyList;
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: getRedeemList(),
+      future: getSellList(),
       builder: (context, snap) {
         if (snap.connectionState == ConnectionState.waiting) {
           return Center(
@@ -32,48 +74,7 @@ class PortfolioWithdrawTransactions extends StatelessWidget {
         }
 
         List<Map<String, dynamic>> list = snap.data!;
-        var m = {
-          "transactionId": "OD226116025618536050068217",
-          "uniqueId": "GE7794778787",
-          "merchantOrderId": "bf56a3b7-1b97-4e88-b749-db52bd1e64a5",
-          "invoiceNo": null,
-          "shippingCharges": "1250.00",
-          "modeOfPayment": "Mehul",
-          "shippingAddress": {
-            "name": "Ravi",
-            "mobile": null,
-            "address":
-                "B 110, 1st Floor, Laxmi Bhavan, Sai Baba nagar, Navghar Road, Bhayandar East",
-            "state": "Andaman and Nicobar",
-            "city": "North and Middle Andaman",
-            "pincode": "401105"
-          },
-          "awbNo": null,
-          "logisticName": null,
-          "product": [
-            {
-              "sku": "AU999GC01R",
-              "productName": "Augmont 1Gm Gold Coin (999 Purity)",
-              "metalType": "gold",
-              "quantity": "3.0000",
-              "price": "350.00",
-              "amount": "1050.00",
-              "productImages": []
-            },
-            {
-              "sku": "BR999S001R",
-              "productName": "1 Gm Silver Bar",
-              "metalType": "silver",
-              "quantity": "2.0000",
-              "price": "100.00",
-              "amount": "200.00",
-              "productImages": []
-            }
-          ],
-          "status": "pending",
-          "createdAt": "2020-10-13T04:04:13.000000Z",
-          "updatedAt": "2020-10-13T04:04:13.000000Z"
-        };
+
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
           child: ListView.builder(
@@ -160,16 +161,14 @@ class PortfolioWithdrawTransactions extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        // TODO: ADD IN WITHDRAW ORDER LIST ARROW BUTTON
+                        /// ADD IN WITHDRAW ORDER LIST ARROW BUTTON
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (ctx) {
-                              return RedeemInfoScreen(
-                                  sellMerchantTxnId: list[index]
-                                      ['transactionId']);
-                            },
-                          ),
+                          MaterialPageRoute(builder: (ctx) {
+                            return SellInfoScreen(
+                                sellMerchantTxnId: list[index]
+                                    ['merchantTransactionId']);
+                          }),
                         );
                       },
                       icon: Icon(
@@ -185,37 +184,5 @@ class PortfolioWithdrawTransactions extends StatelessWidget {
         );
       },
     );
-  }
-
-  void _navigateToCompletedScreen(
-      BuildContext context, Transaction transactionDetails, String id) {
-    if (transactionDetails.type == TransactionType.BUY) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => TransactionStatusScreen(
-            buyOrderDetails: transactionDetails,
-          ),
-        ),
-      );
-    } else if (transactionDetails.type == TransactionType.SELL) {
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (ctx) => SellCompletedScreen(
-      //       buyOrderDetails: transactionDetails,
-      //     ),
-      //   ),
-      // );
-    } else if (transactionDetails.type == TransactionType.EXCHANGE) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => WithdrawCompletedScreen(
-            buyOrderDetails: transactionDetails,
-          ),
-        ),
-      );
-    }
   }
 }

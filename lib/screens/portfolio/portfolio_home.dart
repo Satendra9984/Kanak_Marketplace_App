@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tasvat/screens/portfolio/gold_asset_details.dart';
+import 'package:tasvat/screens/portfolio/portfolio_sell_list.dart';
 import 'package:tasvat/utils/app_constants.dart';
 import 'package:tasvat/screens/portfolio/portfolio_assets.dart';
 import 'package:tasvat/screens/portfolio/portfolio_transactions.dart';
@@ -15,11 +16,13 @@ class PortfolioHome extends StatefulWidget {
 }
 
 class _PortfolioHomeState extends State<PortfolioHome> {
+  late ScrollController _scrollController;
   int _currentTabNumber = 0;
   late PageController _pageController;
 
   @override
   void initState() {
+    _scrollController = ScrollController();
     _pageController = PageController();
     super.initState();
   }
@@ -177,6 +180,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
 
           /// tabs for various pages for portfolio
           SingleChildScrollView(
+            controller: _scrollController,
             padding: const EdgeInsets.symmetric(horizontal: 10),
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -184,46 +188,54 @@ class _PortfolioHomeState extends State<PortfolioHome> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // TabForDashboard(
-                //   currentTabNumber: _currentTabNumber,
-                //   label: 'Assets',
-                //   tabNumber: 0,
-                //   onPressed: () {
-                //     setState(() {
-                //       _currentTabNumber = 0;
-                //     });
-                //     _pageController.jumpToPage(_currentTabNumber);
-                //   },
-                // ),
-                const SizedBox(width: 10),
                 TabForDashboard(
                   currentTabNumber: _currentTabNumber,
-                  label: 'Withdraw Orders',
+                  label: 'Sell',
                   tabNumber: 0,
                   onPressed: () {
                     setState(() {
                       _currentTabNumber = 0;
+                      _scrollController.jumpTo(0);
                     });
-                    _pageController.jumpToPage(0);
+                    _pageController.jumpToPage(_currentTabNumber);
                   },
                 ),
                 const SizedBox(width: 10),
                 TabForDashboard(
                   currentTabNumber: _currentTabNumber,
-                  label: 'Transactions',
+                  label: 'Buy',
                   tabNumber: 1,
                   onPressed: () {
                     setState(() {
                       _currentTabNumber = 1;
+                      _scrollController.jumpTo(
+                          (_scrollController.position.maxScrollExtent / 3) * 2);
                     });
-                    _pageController.jumpToPage(1);
+                    _pageController.jumpToPage(_currentTabNumber);
                   },
                 ),
+                const SizedBox(width: 10),
+                TabForDashboard(
+                  currentTabNumber: _currentTabNumber,
+                  label: 'Withdraw Orders',
+                  tabNumber: 2,
+                  onPressed: () {
+                    setState(() {
+                      _currentTabNumber = 2;
+                      _scrollController.jumpTo(
+                          ((_scrollController.position.maxScrollExtent + 10) /
+                                  3) *
+                              3);
+                    });
+                    _pageController.jumpToPage(_currentTabNumber);
+                  },
+                ),
+                const SizedBox(width: 10),
               ],
             ),
           ),
 
-          /// pageview for various screens
+          /// PageView for various screens
           const SizedBox(height: 15),
           Expanded(
             child: Container(
@@ -237,9 +249,9 @@ class _PortfolioHomeState extends State<PortfolioHome> {
               child: PageView(
                 controller: _pageController,
                 children: [
-                  // PortfolioAssets(),
-                  PortfolioWithdrawOrders(),
-                  PortfolioTransactions(),
+                  PortfolioSellTransactions(),
+                  PortfolioBuyTransactions(),
+                  const PortfolioWithdrawTransactions(),
                 ],
                 onPageChanged: (int pageIndex) {
                   setState(() {

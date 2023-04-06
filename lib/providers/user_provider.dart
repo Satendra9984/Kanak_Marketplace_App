@@ -11,51 +11,41 @@ class UserNotifier extends StateNotifier<User?> {
   }
 
   // sync user data
-  void syncDetails({
-    required User user
-  }) {
+  void syncDetails({required User user}) {
     state = user;
     safePrint(user.toString());
   }
 
   // update user with details
-  void updateUserDetails({
-    String? email,
-    String? phone,
-    String? fname,
-    String? lname,
-    String? dob,
-    String? kyc,
-    String? gpDetails
-  }) {
-    state = state?.copyWith(
-      email: email,
-      phone: phone,
-      fname: fname,
-      lname: lname
-    );
+  void updateUserDetails(
+      {String? email,
+      String? phone,
+      String? fname,
+      String? lname,
+      String? dob,
+      String? kyc,
+      String? gpDetails}) {
+    state =
+        state?.copyWith(email: email, phone: phone, fname: fname, lname: lname);
     if (dob != null) {
       state = state?.copyWith(dob: TemporalDate.fromString(dob));
     }
     safePrint(state.toString());
   }
-  void addUserAddress({
-    required Address address
-  }) {
-    state = state?.copyWith(
-      address: [...?state?.address, address]
-    );
+
+  void addUserAddress({required Address address}) {
+    state = state?.copyWith(address: [...?state?.address, address]);
     safePrint(state.toString());
   }
-  void addBankAccount({
-    required BankAccount account
-  }) {
-    state = state?.copyWith(
-      bankAccounts: [...?state?.bankAccounts, account]
-    );
+
+  void addBankAccount({required BankAccount account}) {
+    state = state?.copyWith(bankAccounts: [...?state?.bankAccounts, account]);
+  }
+
+  String? getDefaultBankId() {
+    return state?.bankAccounts![0].id;
   }
 }
 
-final userProvider = StateNotifierProvider<UserNotifier, User?>(
-  (ref) => UserNotifier()
-);
+final userProvider =
+    StateNotifierProvider<UserNotifier, User?>((ref) => UserNotifier());

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:tasvat/screens/registration/view/user_kyc_page.dart';
+import 'package:tasvat/models/function_lifetime_enum.dart';
+import 'package:tasvat/services/gold_services.dart';
+import '../../../../models/BankAccount.dart';
 import '../../../../utils/app_constants.dart';
 import '../../../../utils/ui_functions.dart';
 
 class UpdateUserBankDetailsPage extends StatefulWidget {
-  const UpdateUserBankDetailsPage({super.key});
+  final BankAccount bankAccount;
+  const UpdateUserBankDetailsPage({
+    super.key,
+    required this.bankAccount,
+  });
 
   @override
   State<UpdateUserBankDetailsPage> createState() =>
@@ -16,6 +22,17 @@ class _UpdateUserBankDetailsPageState extends State<UpdateUserBankDetailsPage> {
   final TextEditingController _accountNameCtrl = TextEditingController();
   final TextEditingController _accountNumberCtrl = TextEditingController();
   final TextEditingController _ifscCodeCtrl = TextEditingController();
+
+  FunctionLifetime _functionLifetime = FunctionLifetime.initialize;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _accountNumberCtrl.text = widget.bankAccount.accNo ?? '';
+    _accountNameCtrl.text = widget.bankAccount.accName ?? '';
+    _ifscCodeCtrl.text = widget.bankAccount.ifsc ?? '';
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -229,42 +246,123 @@ class _UpdateUserBankDetailsPageState extends State<UpdateUserBankDetailsPage> {
           ),
         ),
       ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          /// Bank Details Submit Button
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2.5),
-            child: ElevatedButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  await updateUserBankDetails();
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
+      bottomNavigationBar: Builder(
+        builder: (context) {
+          if (_functionLifetime == FunctionLifetime.initialize) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /// Bank Details Submit Button
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2.5),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          _functionLifetime = FunctionLifetime.calling;
+                        });
+                        await updateUserBankDetails();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      minimumSize: const Size(double.infinity, 50.0),
+                      maximumSize: const Size(double.infinity, 60.0),
+                      backgroundColor: accent1,
+                    ),
+                    child: Text(
+                      'Update',
+                      style: TextStyle(
+                        color: background,
+                        fontSize: heading2,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
-                minimumSize: const Size(double.infinity, 50.0),
-                maximumSize: const Size(double.infinity, 60.0),
-                backgroundColor: accent1,
+              ],
+            );
+          } else if (_functionLifetime == FunctionLifetime.calling) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: accent2,
               ),
-              child: Text(
-                'Update',
-                style: TextStyle(
-                  color: background,
-                  fontSize: heading2,
-                  fontWeight: FontWeight.w600,
+            );
+          } else if (_functionLifetime == FunctionLifetime.success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Updated Successfully')),
+            );
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2.5),
+              child: ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    setState(() {
+                      _functionLifetime = FunctionLifetime.calling;
+                    });
+                    await updateUserBankDetails();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  minimumSize: const Size(double.infinity, 50.0),
+                  maximumSize: const Size(double.infinity, 60.0),
+                  backgroundColor: accent1,
+                ),
+                child: Text(
+                  'Update',
+                  style: TextStyle(
+                    color: background,
+                    fontSize: heading2,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
-          ),
-        ],
+            );
+          } else {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2.5),
+              child: ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    setState(() {
+                      _functionLifetime = FunctionLifetime.calling;
+                    });
+                    await updateUserBankDetails();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  minimumSize: const Size(double.infinity, 50.0),
+                  maximumSize: const Size(double.infinity, 60.0),
+                  backgroundColor: accent1,
+                ),
+                child: Text(
+                  'Update',
+                  style: TextStyle(
+                    color: background,
+                    fontSize: heading2,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            );
+          }
+        },
       ),
     );
   }
 
   Future<void> updateUserBankDetails() async {
-    // TODO: SUBMIT USER ADDRESS DETAILS
+    try {
+      // await GoldServices.
+    } catch (e) {}
   }
 }

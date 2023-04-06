@@ -41,11 +41,11 @@ class UserBanksListScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (ctx) => const UpdateUserBankDetailsPage()),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (ctx) => UpdateUserBankDetailsPage()),
+              // );
             },
             child: Row(
               children: [
@@ -99,11 +99,11 @@ class UserBanksListScreen extends StatelessWidget {
           // rowDetailBank('Status', address['status'].toString()),
           ListTile(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (ctx) => const UpdateUserBankDetailsPage()),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (ctx) => const UpdateUserBankDetailsPage()),
+              // );
             },
             leading: Icon(
               Icons.account_balance_outlined,
@@ -122,11 +122,11 @@ class UserBanksListScreen extends StatelessWidget {
             trailing: PopupMenuButton(
               onSelected: (value) {
                 if (value == 'Edit') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (ctx) => const UpdateUserBankDetailsPage()),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (ctx) => const UpdateUserBankDetailsPage()),
+                  // );
                 }
               },
               itemBuilder: (BuildContext context) {

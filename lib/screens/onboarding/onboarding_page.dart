@@ -30,6 +30,7 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
     await Amplify.Auth.getCurrentUser().then((user) async {
       // fetch token
       await ref.read(tokenProvider.notifier).init().then((value) async {
+        
         // sets auth provider with user id
       ref.read(authProvider.notifier).logInAndSetUser(
         user.username,

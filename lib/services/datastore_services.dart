@@ -512,6 +512,7 @@ class DatastoreServices {
     tokenModel.Token? result;
     final req = ModelQueries.get(tokenModel.Token.classType, "ce0878d1-0da3-4e5a-a4bd-d33830165229");
     await _instance.query(request: req).response.then((tokenRes) {
+      safePrint(tokenRes);
       if (tokenRes.data == null) {
         return;
       }

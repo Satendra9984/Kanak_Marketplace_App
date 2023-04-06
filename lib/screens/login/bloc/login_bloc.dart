@@ -37,18 +37,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             .signInWithPhoneAndPassword(
                 phone: state.phone, password: state.password)
             .then((result) async {
-              await GoldServices.sessionLogIn().then((value) async {
-                if (!value) {
-                  await authRepository.signOut();
-                  emit(state.copyWith(status:  LoginStatus.error));
-                  return;
-                }
-                safePrint('Done');
-                emit(state.copyWith(status: LoginStatus.success));
-              }).catchError((err) {
-                safePrint(err);
-              });
-          
+              emit(state.copyWith(status: LoginStatus.success));
         }).catchError((err) async {
           await authRepository.signOut();
           emit(state.copyWith(

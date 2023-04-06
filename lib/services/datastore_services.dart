@@ -392,6 +392,64 @@ class DatastoreServices {
     return version;
   }
 
+  static Future<int?> getBankAccountVersion({
+    required String bankId
+  }) async {
+    int? version;
+    const String getUserQuery = """
+      query GetBankAccount(\$id: ID!) {
+        getBankAccount(id: \$id) {
+          _version
+        }
+      }
+    """;
+    try {
+      final response = await _instance.query(
+        request: GraphQLRequest<String>(
+          document: getUserQuery,
+          variables: {
+            'id': bankId
+          },
+        ),
+      ).response;
+      version = jsonDecode(
+        response.data!
+      )['getBankAccount']['_version'];
+    } catch (e) {
+      safePrint('Failed to retrieve user record: $e');
+    }
+    return version;
+  }
+
+  static Future<int?> getAddressVersion({
+    required String addressId
+  }) async {
+    int? version;
+    const String getUserQuery = """
+      query GetAddress(\$id: ID!) {
+        getAddress(id: \$id) {
+          _version
+        }
+      }
+    """;
+    try {
+      final response = await _instance.query(
+        request: GraphQLRequest<String>(
+          document: getUserQuery,
+          variables: {
+            'id': addressId
+          },
+        ),
+      ).response;
+      version = jsonDecode(
+        response.data!
+      )['getAddress']['_version'];
+    } catch (e) {
+      safePrint('Failed to retrieve user record: $e');
+    }
+    return version;
+  }
+
   static Future<int?> getWalletVersion({
     required String id
   }) async {
@@ -702,18 +760,46 @@ class DatastoreServices {
     return result;
   }
 
+
+  //TODO: yhi bana
   // update particular address
   static Future<Address?> updateAddress({
     required Address addr
   }) async {
     Address? result;
     
-    final req = ModelMutations.update(addr);
-    await _instance.mutate(request: req).response.then((value) {
-      if (value.data == null) {
-        return;
+    await getAddressVersion(addressId: addr.id).then((version) async {
+      safePrint(version);
+      const String updateQuery = """
+        mutation UpdateAddress(\$id: ID!, \$address: String!, \$pincode: Int!, \$version: Int!) {
+          updateUser(input: {id: \$id, name: \$name, address: \$address, pincode: \$pincode, _version: \$version, }) {
+            id
+            _version
+            goldProviderDetails
+          }
+        }
+      """;
+      final variables = {
+        "id": addr.id,
+        "pincode": addr.pincode,
+        "name": addr.name,
+        "version": version
+      };     
+      try {
+        final response = await _instance.mutate(
+          request: GraphQLRequest<String>(
+            document: updateQuery,
+            variables: variables,
+          ),
+        ).response;
+        if (response.data == null) {
+          return;
+        }
+        result = addr;
+        safePrint(result);
+      } catch (e) {
+        safePrint('Update failed: $e');
       }
-      result = value.data;
     });
     return result;
   }

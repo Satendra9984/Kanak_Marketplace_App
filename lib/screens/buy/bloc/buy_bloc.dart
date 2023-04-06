@@ -18,6 +18,15 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
   late Timer _timer;
   late User _user;
 
+  BuyState reset() {
+    _user = User();
+    return state.copyWith(
+      transaction: Transaction(),
+      remainingTime: 180,
+      status: BuyStatus.initial
+    );
+  }
+
   BuyBloc() : super(const BuyState(status: BuyStatus.initial)) {
     // starting event for buy confirm screen
     on<RateConfirmEvent>((event, emit) async {

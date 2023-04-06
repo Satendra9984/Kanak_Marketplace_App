@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/amplifyconfiguration.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/providers/auth_provider.dart';
+import 'package:tasvat/providers/token_provider.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/home_screen.dart';
 import 'package:tasvat/screens/login/view/pages/login_page.dart';
@@ -27,24 +28,13 @@ class OnBoardingPage extends ConsumerStatefulWidget {
 class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
   Future<void> _decideRoute() async {
     await Amplify.Auth.getCurrentUser().then((user) async {
-      // checks if token expired
-      final expiry = await LocalDBServices.getGPTokenExpiry();
-      safePrint('---------> ${user.userId} ____________ $expiry');
-      if (expiry == null ||
-          DateTime.now().compareTo(DateTime.parse(expiry)) > 0) {
-        safePrint('Token Expired');
-        AuthRepository().signOut().then((value) {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const LogInPage()));
-        });
-        return;
-      }
-
-      // sets auth provider with user id
+      // fetch token
+      await ref.read(tokenProvider.notifier).init().then((value) async {
+        // sets auth provider with user id
       ref.read(authProvider.notifier).logInAndSetUser(
-            user.username,
-            user.userId,
-          );
+        user.username,
+        user.userId,
+      );
 
       // sets user with user id
       ref.read(userProvider.notifier).initializeWithUser(User(id: user.userId));
@@ -98,6 +88,9 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
           }
         });
       });
+      });
+      
+      
     }).catchError((err) {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => const LogInPage()));

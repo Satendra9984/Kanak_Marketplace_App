@@ -1,7 +1,9 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasvat/models/BankAccount.dart';
 import 'package:tasvat/screens/sell/views/sell_confirmation.dart';
 import '../../../providers/user_provider.dart';
 import '../../../utils/app_constants.dart';
@@ -84,9 +86,9 @@ class _SellAssetBodyState extends ConsumerState<SellAssetBody> {
 
   @override
   Widget build(BuildContext context) {
-    dynamic isBankAvailable =
-        ref.watch(userProvider.notifier).state?.defaultBankId;
-
+    BankAccount? bank =
+        ref.watch(userProvider)!.bankAccounts?[0];
+        safePrint(bank);
     return Form(
       key: _formKey,
       child: Column(
@@ -96,7 +98,7 @@ class _SellAssetBodyState extends ConsumerState<SellAssetBody> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                if (isBankAvailable == null)
+                if (bank == null)
                   Container(
                     margin: const EdgeInsets.all(5),
                     padding:
@@ -457,7 +459,7 @@ class _SellAssetBodyState extends ConsumerState<SellAssetBody> {
                     closeKeyboard(context);
                     if (_formKey.currentState != null &&
                         _formKey.currentState!.validate() &&
-                        isBankAvailable != null) {
+                        bank != null) {
                       // PROCEED TO CONFIRMATION SCREEN
                       Navigator.push(
                         context,

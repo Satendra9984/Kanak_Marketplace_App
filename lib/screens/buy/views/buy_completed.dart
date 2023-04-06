@@ -9,8 +9,10 @@ import '../bloc/buy_bloc.dart';
 
 class BuyCompletedScreen extends StatelessWidget {
   final bool backToHome;
+  final Transaction transaction;
   const BuyCompletedScreen({
     Key? key,
+    required this.transaction,
     this.backToHome = false,
   }) : super(key: key);
 
@@ -22,15 +24,14 @@ class BuyCompletedScreen extends StatelessWidget {
         elevation: 0.0,
         backgroundColor: background,
       ),
-      body: BlocBuilder<BuyBloc, BuyState>(
-        builder: (ctxt, state) {
-          Transaction transaction = state.transaction!;
+      body: Builder(
+        builder: (ctxt) {
           if (transaction.status == TransactionStatus.SUCCESSFUL) {
-            return transactionSuccessWidget(transaction, context);
+            return transactionSuccessWidget(transaction, ctxt);
           } else if (transaction.status == TransactionStatus.PENDING) {
-            return transactionFailedWidget(transaction, context);
+            return transactionFailedWidget(transaction, ctxt);
           } else {
-            return transactionPendingWidget(transaction, context);
+            return transactionPendingWidget(transaction, ctxt);
           }
         },
       ),
@@ -300,7 +301,7 @@ class BuyCompletedScreen extends StatelessWidget {
                   RowDetailWidget(
                       title: 'Equal',
                       value:
-                          '${transaction.amount! * int.parse(transaction.lockPrice!)} INR'),
+                          '${transaction.amount! * double.parse(transaction.lockPrice!)} INR'),
                   const SizedBox(height: 25),
                   RowDetailWidget(
                       title: 'Method', value: transaction.type.toString()),

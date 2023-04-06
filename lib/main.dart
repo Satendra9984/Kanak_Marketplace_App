@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasvat/providers/token_provider.dart';
 import 'package:tasvat/screens/buy/bloc/buy_bloc.dart';
 import 'package:tasvat/screens/home_screen.dart';
 import 'package:tasvat/screens/login/bloc/login_bloc.dart';
@@ -37,6 +38,12 @@ class Tasvat extends ConsumerStatefulWidget {
 }
 
 class _TasvatState extends ConsumerState<Tasvat> {
+
+  @override
+  void dispose() {
+    ref.read(tokenProvider.notifier).close();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

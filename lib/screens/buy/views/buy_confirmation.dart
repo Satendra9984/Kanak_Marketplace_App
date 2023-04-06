@@ -23,7 +23,9 @@ class _BuyConfirmationScreenState extends ConsumerState<BuyConfirmationScreen> {
 
   @override
   void dispose() {
+    safePrint('XXXXXXXXXXXXXXXXXXXXXXXXXX| Disposed');
     _buyBloc.closeTimer();
+    _buyBloc.close();
     super.dispose();
   }
 
@@ -51,9 +53,11 @@ class _BuyConfirmationScreenState extends ConsumerState<BuyConfirmationScreen> {
           if (buyState.status == BuyStatus.success || buyState.status == BuyStatus.failed) {
             _buyBloc.closeTimer();
             safePrint('***************************${buyState.status}*******************************');
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (ctx) => const BuyCompletedScreen(),
+                builder: (ctx) => BuyCompletedScreen(
+                  transaction: buyState.transaction!
+                ),
               ),
             );
           }

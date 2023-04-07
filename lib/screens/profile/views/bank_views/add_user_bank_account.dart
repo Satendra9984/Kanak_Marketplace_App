@@ -163,7 +163,7 @@ class _AddUserBankDetailsPageState extends State<AddUserBankDetailsPage> {
                         return 'IFSC Code must be equal 11 character';
                       }
                       bool ifscValid =
-                          RegExp(r'/^[A-Za-z]{4}[0-9]{6,7}$/').hasMatch(value);
+                          RegExp(r'^[A-Za-z]{4}[0-9]{6,7}$').hasMatch(value);
                       if (ifscValid == false) {
                         return 'Please enter a valid IFSC Code';
                       }
@@ -178,93 +178,97 @@ class _AddUserBankDetailsPageState extends State<AddUserBankDetailsPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-
-                Text(
-                  'Account Number',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    // color: text150,
-                  ),
-                  child: TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.number,
-                    controller: _accountNumberCtrl,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter account number';
-                      } else if (value.length > 18) {
-                        return 'Bank Id should not be greater than 18 characters';
-                      } else if (value.length < 9) {
-                        return 'Bank Id should not be lesser than 9 characters';
-                      }
-
-                      bool accountNoValid =
-                          RegExp(r'^\d{9,18}$').hasMatch(value);
-                      if (accountNoValid == false) {
-                        return 'Please enter a valid Account Number';
-                      }
-                      return null;
-                    },
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: accent2,
-                    ),
-                    decoration: getInputDecoration('0112345678'),
-                  ),
-                ),
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          /// Bank Details Submit Button
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2.5),
-            child: ElevatedButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  await updateUserBankDetails();
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                minimumSize: const Size(double.infinity, 50.0),
-                maximumSize: const Size(double.infinity, 60.0),
-                backgroundColor: accent1,
+      bottomNavigationBar: Builder(
+        builder: (context) {
+          if (_functionLifetime == FunctionLifetime.calling) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: accent2),
+                  const SizedBox(width: 15),
+                  Text(
+                    'Adding Bank Account',
+                    style: TextStyle(
+                        color: accent2,
+                        fontWeight: FontWeight.w500,
+                        fontSize: body1),
+                  ),
+                ],
               ),
-              child: Text(
-                'Update',
-                style: TextStyle(
-                  color: background,
-                  fontSize: heading2,
-                  fontWeight: FontWeight.w600,
+            );
+          } else {
+            /// FunctionLifetime.initialize
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    setState(() {
+                      _functionLifetime = FunctionLifetime.calling;
+                    });
+                    await addUserBankDetails();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  minimumSize: const Size(double.infinity, 50.0),
+                  maximumSize: const Size(double.infinity, 60.0),
+                  backgroundColor: accent1,
+                ),
+                child: Text(
+                  'Add Bank Account',
+                  style: TextStyle(
+                    color: background,
+                    fontSize: heading2,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
-          ),
-        ],
+            );
+          }
+        },
       ),
     );
   }
 
-  Future<void> updateUserBankDetails() async {
+  Future<void> addUserBankDetails() async {
     // TODO: SUBMIT USER ADDRESS DETAILS
+    try {
+      // await GoldServices.
+      Future.delayed(const Duration(seconds: 5)).then((value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: success,
+            content: Text('Bank Added Successfully',
+                style: TextStyle(
+                  color: text500,
+                )),
+          ),
+        );
+        setState(() {
+          _functionLifetime = FunctionLifetime.success;
+        });
+        // Navigator.pop(context);
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: error,
+          content: Text('Bank Add Failed', style: TextStyle(color: text500)),
+        ),
+      );
+      setState(() {
+        _functionLifetime = FunctionLifetime.initialize;
+      });
+    }
   }
 }

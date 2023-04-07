@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:tasvat/models/function_lifetime_enum.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
@@ -22,6 +23,7 @@ class _UserAddressPageState extends ConsumerState<AddUserAddressPage> {
   final TextEditingController _addressCtrl = TextEditingController();
   List<Map<dynamic, dynamic>>? _statesList;
   List<Map<dynamic, dynamic>> _citiesList = [];
+  FunctionLifetime _functionLifetime = FunctionLifetime.initialize;
 
   Map<dynamic, dynamic>? _state, _city;
   Future<void> getCitiesList() async {
@@ -110,7 +112,8 @@ class _UserAddressPageState extends ConsumerState<AddUserAddressPage> {
           if (rsp == null) {
             return;
           }
-          await DatastoreServices.addUserAddress(rsp: rsp, userId: user.id).then((addr) {
+          await DatastoreServices.addUserAddress(rsp: rsp, userId: user.id)
+              .then((addr) {
             safePrint(
                 'Added User Address-------------------> ${addr.toString()}');
             if (addr == null) {
@@ -440,36 +443,92 @@ class _UserAddressPageState extends ConsumerState<AddUserAddressPage> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        color: background,
-        child: Container(
-          // color: success,
-          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          child: ElevatedButton(
-            onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                await _createGoldUserWithAddress();
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+      bottomNavigationBar: Builder(
+        builder: (context) {
+          if (_functionLifetime == FunctionLifetime.calling) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: accent2),
+                  const SizedBox(width: 15),
+                  Text(
+                    'Adding Address Account',
+                    style: TextStyle(
+                        color: accent2,
+                        fontWeight: FontWeight.w500,
+                        fontSize: body1),
+                  ),
+                ],
               ),
-              minimumSize: const Size(double.infinity, 50.0),
-              maximumSize: const Size(double.infinity, 60.0),
-              backgroundColor: accent1,
-            ),
-            child: Text(
-              'Submit',
-              style: TextStyle(
-                color: background,
-                fontSize: heading2,
-                fontWeight: FontWeight.w600,
+            );
+          } else {
+            /// FunctionLifetime.initialize
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    setState(() {
+                      _functionLifetime = FunctionLifetime.calling;
+                    });
+                    await addUserAddressDetails();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  minimumSize: const Size(double.infinity, 50.0),
+                  maximumSize: const Size(double.infinity, 60.0),
+                  backgroundColor: accent1,
+                ),
+                child: Text(
+                  'Add Address',
+                  style: TextStyle(
+                    color: background,
+                    fontSize: heading2,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
+            );
+          }
+        },
       ),
     );
+  }
+
+  Future<void> addUserAddressDetails() async {
+    // TODO: SUBMIT USER ADDRESS DETAILS
+    try {
+      // await GoldServices.
+      Future.delayed(const Duration(seconds: 5)).then((value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: success,
+            content: Text('Address Added Successfully',
+                style: TextStyle(
+                  color: text500,
+                )),
+          ),
+        );
+        setState(() {
+          _functionLifetime = FunctionLifetime.success;
+        });
+        // Navigator.pop(context);
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: error,
+          content: Text('Address Add Failed', style: TextStyle(color: text500)),
+        ),
+      );
+      setState(() {
+        _functionLifetime = FunctionLifetime.initialize;
+      });
+    }
   }
 }

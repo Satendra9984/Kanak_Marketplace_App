@@ -1,29 +1,66 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/profile/views/address_views/update_user_address.dart';
-import 'package:tasvat/screens/registration/view/user_address.dart';
 import 'package:tasvat/services/gold_services.dart';
-import 'package:tasvat/services/rest_services.dart';
 import 'package:tasvat/utils/app_constants.dart';
 
+import '../../../../models/Address.dart';
 import 'add_user_address_screen.dart';
 
-class AddressListScreen extends StatefulWidget {
+class AddressListScreen extends ConsumerStatefulWidget {
   const AddressListScreen({Key? key}) : super(key: key);
 
   @override
-  State<AddressListScreen> createState() => _AddressListScreenState();
+  ConsumerState<AddressListScreen> createState() => _AddressListScreenState();
 }
 
-class _AddressListScreenState extends State<AddressListScreen> {
-  Future<List<Map<dynamic, dynamic>>> getAddress() async {
-    List<Map<dynamic, dynamic>> addressList = [];
+class _AddressListScreenState extends ConsumerState<AddressListScreen> {
+  Future<List<Address>> getAddress() async {
+    List<Address> addressList = [];
     try {
       await GoldServices.getAddressList().then((addList) {
         debugPrint('addressList\ntype: ${addressList.runtimeType}');
+        // debugPrint('${addList}');
         for (var addressMap in addList) {
-          Map<dynamic, dynamic> address =
-              Map<dynamic, dynamic>.from(addressMap);
+          //   {
+          // "userAddressId": "vLB5pWGY",
+          // "userAccountId": "g5K3yBeO",
+          // "name": "Sunil Shukla",
+          // "email": "sunil.shukla@gmail.com",
+          // "address": "Zaveri Bazaar, Kalbadevi, Mumbai",
+          // "stateId": "qYMjvMvX",
+          // "cityId": "z6KkbrMb",
+          // "pincode": 400002,
+          // "status": "active"
+          // };
+
+          //   id = json['id'],
+          // _name = json['name'],
+          // _pincode = (json['pincode'] as num?)?.toInt(),
+          // _userID = json['userID'],
+          // _phone = json['phone'],
+          // _email = json['email'],
+          // _address = json['address'],
+          // _status = json['status'],
+          // _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
+          // _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
+          var map = {
+            "userId": addressMap['userAccountId'],
+            "id": addressMap['userAddressId'],
+            "name": addressMap['name'],
+            "email": addressMap['email'],
+            "phone": '9335828140',
+            "address": addressMap['address'],
+            "stateId": "qYMjvMvX",
+            "cityId": "z6KkbrMb",
+            "pincode": 400002,
+            "status": true,
+          };
+          Address address = Address.fromJson(map);
+          debugPrint(address.toJson().toString());
           addressList.add(address);
           //debugPrint(addressList.toString());
         }
@@ -31,6 +68,7 @@ class _AddressListScreenState extends State<AddressListScreen> {
         return addressList;
       });
     } catch (e) {
+      debugPrint(e.toString());
       return addressList;
     }
     return addressList;
@@ -85,16 +123,17 @@ class _AddressListScreenState extends State<AddressListScreen> {
               child: CircularProgressIndicator(),
             );
           } else if (listSnap.hasError == false) {
-            List<Map<dynamic, dynamic>> list = listSnap.data!;
+            List<Address> list = listSnap.data!;
             // debugPrint(list.toString());
+            // ref.read(userProvider);
             return Container(
-              margin: const EdgeInsets.only(top: 25),
+              margin: const EdgeInsets.only(top: 25, left: 10, right: 10),
               child: ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: list.length,
                   itemBuilder: (ctx, index) {
-                    return addressWidget(list[index]);
+                    return addressWidget(list[index], index);
                   }),
             );
           } else {
@@ -107,29 +146,49 @@ class _AddressListScreenState extends State<AddressListScreen> {
     );
   }
 
-  Widget addressWidget(Map<dynamic, dynamic> address) {
-    return Column(
-      children: [
-        // rowDetailAddress('Name', address['name'].toString()),
-        // rowDetailAddress('Email', address['email'].toString()),
-        // rowDetailAddress('Address', address['address'].toString()),
-        // rowDetailAddress('State', address['stateId'].toString()),
-        // rowDetailAddress('City', address['cityId'].toString()),
-        // rowDetailAddress('Pincode', address['pincode'].toString()),
-        // rowDetailAddress('Status', address['status'].toString()),
-
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-          decoration: BoxDecoration(
-            // border: Border.all(
-            //   color: text150,
-            //   width: 0.00,
-            // ),
-            // color: text100,
-            borderRadius: BorderRadius.circular(15),
+  Widget addressWidget(Address address, int index, {bool isDefault = false}) {
+    debugPrint('${address.id}');
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+      decoration: BoxDecoration(
+        color: text100,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 5, left: 15),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: accentBG.withOpacity(0.55),
+                  child: Icon(
+                    Icons.location_city,
+                    color: accent1.withOpacity(0.75),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  'Address ${index + 1}',
+                  style: TextStyle(
+                      fontSize: heading2,
+                      fontWeight: FontWeight.w500,
+                      color: text500),
+                ),
+                const SizedBox(width: 10),
+                if (isDefault == true)
+                  Text(
+                    '( Default )',
+                    style: TextStyle(
+                        fontSize: body1,
+                        fontWeight: FontWeight.w500,
+                        color: CupertinoColors.activeGreen),
+                  ),
+              ],
+            ),
           ),
-          child: ListTile(
+          ListTile(
             onTap: () {
               Navigator.push(
                 context,
@@ -137,43 +196,44 @@ class _AddressListScreenState extends State<AddressListScreen> {
                     builder: (ctx) => const UpdateUserAddressPage()),
               );
             },
-            leading: Icon(
-              Icons.location_city,
-              color: text400,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 5),
+                Text(
+                  '${address.address}',
+                  style: TextStyle(
+                      fontSize: body2,
+                      fontWeight: FontWeight.w400,
+                      color: text500),
+                ),
+              ],
             ),
-            title: Text(
-              address['address'],
-              style: TextStyle(
-                  fontSize: body1, fontWeight: FontWeight.w400, color: text500),
-            ),
-            subtitle: Text(
-              address['pincode'].toString(),
-              style: TextStyle(
-                  fontSize: body2, fontWeight: FontWeight.w400, color: text500),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 5),
+                Text(
+                  '${address.pincode}',
+                  style: TextStyle(
+                      fontSize: body1,
+                      fontWeight: FontWeight.w400,
+                      color: text500),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  '+91 ${address.phone}',
+                  style: TextStyle(
+                      fontSize: body2,
+                      fontWeight: FontWeight.w600,
+                      color: text400),
+                ),
+              ],
             ),
             trailing: PopupMenuButton(
-              onSelected: (value) {
-                if (value == 'Edit') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (ctx) => const UpdateUserAddressPage()),
-                  );
-                }
-              },
+              onSelected: (value) {},
               itemBuilder: (BuildContext context) {
                 return [
-                  // PopupMenuItem(
-                  //   onTap: () {},
-                  //   value: 'Edit',
-                  //   child: Row(
-                  //     children: const [
-                  //       Icon(Icons.edit, color: Colors.green),
-                  //       SizedBox(width: 10),
-                  //       Text('Edit'),
-                  //     ],
-                  //   ),
-                  // ),
                   PopupMenuItem(
                     onTap: () async {
                       await deleteUserAddress().then((value) {
@@ -197,8 +257,8 @@ class _AddressListScreenState extends State<AddressListScreen> {
                   borderRadius: BorderRadius.circular(10)),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

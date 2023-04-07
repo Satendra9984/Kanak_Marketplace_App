@@ -1,9 +1,7 @@
-import 'package:amplify_auth_cognito/amplify_auth_error_handling.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tasvat/models/BankAccount.dart';
 import 'package:tasvat/screens/profile/views/bank_views/update_user_bank.dart';
-import 'package:tasvat/screens/registration/view/user_bank_details.dart';
 import 'package:tasvat/services/gold_services.dart';
 import '../../../../utils/app_constants.dart';
 import 'add_user_bank_account.dart';
@@ -237,8 +235,6 @@ class _UserBanksListScreenState extends State<UserBanksListScreen> {
                       value: 'Make Default',
                       child: Row(
                         children: [
-                          // Icon(Icons.add_rounded, color: success, size: 32),
-                          // const SizedBox(width: 10),
                           Text(
                             'Make Default',
                             style: TextStyle(
@@ -246,7 +242,6 @@ class _UserBanksListScreenState extends State<UserBanksListScreen> {
                                 fontWeight: FontWeight.w500,
                                 color: text500),
                           ),
-                          // Icon(Icons.add_rounded, color: success, size: 32),
                         ],
                       ),
                     ),

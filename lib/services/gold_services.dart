@@ -949,7 +949,7 @@ class GoldServices {
     return withdrawInfo['result']['data'];
   }
 
-  /// <----------------------------- Redeem ------------------------------------>
+  /// <----------------------------- Bank ------------------------------------>
 
   // get user bank
   static Future<UserBank?> getUserBank({required String userId}) async {
@@ -977,8 +977,8 @@ class GoldServices {
     final authToken = await LocalDBServices.getGPAccessToken();
     await HttpServices.sendGetReq('${_baseUrl}rates',
         extraHeaders: {'Authorization': 'Bearer $authToken'}).then((result) {
-          safePrint('result  000000-> $result');
-          
+      safePrint('result  000000-> $result');
+
       if (result == null) {
         return;
       }

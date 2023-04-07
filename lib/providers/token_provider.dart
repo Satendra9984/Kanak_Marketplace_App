@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/services/datastore_services.dart';
@@ -8,11 +9,12 @@ class TokenNotifier extends StateNotifier<Token?> {
   TokenNotifier() : super(null);
   late Timer timer;
   Future<void> init() async {
-    timer = Timer.periodic( const Duration(minutes: 5), (timer) async {
+    timer = Timer.periodic(const Duration(minutes: 5), (timer) async {
       await DatastoreServices.getToken().then((token) async {
         if (token == null) {
           return;
         }
+        debugPrint(token.token);
         await LocalDBServices.storeGPAccessToken(token.token);
       });
     });
@@ -23,6 +25,5 @@ class TokenNotifier extends StateNotifier<Token?> {
   }
 }
 
-final tokenProvider = StateNotifierProvider<TokenNotifier, Token?>(
-  (ref) => TokenNotifier()
-);
+final tokenProvider =
+    StateNotifierProvider<TokenNotifier, Token?>((ref) => TokenNotifier());

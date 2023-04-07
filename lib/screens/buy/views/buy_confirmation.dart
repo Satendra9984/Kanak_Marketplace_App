@@ -25,7 +25,7 @@ class _BuyConfirmationScreenState extends ConsumerState<BuyConfirmationScreen> {
   void dispose() {
     safePrint('XXXXXXXXXXXXXXXXXXXXXXXXXX| Disposed');
     _buyBloc.closeTimer();
-    _buyBloc.close();
+    _buyBloc.add(ResetEvent());
     super.dispose();
   }
 

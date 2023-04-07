@@ -761,7 +761,6 @@ class DatastoreServices {
   }
 
 
-  //TODO: yhi bana
   // update particular address
   static Future<Address?> updateAddress({
     required Address addr
@@ -771,16 +770,25 @@ class DatastoreServices {
     await getAddressVersion(addressId: addr.id).then((version) async {
       safePrint(version);
       const String updateQuery = """
-        mutation UpdateAddress(\$id: ID!, \$address: String!, \$pincode: Int!, \$version: Int!) {
-          updateUser(input: {id: \$id, name: \$name, address: \$address, pincode: \$pincode, _version: \$version, }) {
+        mutation UpdateAddress(\$id: ID!, \$address: String!, \$pincode: Int!, \$name: String!, \$phone: AWSPhone!, \$email: AWSEmail!, \$status: Boolean!, \$version: Int!) {
+          updateAddress(input: {id: \$id, name: \$name, address: \$address, pincode: \$pincode, phone: \$phone, email: \$email, status: \$status, _version: \$version, }) {
             id
+            address
+            status
+            name
+            pincode
+            phone
+            email
             _version
-            goldProviderDetails
           }
         }
       """;
       final variables = {
         "id": addr.id,
+        "address": addr.address,
+        "status": addr.status,
+        "email": addr.email,
+        "phone": addr.phone,
         "pincode": addr.pincode,
         "name": addr.name,
         "version": version
@@ -803,4 +811,6 @@ class DatastoreServices {
     });
     return result;
   }
+
+  
 }

@@ -77,6 +77,7 @@ type User @model @auth(rules: [{allow: public}]) {
   address: [Address] @hasMany(indexName: "byUser", fields: ["id"])
   kycDetails: String
   dob: AWSDate
+  defaultAddr: String
   defaultBankId: String
 }
 

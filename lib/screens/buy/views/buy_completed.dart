@@ -77,9 +77,7 @@ class BuyCompletedScreen extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {
-                    
-                  },
+                  onPressed: () {},
                   icon: Icon(
                     Icons.copy,
                     size: 18,
@@ -115,7 +113,9 @@ class BuyCompletedScreen extends StatelessWidget {
                       title: 'Transaction Type',
                       value: transaction.type.toString()),
                   const SizedBox(height: 25),
-                  const RowDetailWidget(title: 'Price', value: '${10000} INR/gm'),
+                  RowDetailWidget(
+                      title: 'Price',
+                      value: '${transaction.lockPrice!} INR/gm'),
                   const SizedBox(height: 25),
                   RowDetailWidget(
                       title: 'Amount', value: '${transaction.amount} gm'),

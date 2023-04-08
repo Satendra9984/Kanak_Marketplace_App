@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:tasvat/models/ModelProvider.dart';
+import 'package:tasvat/models/function_lifetime_enum.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
@@ -20,107 +22,15 @@ class _UserAddressPageState extends ConsumerState<AddUserAddressPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _pinCodeCtrl = TextEditingController();
   final TextEditingController _addressCtrl = TextEditingController();
-  List<Map<dynamic, dynamic>>? _statesList;
-  List<Map<dynamic, dynamic>> _citiesList = [];
+  final TextEditingController _emailCtrl = TextEditingController();
+  final TextEditingController _nameCtrl = TextEditingController();
+  final TextEditingController _phoneCtrl = TextEditingController();
 
-  Map<dynamic, dynamic>? _state, _city;
-  Future<void> getCitiesList() async {
-    try {
-      if (_state != null) {
-        await GoldServices.getCityList(_state!['id']).then((value) {
-          _citiesList = [];
-          for (var city in value) {
-            Map<dynamic, dynamic> cityMap = Map.from(city);
-            _citiesList.add(cityMap);
-          }
-          setState(() {
-            _citiesList;
-          });
-          debugPrint('citiesList: $_state');
-        });
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-  }
-
-  Future<void> _initializeStatesList() async {
-    try {
-      if (_statesList == null) {
-        List<dynamic> states = await GoldServices.getStateCityList();
-        _statesList = [];
-        for (var element in states) {
-          Map<dynamic, dynamic> state = Map.from(element);
-          _statesList!.add(state);
-        }
-        setState(() {
-          _statesList;
-        });
-        debugPrint(_statesList.toString());
-      }
-    } catch (e) {
-      _statesList = [];
-    }
-  }
+  FunctionLifetime _functionLifetime = FunctionLifetime.initialize;
 
   @override
   void initState() {
-    // _initializeStatesList();
     super.initState();
-  }
-
-  // flow | registerGoldUser > updateGPDetails > addGoldUserAddress > addUserAddress > provider
-  Future<void> _createGoldUserWithAddress() async {
-    final authData = await Amplify.Auth.getCurrentUser();
-    final user = ref.read(userProvider);
-    safePrint(user);
-    await GoldServices.registerGoldUser(
-      phone: authData.username.substring(3),
-      email: user!.email!,
-      userId: authData.userId,
-      name: '${user.fname!} ${user.lname!}',
-      pincode: int.parse(_pinCodeCtrl.text),
-      dob: user.dob!.getDateTime().toIso8601String().split('T')[0],
-      city: _city!['id'],
-      state: _state!['id'],
-    ).then((goldUser) async {
-      safePrint('Gold User Creation---> ${goldUser.toString()}');
-      if (goldUser == null) {
-        return;
-      }
-      await DatastoreServices.updateGPDetails(user: user, details: goldUser)
-          .then((updatedUser) async {
-        if (updatedUser == null) {
-          safePrint(
-              'User with GP Details----------> ${updatedUser.toString()}');
-          return;
-        }
-        ref.read(userProvider.notifier).updateUserDetails(
-            gpDetails: jsonDecode(updatedUser.goldProviderDetails!));
-        await GoldServices.addGoldUserAddress(
-                user: user,
-                name: 'primary',
-                address: _addressCtrl.text,
-                pincode: int.parse(_pinCodeCtrl.text),
-                state: _state!['id'],
-                city: _city!['id'])
-            .then((rsp) async {
-          safePrint(
-              'Gold User Address Response----------------> ${rsp.toString()}');
-          if (rsp == null) {
-            return;
-          }
-          await DatastoreServices.addUserAddress(rsp: rsp, userId: user.id).then((addr) {
-            safePrint(
-                'Added User Address-------------------> ${addr.toString()}');
-            if (addr == null) {
-              return;
-            }
-            ref.read(userProvider.notifier).addUserAddress(address: addr);
-          });
-        });
-      });
-    });
   }
 
   @override
@@ -157,6 +67,143 @@ class _UserAddressPageState extends ConsumerState<AddUserAddressPage> {
                   ),
                 ),
                 const SizedBox(height: 25),
+
+                /// Name
+                Text(
+                  'Name',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    // color: text150,
+                  ),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: TextInputType.name,
+                    controller: _nameCtrl,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter your First Name';
+                      } else if (value.length > 30) {
+                        return 'Less than 30 letters';
+                      } else if (value.length < 2) {
+                        return 'Greater than 2 letters';
+                      }
+                      return null;
+                    },
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: accent2,
+                    ),
+                    decoration: getInputDecoration('First Name').copyWith(
+                      errorStyle: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: error,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                /// email
+                Text(
+                  'Email',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    // color: text150,
+                  ),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: TextInputType.emailAddress,
+                    controller: _emailCtrl,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter an email';
+                      } else {
+                        bool emailValid = RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(value);
+                        if (!emailValid) {
+                          return 'Please Enter a valid email';
+                        }
+                      }
+
+                      return null;
+                    },
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: accent2,
+                    ),
+                    decoration: getInputDecoration('example123@gmail.com'),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                /// phone
+                Text(
+                  'Phone Number',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Container(
+                  // height: 60,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    controller: _phoneCtrl,
+                    onChanged: (value) {},
+                    validator: (value) {
+                      String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+                      RegExp regExp = RegExp(pattern);
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter mobile number';
+                      } else if (!regExp.hasMatch(value)) {
+                        return 'Please enter valid mobile number';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.phone,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: accent2,
+                    ),
+                    decoration: getInputDecoration('Phone Number'),
+                  ),
+                ),
+                const SizedBox(height: 10),
 
                 /// address
                 Text(
@@ -241,235 +288,127 @@ class _UserAddressPageState extends ConsumerState<AddUserAddressPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-
-                /// state and city
-                Text(
-                  'State',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                FormField(
-                  initialValue: _state,
-                  validator: (state) {
-                    if (state == null) {
-                      return 'Select State';
-                    }
-                    return null;
-                  },
-                  builder: (formState) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: text100,
-                          ),
-                          child: FutureBuilder(
-                            future: _initializeStatesList(),
-                            builder: (context, snap) {
-                              if (snap.connectionState ==
-                                      ConnectionState.waiting ||
-                                  snap.hasError == false) {
-                                return DropdownButton<Map<dynamic, dynamic>>(
-                                  hint: Text(
-                                    'Delhi',
-                                    style: TextStyle(
-                                      color: accentBG,
-                                    ),
-                                  ),
-                                  value: _state == null || _state!.isEmpty
-                                      ? null
-                                      : _state,
-                                  items: _statesList == null
-                                      ? []
-                                      : _statesList!.map((state) {
-                                          return DropdownMenuItem(
-                                            value: state,
-                                            child: Text(
-                                              state['name'],
-                                              style: TextStyle(color: accent2),
-                                            ),
-                                          );
-                                        }).toList(),
-                                  onChanged: (value) async {
-                                    setState(() {
-                                      _state = value;
-                                      _city = null;
-                                      _citiesList = [];
-                                      debugPrint(_state.toString());
-                                    });
-                                    await getCitiesList();
-                                  },
-                                  menuMaxHeight: 400,
-                                  underline: Container(),
-                                  dropdownColor: text150,
-                                  isExpanded: true,
-                                  borderRadius: BorderRadius.circular(10),
-                                  icon: Icon(
-                                    Icons.arrow_drop_down,
-                                    color:
-                                        _statesList != null ? accent2 : text100,
-                                  ),
-                                );
-                              } else {
-                                return Container(
-                                  height: 45,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: text100,
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Something Went Wrong',
-                                    style: TextStyle(color: error),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                        if (formState.hasError)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 5),
-                            child: Text(
-                              formState.errorText.toString(),
-                              style: TextStyle(
-                                color: error,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                      ],
-                    );
-                  },
-                ),
-
-                const SizedBox(height: 25),
-                Text(
-                  'City',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                FormField(
-                  initialValue: _city,
-                  validator: (city) {
-                    if (_state == null) {
-                      return 'First Select State';
-                    } else if (city == null) {
-                      return 'Select City';
-                    }
-                    return null;
-                  },
-                  builder: (formState) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: text100,
-                          ),
-                          child: DropdownButton<Map<dynamic, dynamic>>(
-                            hint: Text(
-                              'New Delhi',
-                              style: TextStyle(
-                                color: accentBG,
-                              ),
-                            ),
-                            value: _city != null ? _city! : null,
-                            items: _citiesList.map((city) {
-                              return DropdownMenuItem<Map<dynamic, dynamic>>(
-                                value: city,
-                                child: Text(
-                                  city['name'],
-                                  style: TextStyle(color: accent2),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              if (value != null) {
-                                setState(() {
-                                  _city = value;
-                                });
-                              }
-                            },
-                            menuMaxHeight: 400,
-                            underline: Container(),
-                            dropdownColor: text150,
-                            isExpanded: true,
-                            borderRadius: BorderRadius.circular(10),
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                              color: _citiesList.isNotEmpty ? accent2 : text100,
-                            ),
-                          ),
-                        ),
-                        if (formState.hasError)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 5),
-                            child: Text(
-                              formState.errorText.toString(),
-                              style: TextStyle(
-                                color: error,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                      ],
-                    );
-                  },
-                ),
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        color: background,
-        child: Container(
-          // color: success,
-          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          child: ElevatedButton(
-            onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                await _createGoldUserWithAddress();
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+      bottomNavigationBar: Builder(
+        builder: (context) {
+          if (_functionLifetime == FunctionLifetime.calling) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: accent2),
+                  const SizedBox(width: 15),
+                  Text(
+                    'Adding Address Account',
+                    style: TextStyle(
+                        color: accent2,
+                        fontWeight: FontWeight.w500,
+                        fontSize: body1),
+                  ),
+                ],
               ),
-              minimumSize: const Size(double.infinity, 50.0),
-              maximumSize: const Size(double.infinity, 60.0),
-              backgroundColor: accent1,
-            ),
-            child: Text(
-              'Submit',
-              style: TextStyle(
-                color: background,
-                fontSize: heading2,
-                fontWeight: FontWeight.w600,
+            );
+          } else {
+            /// FunctionLifetime.initialize
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    setState(() {
+                      _functionLifetime = FunctionLifetime.calling;
+                    });
+                    await addUserAddressDetails();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  minimumSize: const Size(double.infinity, 50.0),
+                  maximumSize: const Size(double.infinity, 60.0),
+                  backgroundColor: accent1,
+                ),
+                child: Text(
+                  'Add Address',
+                  style: TextStyle(
+                    color: background,
+                    fontSize: heading2,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
-            ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Future<void> addUserAddressDetails() async {
+    // ADD USER ADDRESS DETAILS
+    try {
+      User? user = ref.read(userProvider)!;
+      await GoldServices.addGoldUserAddress(
+        user: user,
+        name: _nameCtrl.text,
+        address: _addressCtrl.text,
+        pincode: int.parse(_pinCodeCtrl.text),
+        phone: _phoneCtrl.text,
+        state: '',
+        city: '',
+      ).then((response) async {
+        if (response == null) {
+          handleError();
+          return;
+        }
+        await DatastoreServices.addUserAddress(rsp: response, userId: user.id)
+            .then((value) {
+          if (value == null) {
+            handleError();
+            return;
+          }
+          ref.read(userProvider.notifier).addUserAddress(address: value);
+          handleSuccess();
+        });
+      });
+    } catch (e) {
+      handleError();
+    }
+  }
+
+  void handleError() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: error,
+        content: Text('Address Add Failed', style: TextStyle(color: text500)),
+      ),
+    );
+    setState(() {
+      _functionLifetime = FunctionLifetime.initialize;
+    });
+  }
+
+  void handleSuccess() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: success,
+        content: Text(
+          'Address Added Successfully',
+          style: TextStyle(
+            color: text500,
           ),
         ),
       ),
     );
+    setState(() {
+      _functionLifetime = FunctionLifetime.success;
+    });
+    Navigator.pop(context);
   }
 }

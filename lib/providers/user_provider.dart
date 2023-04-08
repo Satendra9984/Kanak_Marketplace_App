@@ -11,51 +11,65 @@ class UserNotifier extends StateNotifier<User?> {
   }
 
   // sync user data
-  void syncDetails({
-    required User user
-  }) {
-    state = user;
-    safePrint(user.toString());
+  void syncDetails({required User user}) {
+    state =
+        state?.copyWith(bankAccounts: user.bankAccounts, address: user.address);
+    safePrint(
+        'sync details called\n\n\n ${state?.bankAccounts?.length.toString()}');
+    safePrint(
+        'sync details called\n\n\n ${user.bankAccounts?.length.toString()}');
   }
 
   // update user with details
-  void updateUserDetails({
-    String? email,
-    String? phone,
-    String? fname,
-    String? lname,
-    String? dob,
-    String? kyc,
-    String? gpDetails
-  }) {
-    state = state?.copyWith(
-      email: email,
-      phone: phone,
-      fname: fname,
-      lname: lname
-    );
+  void updateUserDetails(
+      {String? email,
+      String? phone,
+      String? fname,
+      String? lname,
+      String? dob,
+      String? kyc,
+      String? gpDetails}) {
+    state =
+        state?.copyWith(email: email, phone: phone, fname: fname, lname: lname);
     if (dob != null) {
       state = state?.copyWith(dob: TemporalDate.fromString(dob));
     }
     safePrint(state.toString());
   }
-  void addUserAddress({
-    required Address address
-  }) {
-    state = state?.copyWith(
-      address: [...?state?.address, address]
-    );
+
+  void addUserAddress({required Address address}) {
+    state = state?.copyWith(address: [...?state?.address, address]);
     safePrint(state.toString());
   }
-  void addBankAccount({
-    required BankAccount account
-  }) {
-    state = state?.copyWith(
-      bankAccounts: [...?state?.bankAccounts, account]
-    );
+
+  void addBankAccount({required BankAccount account}) {
+    state = state?.copyWith(bankAccounts: [...?state?.bankAccounts, account]);
+  }
+
+  String? getDefaultBankId() {
+    return state?.bankAccounts![0].id;
+  }
+
+  void updateBankAccount({required BankAccount bankAccount}) {
+    List<BankAccount>? bankList = state?.bankAccounts;
+
+    if (bankList != null && bankList.isNotEmpty) {
+      int index =
+          bankList.indexWhere((element) => element.id == bankAccount.id);
+      bankList[index] = bankAccount;
+      state = state!.copyWith(bankAccounts: bankList);
+    }
+  }
+
+  void deleteBankAccount({required BankAccount bankAccount}) {
+    List<BankAccount>? bankList = state?.bankAccounts;
+
+    if (bankList != null && bankList.isNotEmpty) {
+      bankList.removeWhere((element) => element.id == bankAccount.id);
+      state = state!.copyWith(bankAccounts: bankList);
+    }
   }
 }
 
-final userProvider = StateNotifierProvider<UserNotifier, User?>(
-  (ref) => UserNotifier()
-);
+final userProvider =
+    StateNotifierProvider<UserNotifier, User?>((ref) => UserNotifier());

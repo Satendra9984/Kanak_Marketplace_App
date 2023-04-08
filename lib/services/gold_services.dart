@@ -110,89 +110,21 @@ class GoldServices {
     return addressList;
   }
 
-  static Future<List<dynamic>> getUserBanksList() async {
-    List<dynamic> addressList = [];
+  static Future<List<dynamic>> getUserBanksList(
+      {required String userId}) async {
+    List<dynamic> bList = [];
 
     try {
-      // String? uid = await LocalDBServices.getGPMerchantId();
-      // if (uid == null) {
-      //   return addressList;
-      // }
-      // await HttpServices.sendGetReq('${_baseUrl}users/$uid/banks')
-      //     .then((listMap) {
-      //   if (listMap != null && listMap['statusCode'] == 200) {
-      //     addressList = listMap['result'];
-      //     return addressList;
-      //   }
-      // });
-
-      Map<dynamic, dynamic> listMap = {
-        "statusCode": 200,
-        "message": "User Bank Detail List retrieved successfully.",
-        "result": [
-          {
-            "userBankId": "nXMbVMGA",
-            "uniqueId": "UNIQUEID0002",
-            "bankId": "XgWeevW1",
-            "bankName": "FIRSTRAND BANK LIMITED",
-            "accountNumber": "112847788538",
-            "accountName": "Ravi",
-            "ifscCode": "FIRA0A0A585",
-            "status": "active"
-          },
-          {
-            "userBankId": "4oBpvKQO",
-            "uniqueId": "UNIQUEID0002",
-            "bankId": null,
-            "bankName": null,
-            "accountNumber": "992597788538",
-            "accountName": "Ravi",
-            "ifscCode": "HDFC043640A",
-            "status": "active"
-          },
-          {
-            "userBankId": "O5WZvW9z",
-            "uniqueId": "UNIQUEID0002",
-            "bankId": "maMyDBbD",
-            "bankName": "DICGC",
-            "accountNumber": "992597788538",
-            "accountName": "Ravi",
-            "ifscCode": "HSBC043640A",
-            "status": "active"
-          },
-          {
-            "userBankId": "qzW9mW89",
-            "uniqueId": "UNIQUEID0002",
-            "bankId": "34BXoDW5",
-            "bankName": "NKGSB CO-OP BANK LTD",
-            "accountNumber": "9000100001247",
-            "accountName": "Mahesh",
-            "ifscCode": "NKGS0794478",
-            "status": "active"
-          },
-          {
-            "userBankId": "g5K3yBeO",
-            "uniqueId": "UNIQUEID0002",
-            "bankId": null,
-            "bankName": null,
-            "accountNumber": "002801255144",
-            "accountName": "Sunil Shukla",
-            "ifscCode": "ICIC0BHAESA",
-            "status": "active"
-          }
-        ]
-      };
-
-      if (listMap['statusCode'] == 200) {
-        addressList = listMap['result'];
-        return addressList;
-      }
+      await HttpServices.sendGetReq('$_baseUrl/users/$userId/banks')
+          .then((banksList) {
+        debugPrint(banksList.toString());
+      });
     } catch (e) {
       debugPrint(e.toString());
-      return addressList;
+      return bList;
     }
 
-    return addressList;
+    return bList;
   }
 
   static Future<List<dynamic>> getStateCityList() async {
@@ -275,36 +207,6 @@ class GoldServices {
       }
     });
     return details;
-  }
-
-  // create bank account
-  static Future<UserBank?> createBankAccount(
-      {required String accNo,
-      required String accName,
-      required String ifsc,
-      required String userId}) async {
-    UserBank? bank;
-    final authToken = await LocalDBServices.getGPAccessToken();
-    await HttpServices.sendPostReq('${_baseUrl}users/$userId/banks',
-        extraHeaders: {
-          'Authorization': 'Bearer $authToken'
-        },
-        body: {
-          'accountNumber': accNo,
-          'accountName': accName,
-          'ifscCode': ifsc,
-          'status': 'active'
-        }).then((value) {
-      if (value == null) {
-        return;
-      }
-      if (!value.containsKey('statusCode') || value['statusCode'] != 200) {
-        return;
-      }
-      bank = UserBank.fromJson(value['result']['data']);
-      safePrint(bank);
-    });
-    return bank;
   }
 
   /// ------------------------ Buy Gold ------------------------------
@@ -952,7 +854,78 @@ class GoldServices {
     return withdrawInfo['result']['data'];
   }
 
-  /// <----------------------------- Redeem ------------------------------------>
+  /// <----------------------------- Bank ------------------------------------>
+// create bank account
+  static Future<UserBank?> createBankAccount(
+      {required String accNo,
+      required String accName,
+      required String ifsc,
+      required String userId}) async {
+    UserBank? bank;
+    final authToken = await LocalDBServices.getGPAccessToken();
+    await HttpServices.sendPostReq('${_baseUrl}users/$userId/banks',
+        extraHeaders: {
+          'Authorization': 'Bearer $authToken'
+        },
+        body: {
+          'accountNumber': accNo,
+          'accountName': accName,
+          'ifscCode': ifsc,
+          'status': 'active'
+        }).then((value) {
+      if (value == null) {
+        return;
+      }
+      if (!value.containsKey('statusCode') || value['statusCode'] != 200) {
+        return;
+      }
+      bank = UserBank.fromJson(value['result']['data']);
+      safePrint(bank);
+    });
+    return bank;
+  }
+
+  // delete user bank
+  static Future<bool> deleteUserBank(
+      {required BankAccount bankAccount, required String userId}) async {
+    await HttpServices.sendDeleteRequest(
+            '$_baseUrl/users/$userId/banks/${bankAccount.bankId}')
+        .then((value) {
+      return value;
+    });
+    return false;
+  }
+
+  // Update bank account
+  static Future<UserBank?> updateBankAccount(
+      {required BankAccount bankAccount, required String userId}) async {
+    UserBank? bank;
+    final authToken = await LocalDBServices.getGPAccessToken();
+    await HttpServices.sendPostReq(
+        '${_baseUrl}users/$userId/banks/${bankAccount.bankId}',
+        extraHeaders: {
+          'Authorization': 'Bearer $authToken'
+        },
+        body: {
+          'bankId': bankAccount.bankId,
+          'accountNumber': bankAccount.accNo,
+          'accountName': bankAccount.accName,
+          'ifscCode': bankAccount.ifsc,
+          'status': bankAccount.status == true ? 'active' : 'deactive',
+          // '_method': 'PUT',
+        }).then((value) {
+      if (value == null) {
+        return;
+      }
+      debugPrint('status of bank update-----------> ${value['statusCode']}');
+      if (!value.containsKey('statusCode') || value['statusCode'] != 200) {
+        return;
+      }
+      bank = UserBank.fromJson(value['result']['data']);
+      safePrint(bank?.toJson().toString());
+    });
+    return bank;
+  }
 
   // get user bank
   static Future<UserBank?> getUserBank({required String userId, required }) async {
@@ -980,8 +953,8 @@ class GoldServices {
     final authToken = await LocalDBServices.getGPAccessToken();
     await HttpServices.sendGetReq('${_baseUrl}rates',
         extraHeaders: {'Authorization': 'Bearer $authToken'}).then((result) {
-          safePrint('result  000000-> $result');
-          
+      safePrint('result  000000-> $result');
+
       if (result == null) {
         return;
       }
@@ -995,7 +968,8 @@ class GoldServices {
     return rates;
   }
 
-  // add user address
+  /// <-------------------------------- User Address ------------------------------------->
+  // Add user address
   static Future<UserAddressResponse?> addGoldUserAddress({
     required User user,
     required String name,

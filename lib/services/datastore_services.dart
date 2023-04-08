@@ -1,20 +1,19 @@
 import 'dart:convert';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/models/Token.dart' as tokenModel;
 import 'package:tasvat/models/gold_models/address_response.dart';
 
 class DatastoreServices {
   static final _instance = Amplify.API;
-  
-  
+
   // _________________________________________________TRANSACTION OPERATIONS___________________________________________
 
   // add pending transaction
-  static Future<Transaction?> addPendingTransaction({
-    required Transaction transaction
-  }) async {
+  static Future<Transaction?> addPendingTransaction(
+      {required Transaction transaction}) async {
     Transaction? tx;
     final pendingTransactionMutation = ModelMutations.create(transaction);
     await _instance
@@ -30,9 +29,8 @@ class DatastoreServices {
   }
 
   // mark successful transaction
-  static Future<Transaction?> markSuccessfulPurchase({
-    required Transaction transaction
-  }) async {
+  static Future<Transaction?> markSuccessfulPurchase(
+      {required Transaction transaction}) async {
     Transaction? result;
     await getTransactionVersion(txId: transaction.id).then((version) async {
       safePrint(version);
@@ -57,18 +55,18 @@ class DatastoreServices {
         "version": version
       };
       try {
-        final response = await _instance.mutate(
-          request: GraphQLRequest<String>(
-            document: updateQuery,
-            variables: variables,
-          ),
-        ).response;
+        final response = await _instance
+            .mutate(
+              request: GraphQLRequest<String>(
+                document: updateQuery,
+                variables: variables,
+              ),
+            )
+            .response;
         if (response.data == null) {
           return;
         }
-        result = transaction.copyWith(
-          status: TransactionStatus.SUCCESSFUL
-        );
+        result = transaction.copyWith(status: TransactionStatus.SUCCESSFUL);
         safePrint(result!.status);
       } catch (e) {
         safePrint('Update failed: $e');
@@ -82,9 +80,8 @@ class DatastoreServices {
   
 
   // mark failed transaction
-  static Future<Transaction?> markFailedPurchase({
-    required Transaction transaction
-  }) async {
+  static Future<Transaction?> markFailedPurchase(
+      {required Transaction transaction}) async {
     Transaction? result;
     await getTransactionVersion(txId: transaction.id).then((version) async {
       safePrint(version);
@@ -105,19 +102,19 @@ class DatastoreServices {
         "version": version
       };
       try {
-        final response = await _instance.mutate(
-          request: GraphQLRequest<String>(
-            document: updateQuery,
-            variables: variables,
-          ),
-        ).response;
+        final response = await _instance
+            .mutate(
+              request: GraphQLRequest<String>(
+                document: updateQuery,
+                variables: variables,
+              ),
+            )
+            .response;
         if (response.data == null) {
           return;
         }
         result = transaction.copyWith(
-          status: TransactionStatus.FAILED,
-          failType: FailType.PURCHASEFAIL
-        );
+            status: TransactionStatus.FAILED, failType: FailType.PURCHASEFAIL);
         safePrint(result!.status);
       } catch (e) {
         safePrint('Update failed: $e');
@@ -127,9 +124,8 @@ class DatastoreServices {
   }
 
   // mark failed payment
-  static Future<Transaction?> markFailedPayment({
-    required Transaction transaction
-  }) async {
+  static Future<Transaction?> markFailedPayment(
+      {required Transaction transaction}) async {
     Transaction? result;
     await getTransactionVersion(txId: transaction.id).then((version) async {
       safePrint(version);
@@ -150,19 +146,19 @@ class DatastoreServices {
         "version": version
       };
       try {
-        final response = await _instance.mutate(
-          request: GraphQLRequest<String>(
-            document: updateQuery,
-            variables: variables,
-          ),
-        ).response;
+        final response = await _instance
+            .mutate(
+              request: GraphQLRequest<String>(
+                document: updateQuery,
+                variables: variables,
+              ),
+            )
+            .response;
         if (response.data == null) {
           return;
         }
         result = transaction.copyWith(
-          status: TransactionStatus.FAILED,
-          failType: FailType.PAYMENTFAIL
-        );
+            status: TransactionStatus.FAILED, failType: FailType.PAYMENTFAIL);
         safePrint(result!.status);
       } catch (e) {
         safePrint('Update failed: $e');
@@ -172,10 +168,8 @@ class DatastoreServices {
   }
 
   // mark payment success
-  static Future<Transaction?> markSuccessfulPayment({
-    required Transaction transaction,
-    required String txId
-  }) async {
+  static Future<Transaction?> markSuccessfulPayment(
+      {required Transaction transaction, required String txId}) async {
     Transaction? result;
     await getTransactionVersion(txId: transaction.id).then((version) async {
       safePrint(version);
@@ -194,18 +188,18 @@ class DatastoreServices {
         "version": version
       };
       try {
-        final response = await _instance.mutate(
-          request: GraphQLRequest<String>(
-            document: updateQuery,
-            variables: variables,
-          ),
-        ).response;
+        final response = await _instance
+            .mutate(
+              request: GraphQLRequest<String>(
+                document: updateQuery,
+                variables: variables,
+              ),
+            )
+            .response;
         if (response.data == null) {
           return;
         }
-        result = transaction.copyWith(
-          failType: FailType.PURCHASEFAIL
-        );
+        result = transaction.copyWith(failType: FailType.PURCHASEFAIL);
         safePrint(result!.status);
       } catch (e) {
         safePrint('Update failed: $e');
@@ -213,12 +207,10 @@ class DatastoreServices {
     });
     return result;
   }
-  
+
   // update wallet gold balance
-  static Future<Wallet?> updateWalletGoldBalance({
-    required Wallet wallet,
-    required double balance
-  }) async {
+  static Future<Wallet?> updateWalletGoldBalance(
+      {required Wallet wallet, required double balance}) async {
     Wallet? result;
     await getWalletVersion(id: wallet.id).then((version) async {
       safePrint(version);
@@ -237,18 +229,18 @@ class DatastoreServices {
         "version": version
       };
       try {
-        final response = await _instance.mutate(
-          request: GraphQLRequest<String>(
-            document: updateQuery,
-            variables: variables,
-          ),
-        ).response;
+        final response = await _instance
+            .mutate(
+              request: GraphQLRequest<String>(
+                document: updateQuery,
+                variables: variables,
+              ),
+            )
+            .response;
         if (response.data == null) {
           return;
         }
-        result = wallet.copyWith(
-          gold_balance: balance
-        );
+        result = wallet.copyWith(gold_balance: balance);
         safePrint(result!.balance);
       } catch (e) {
         safePrint('Update failed: $e');
@@ -258,14 +250,11 @@ class DatastoreServices {
   }
 
   // mark wallet update fail
-  static Future<Transaction?> markWalletUpdateFail({
-    required Transaction transaction
-  }) async {
+  static Future<Transaction?> markWalletUpdateFail(
+      {required Transaction transaction}) async {
     Transaction? result;
     final req = ModelMutations.update(transaction.copyWith(
-      status: TransactionStatus.FAILED,
-      failType: FailType.WALLETUPDATEFAIL
-    ));
+        status: TransactionStatus.FAILED, failType: FailType.WALLETUPDATEFAIL));
     await _instance.mutate(request: req).response.then((res) {
       if (res.data == null) {
         return;
@@ -275,14 +264,6 @@ class DatastoreServices {
     return result;
   }
 
-  
-  
-  
-  
-  
-  
-  
-  
   // _________________________________________________SPECIAL CHECKS OPERATION_____________________________________________________
 
   // get the next required details
@@ -328,19 +309,9 @@ class DatastoreServices {
     return nextRequiredDetails;
   }
 
-  
-  
-  
-  
-  
-  
-  
   // _________________________________________________FETCH OPERATION_____________________________________________________
 
-
-  static Future<int?> getUserVersion({
-    required String userId
-  }) async {
+  static Future<int?> getUserVersion({required String userId}) async {
     int? version;
     const String getUserQuery = """
       query GetUser(\$id: ID!) {
@@ -350,26 +321,22 @@ class DatastoreServices {
       }
     """;
     try {
-      final response = await _instance.query(
-        request: GraphQLRequest<String>(
-          document: getUserQuery,
-          variables: {
-            'id': userId
-          },
-        ),
-      ).response;
-      version = jsonDecode(
-        response.data!
-      )['getUser']['_version'];
+      final response = await _instance
+          .query(
+            request: GraphQLRequest<String>(
+              document: getUserQuery,
+              variables: {'id': userId},
+            ),
+          )
+          .response;
+      version = jsonDecode(response.data!)['getUser']['_version'];
     } catch (e) {
       safePrint('Failed to retrieve user record: $e');
     }
     return version;
   }
 
-  static Future<int?> getTransactionVersion({
-    required String txId
-  }) async {
+  static Future<int?> getTransactionVersion({required String txId}) async {
     int? version;
     const String getTxQuery = """
       query GetTransaction(\$id: ID!) {
@@ -379,26 +346,22 @@ class DatastoreServices {
       }
     """;
     try {
-      final response = await _instance.query(
-        request: GraphQLRequest<String>(
-          document: getTxQuery,
-          variables: {
-            'id': txId
-          },
-        ),
-      ).response;
-      version = jsonDecode(
-        response.data!
-      )['getTransaction']['_version'];
+      final response = await _instance
+          .query(
+            request: GraphQLRequest<String>(
+              document: getTxQuery,
+              variables: {'id': txId},
+            ),
+          )
+          .response;
+      version = jsonDecode(response.data!)['getTransaction']['_version'];
     } catch (e) {
       safePrint('Failed to retrieve user record: $e');
     }
     return version;
   }
 
-  static Future<int?> getBankAccountVersion({
-    required String bankId
-  }) async {
+  static Future<int?> getBankAccountVersion({required String bankId}) async {
     int? version;
     const String getUserQuery = """
       query GetBankAccount(\$id: ID!) {
@@ -408,26 +371,22 @@ class DatastoreServices {
       }
     """;
     try {
-      final response = await _instance.query(
-        request: GraphQLRequest<String>(
-          document: getUserQuery,
-          variables: {
-            'id': bankId
-          },
-        ),
-      ).response;
-      version = jsonDecode(
-        response.data!
-      )['getBankAccount']['_version'];
+      final response = await _instance
+          .query(
+            request: GraphQLRequest<String>(
+              document: getUserQuery,
+              variables: {'id': bankId},
+            ),
+          )
+          .response;
+      version = jsonDecode(response.data!)['getBankAccount']['_version'];
     } catch (e) {
       safePrint('Failed to retrieve user record: $e');
     }
     return version;
   }
 
-  static Future<int?> getAddressVersion({
-    required String addressId
-  }) async {
+  static Future<int?> getAddressVersion({required String addressId}) async {
     int? version;
     const String getUserQuery = """
       query GetAddress(\$id: ID!) {
@@ -437,26 +396,22 @@ class DatastoreServices {
       }
     """;
     try {
-      final response = await _instance.query(
-        request: GraphQLRequest<String>(
-          document: getUserQuery,
-          variables: {
-            'id': addressId
-          },
-        ),
-      ).response;
-      version = jsonDecode(
-        response.data!
-      )['getAddress']['_version'];
+      final response = await _instance
+          .query(
+            request: GraphQLRequest<String>(
+              document: getUserQuery,
+              variables: {'id': addressId},
+            ),
+          )
+          .response;
+      version = jsonDecode(response.data!)['getAddress']['_version'];
     } catch (e) {
       safePrint('Failed to retrieve user record: $e');
     }
     return version;
   }
 
-  static Future<int?> getWalletVersion({
-    required String id
-  }) async {
+  static Future<int?> getWalletVersion({required String id}) async {
     int? version;
     const String getTxQuery = """
       query GetWallet(\$id: ID!) {
@@ -466,17 +421,15 @@ class DatastoreServices {
       }
     """;
     try {
-      final response = await _instance.query(
-        request: GraphQLRequest<String>(
-          document: getTxQuery,
-          variables: {
-            'id': id
-          },
-        ),
-      ).response;
-      version = jsonDecode(
-        response.data!
-      )['getWallet']['_version'];
+      final response = await _instance
+          .query(
+            request: GraphQLRequest<String>(
+              document: getTxQuery,
+              variables: {'id': id},
+            ),
+          )
+          .response;
+      version = jsonDecode(response.data!)['getWallet']['_version'];
     } catch (e) {
       safePrint('Failed to retrieve user record: $e');
     }
@@ -492,29 +445,33 @@ class DatastoreServices {
         return;
       }
       fetchedUser = user.data;
-      final req = ModelQueries.list(
-        BankAccount.classType, where: BankAccount.USERID.eq(id)
-      );
+      final req = ModelQueries.list(BankAccount.classType,
+          where: BankAccount.USERID.eq(id));
+
       await _instance.query(request: req).response.then((banks) async {
         if (banks.data == null) {
           return;
         }
         if (banks.data?.items != null && banks.data?.items.isNotEmpty == true) {
-          List<BankAccount> bankList = banks.data!.items.map((e) => e!).toList();
+          List<BankAccount> bankList =
+              banks.data!.items.map((e) => e!).toList();
           fetchedUser = user.data!.copyWith(bankAccounts: bankList);
+          debugPrint(
+              '---------------- banks from datastore\n ${fetchedUser?.bankAccounts?.length}');
         }
-        final req = ModelQueries.list(
-          Address.classType, where: Address.USERID.eq(id)
-        );
+        final req =
+            ModelQueries.list(Address.classType, where: Address.USERID.eq(id));
         await _instance.query(request: req).response.then((addrs) async {
           if (addrs.data == null) {
             return;
           }
-          if (addrs.data?.items != null && addrs.data?.items.isNotEmpty == true) {
+          if (addrs.data?.items != null &&
+              addrs.data?.items.isNotEmpty == true) {
             List<Address> addrsList = addrs.data!.items.map((e) => e!).toList();
             fetchedUser = user.data!.copyWith(address: addrsList);
           }
-          final req = ModelQueries.get(Wallet.classType, user.data!.userWalletId!);
+          final req =
+              ModelQueries.get(Wallet.classType, user.data!.userWalletId!);
           await _instance.query(request: req).response.then((wallet) {
             if (wallet.data == null) {
               return;
@@ -525,7 +482,7 @@ class DatastoreServices {
       });
     });
 
-    safePrint(fetchedUser!.wallet!.toJson());
+    safePrint(fetchedUser?.address?.length.toString());
 
     return fetchedUser;
   }
@@ -568,11 +525,12 @@ class DatastoreServices {
     });
     return list;
   }
-  
+
   // fetch token for app
   static Future<tokenModel.Token?> getToken() async {
     tokenModel.Token? result;
-    final req = ModelQueries.get(tokenModel.Token.classType, "ce0878d1-0da3-4e5a-a4bd-d33830165229");
+    final req = ModelQueries.get(
+        tokenModel.Token.classType, "ce0878d1-0da3-4e5a-a4bd-d33830165229");
     await _instance.query(request: req).response.then((tokenRes) {
       safePrint(tokenRes);
       if (tokenRes.data == null) {
@@ -582,8 +540,7 @@ class DatastoreServices {
     });
     return result;
   }
-  
-  
+
   // ________________________________________________CREATE AND UPDATE OPERATION___________________________________________
 
   // create user with wallet
@@ -621,10 +578,8 @@ class DatastoreServices {
   }
 
   // add address of user
-  static Future<Address?> addUserAddress({
-        required UserAddressResponse rsp,
-        required String userId
-    }) async {
+  static Future<Address?> addUserAddress(
+      {required UserAddressResponse rsp, required String userId}) async {
     Address? createdAddr;
     final addr = Address(
         id: rsp.userAddressId,
@@ -633,8 +588,7 @@ class DatastoreServices {
         name: rsp.name,
         address: rsp.address,
         email: rsp.email,
-        userID: userId
-    );
+        userID: userId);
     final addressAddReq =
         _instance.mutate(request: ModelMutations.create(addr));
     await addressAddReq.response.then((value) {
@@ -667,10 +621,8 @@ class DatastoreServices {
   }
 
   // set default bank id
-  static Future<User?> updateDefaultBankId({
-    required User user,
-    required String bankId
-  }) async {
+  static Future<User?> updateDefaultBankId(
+      {required User user, required String bankId}) async {
     User? updatedUser;
     final req = ModelMutations.update(user.copyWith(defaultBankId: bankId));
     await _instance.mutate(request: req).response.then((value) {
@@ -701,20 +653,21 @@ class DatastoreServices {
         "id": user.id,
         "kycDetails": jsonEncode(details),
         "version": version
-      };     
+      };
       try {
-        final response = await _instance.mutate(
-          request: GraphQLRequest<String>(
-            document: updateQuery,
-            variables: variables,
-          ),
-        ).response;
+        final response = await _instance
+            .mutate(
+              request: GraphQLRequest<String>(
+                document: updateQuery,
+                variables: variables,
+              ),
+            )
+            .response;
         if (response.data == null) {
           return;
         }
         result = user.copyWith(
-          kycDetails: jsonDecode(response.data!)['updateUser']['kycDetails']
-        );
+            kycDetails: jsonDecode(response.data!)['updateUser']['kycDetails']);
         safePrint(result!.kycDetails);
       } catch (e) {
         safePrint('Update failed: $e');
@@ -742,20 +695,22 @@ class DatastoreServices {
         "id": user.id,
         "goldProviderDetails": jsonEncode(details),
         "version": version
-      };     
+      };
       try {
-        final response = await _instance.mutate(
-          request: GraphQLRequest<String>(
-            document: updateQuery,
-            variables: variables,
-          ),
-        ).response;
+        final response = await _instance
+            .mutate(
+              request: GraphQLRequest<String>(
+                document: updateQuery,
+                variables: variables,
+              ),
+            )
+            .response;
         if (response.data == null) {
           return;
         }
         result = user.copyWith(
-          goldProviderDetails: jsonDecode(response.data!)['updateUser']['goldProviderDetails']
-        );
+            goldProviderDetails: jsonDecode(response.data!)['updateUser']
+                ['goldProviderDetails']);
         safePrint(result!.goldProviderDetails);
       } catch (e) {
         safePrint('Update failed: $e');
@@ -764,11 +719,8 @@ class DatastoreServices {
     return result;
   }
 
-
   // update particular address
-  static Future<Address?> updateAddress({
-    required Address addr
-  }) async {
+  static Future<Address?> updateAddress({required Address addr}) async {
     Address? result;
     await getAddressVersion(addressId: addr.id).then((version) async {
       safePrint(version);
@@ -795,19 +747,21 @@ class DatastoreServices {
         "pincode": addr.pincode,
         "name": addr.name,
         "version": version
-      };     
+      };
       try {
-        final response = await _instance.mutate(
-          request: GraphQLRequest<String>(
-            document: updateQuery,
-            variables: variables,
-          ),
-        ).response;
-        if (response.data == null) {
-          return;
-        }
-        result = addr;
-        safePrint(result);
+      final response = await _instance
+          .mutate(
+            request: GraphQLRequest<String>(
+              document: updateQuery,
+              variables: variables,
+            ),
+          )
+          .response;
+      if (response.data == null) {
+        return;
+      }
+      result = addr;
+      safePrint(result);
       } catch (e) {
         safePrint('Update failed: $e');
       }
@@ -815,5 +769,66 @@ class DatastoreServices {
     return result;
   }
 
-  
+  // update bank account
+  static Future<BankAccount?> updateBankAccount(
+      {required BankAccount bankAccount}) async {
+    BankAccount? result;
+
+    await getBankAccountVersion(bankId: bankAccount.id).then((version) async {
+      safePrint(version);
+      const String updateQuery = """
+        mutation UpdateBankAccount(\$id: ID!, \$bankId: String!, \$accNo: String!, \$ifsc: String!, \$addressId: String!, \$accName: String!,\$status: Boolean!, \$version: Int!) {
+          updateBankAccount(input: {id: \$id, bankId: \$bankId, accNo: \$accNo, ifsc: \$ifsc, addressId: \$addressId,accName: \$accName,status:\$status, _version: \$version, }) {
+            id
+            bankId
+            accNo
+            ifsc
+            addressId
+            accName
+            userId
+            status
+            _version
+          }
+        }
+      """;
+      final variables = {
+        "id": bankAccount.id,
+        "bankId": bankAccount.bankId,
+        "accNo": bankAccount.accName,
+        "ifsc": bankAccount.ifsc,
+        "addressId": bankAccount.addressId,
+        "accName": bankAccount.accName,
+        "userId": bankAccount.userID,
+        "status": bankAccount.status,
+        "version": version
+      };
+      final response = await _instance
+          .mutate(
+            request: GraphQLRequest<String>(
+              document: updateQuery,
+              variables: variables,
+            ),
+          )
+          .response;
+      if (response.data == null) {
+        return;
+      }
+      result = bankAccount;
+      safePrint(result);
+    });
+    return result;
+  }
+
+  /// <---------------------------------------- Delete ----------------------------------->
+
+  static Future<bool> deleteUserBank({required BankAccount bankAccount}) async {
+    final request = ModelMutations.delete(bankAccount);
+    final response = await Amplify.API.mutate(request: request).response;
+    // print('Response: $response');
+
+    if (response.data != null) {
+      return true;
+    }
+    return false;
+  }
 }

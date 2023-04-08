@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:amplify_core/amplify_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 class HttpServices {
@@ -37,30 +38,37 @@ class HttpServices {
     return result;
   }
 
-  static Future<Map<String, dynamic>?> sendMultipartRequest(String path, {
-      Map<String, dynamic>? body,
+  static Future<bool> sendDeleteRequest(
+    String path,
+  ) async {
+    await http.delete(Uri.parse(path)).then((res) {
+      if (res.statusCode == 200) {
+        debugPrint('delete from http request');
+        return true;
+      }
+      return false;
+    });
+    return false;
+  }
+
+  //
+  static Future<Map<String, dynamic>?> sendMultipartRequest(String path,
+      {Map<String, dynamic>? body,
       required List<Map<String, dynamic>> files,
-      Map<String, String>? extraheaders
-    }) async {
+      Map<String, String>? extraheaders}) async {
     Map<String, dynamic>? result;
     var req = http.MultipartRequest('POST', Uri.parse(path));
     body?.forEach((key, value) {
       req.fields[key] = value;
     });
-    req.headers.addAll({
-      'Content-Type': 'application/json',
-      ...?extraheaders
-    });
+    req.headers.addAll({'Content-Type': 'application/json', ...?extraheaders});
     for (var element in files) {
       final File file = element['file'];
       final fileStream = http.ByteStream(file.openRead());
       final fileLength = await file.length();
       final multipartFile = http.MultipartFile(
-        element['name'],
-        fileStream,
-        fileLength,
-        filename: file.path.split('/').last
-      );
+          element['name'], fileStream, fileLength,
+          filename: file.path.split('/').last);
       req.files.add(multipartFile);
     }
     await req.send().then((res) async {

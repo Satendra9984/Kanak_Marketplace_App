@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/models/Token.dart' as tokenModel;
 import 'package:tasvat/models/gold_models/address_response.dart';
@@ -442,6 +443,7 @@ class DatastoreServices {
       fetchedUser = user.data;
       final req = ModelQueries.list(BankAccount.classType,
           where: BankAccount.USERID.eq(id));
+
       await _instance.query(request: req).response.then((banks) async {
         if (banks.data == null) {
           return;
@@ -450,6 +452,8 @@ class DatastoreServices {
           List<BankAccount> bankList =
               banks.data!.items.map((e) => e!).toList();
           fetchedUser = user.data!.copyWith(bankAccounts: bankList);
+          debugPrint(
+              '---------------- banks from datastore\n ${fetchedUser?.bankAccounts?.length}');
         }
         final req =
             ModelQueries.list(Address.classType, where: Address.USERID.eq(id));
@@ -474,7 +478,7 @@ class DatastoreServices {
       });
     });
 
-    safePrint(fetchedUser!.wallet!.toJson());
+    safePrint(fetchedUser?.address?.length.toString());
 
     return fetchedUser;
   }

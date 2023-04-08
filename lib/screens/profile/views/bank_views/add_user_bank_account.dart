@@ -222,12 +222,12 @@ class _AddUserBankDetailsPageState
 
                   await GoldServices.getUserBanksList(userId: user.id);
 
-                  // if (_formKey.currentState!.validate()) {
-                  //   setState(() {
-                  //     _functionLifetime = FunctionLifetime.calling;
-                  //   });
-                  //   await addUserBankDetails();
-                  // }
+                  if (_formKey.currentState!.validate()) {
+                    setState(() {
+                      _functionLifetime = FunctionLifetime.calling;
+                    });
+                    await addUserBankDetails();
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -287,6 +287,7 @@ class _AddUserBankDetailsPageState
         });
       });
     } catch (e) {
+      debugPrint(e.toString());
       handleError();
     }
   }

@@ -12,8 +12,12 @@ class UserNotifier extends StateNotifier<User?> {
 
   // sync user data
   void syncDetails({required User user}) {
-    state = user;
-    safePrint(user.toString());
+    state =
+        state?.copyWith(bankAccounts: user.bankAccounts, address: user.address);
+    safePrint(
+        'sync details called\n\n\n ${state?.bankAccounts?.length.toString()}');
+    safePrint(
+        'sync details called\n\n\n ${user.bankAccounts?.length.toString()}');
   }
 
   // update user with details

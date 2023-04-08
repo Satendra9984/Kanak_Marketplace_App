@@ -1,70 +1,96 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/models/BankAccount.dart';
+import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/profile/views/bank_views/update_user_bank.dart';
 import 'package:tasvat/services/gold_services.dart';
+import '../../../../models/User.dart';
+import '../../../../services/datastore_services.dart';
 import '../../../../utils/app_constants.dart';
 import 'add_user_bank_account.dart';
 
-class UserBanksListScreen extends StatefulWidget {
+class UserBanksListScreen extends ConsumerStatefulWidget {
   const UserBanksListScreen({Key? key}) : super(key: key);
 
   @override
-  State<UserBanksListScreen> createState() => _UserBanksListScreenState();
+  ConsumerState<UserBanksListScreen> createState() =>
+      _UserBanksListScreenState();
 }
 
-class _UserBanksListScreenState extends State<UserBanksListScreen> {
+class _UserBanksListScreenState extends ConsumerState<UserBanksListScreen> {
   Future<List<BankAccount>> getBanks() async {
     List<BankAccount> banksList = [];
     try {
-      await GoldServices.getUserBanksList().then((bankList) {
-        debugPrint('addressList\ntype: ${bankList.runtimeType}');
-        for (var bankMap in bankList) {
-          //   {
-          //     "userBankId": "nXMbVMGA",
-          // "uniqueId": "UNIQUEID0002",
-          // "bankId": "XgWeevW1",
-          // "bankName": "FIRSTRAND BANK LIMITED",
-          // "accountNumber": "112847788538",
-          // "accountName": "Ravi",
-          // "ifscCode": "FIRA0A0A585",
-          // "status": "active"
-          // },
+      List<BankAccount>? banks = ref.watch(userProvider)!.bankAccounts;
+      if (banks != null && banks.isNotEmpty) {
+        banksList = banks;
+      }
 
-          //   id = json['id'],
-          // _bankId = json['bankId'],
-          // _accNo = json['accNo'],
-          // _ifsc = json['ifsc'],
-          // _addressId = json['addressId'],
-          // _accName = json['accName'],
-          // _userID = json['userID'],
-          // _status = json['status'],
-          // _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-          // _updatedAt = json['updatedAt'] != null ? Tempora
-
-          var map = {
-            "id": bankMap['uniqueId'] ?? '',
-            "bankId": bankMap['userBankId'] ?? '',
-            "accNo": bankMap['accountNumber'] ?? '',
-            "ifsc": bankMap["ifscCode"] ?? '',
-            "addressId": '1234rdfd',
-            "accName": bankMap['accountName'] ?? '',
-            "userId": '123ddfd%ffd55',
-            "status": bankMap['status'] == 'active',
-            "bankName": "FIRSTRAND BANK LIMITED",
-          };
-          BankAccount bank = BankAccount.fromJson(map);
-          banksList.add(bank);
-          //debugPrint(addressList.toString());
-        }
-
-        return banksList;
-      });
       return banksList;
     } catch (e) {
       debugPrint(e.toString());
       return banksList;
     }
+  }
+
+  Future<void> deleteBank(BankAccount bankAccount) async {
+    // ADD USER ADDRESS DETAILS
+    try {
+      User? user = ref.read(userProvider)!;
+      await GoldServices.deleteUserBank(
+              bankAccount: bankAccount, userId: user.id)
+          .then((response) async {
+        if (response == false) {
+          debugPrint(
+              '-------------not deleted from augmont ----------------------');
+          handleError();
+          return;
+        }
+        debugPrint('------------- deleted from augmont ----------------------');
+        await DatastoreServices.deleteUserBank(bankAccount: bankAccount)
+            .then((value) {
+          if (value == false) {
+            handleError();
+            return;
+          }
+          debugPrint('------------- deleted from aws ----------------------');
+
+          ref
+              .read(userProvider.notifier)
+              .deleteBankAccount(bankAccount: bankAccount);
+          handleSuccess();
+        });
+      });
+    } catch (e) {
+      debugPrint('--------error: $e');
+      handleError();
+    }
+  }
+
+  void handleError() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: error,
+        content: Text('Bank Delete Failed', style: TextStyle(color: text500)),
+      ),
+    );
+  }
+
+  void handleSuccess() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: success,
+        content: Text(
+          'Bank Deleted Successfully',
+          style: TextStyle(
+            color: text500,
+          ),
+        ),
+      ),
+    );
+
+    Navigator.pop(context);
   }
 
   @override
@@ -206,9 +232,7 @@ class _UserBanksListScreenState extends State<UserBanksListScreen> {
                 return [
                   PopupMenuItem(
                     onTap: () async {
-                      // await deleteUserB().then((value) {
-                      //   setState(() {});
-                      // });
+                      await deleteBank(bankAccount);
                     },
                     value: 'Delete',
                     child: Row(

@@ -1,12 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/profile/views/address_views/update_user_address.dart';
-import 'package:tasvat/services/gold_services.dart';
 import 'package:tasvat/utils/app_constants.dart';
-
 import '../../../../models/Address.dart';
 import 'add_user_address_screen.dart';
 
@@ -21,52 +18,55 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
   Future<List<Address>> getAddress() async {
     List<Address> addressList = [];
     try {
-      await GoldServices.getAddressList().then((addList) {
-        debugPrint('addressList\ntype: ${addressList.runtimeType}');
-        // debugPrint('${addList}');
-        for (var addressMap in addList) {
-          //   {
-          // "userAddressId": "vLB5pWGY",
-          // "userAccountId": "g5K3yBeO",
-          // "name": "Sunil Shukla",
-          // "email": "sunil.shukla@gmail.com",
-          // "address": "Zaveri Bazaar, Kalbadevi, Mumbai",
-          // "stateId": "qYMjvMvX",
-          // "cityId": "z6KkbrMb",
-          // "pincode": 400002,
-          // "status": "active"
-          // };
+      List<Address> list = ref.read(userProvider)!.address ?? [];
+      // await GoldServices.getAddressList().then((addList) {
+      //   debugPrint('addressList\ntype: ${addressList.runtimeType}');
+      //   // debugPrint('${addList}');
+      //   for (var addressMap in addList) {
+      //     //   {
+      //     // "userAddressId": "vLB5pWGY",
+      //     // "userAccountId": "g5K3yBeO",
+      //     // "name": "Sunil Shukla",
+      //     // "email": "sunil.shukla@gmail.com",
+      //     // "address": "Zaveri Bazaar, Kalbadevi, Mumbai",
+      //     // "stateId": "qYMjvMvX",
+      //     // "cityId": "z6KkbrMb",
+      //     // "pincode": 400002,
+      //     // "status": "active"
+      //     // };
+      //
+      //     //   id = json['id'],
+      //     // _name = json['name'],
+      //     // _pincode = (json['pincode'] as num?)?.toInt(),
+      //     // _userID = json['userID'],
+      //     // _phone = json['phone'],
+      //     // _email = json['email'],
+      //     // _address = json['address'],
+      //     // _status = json['status'],
+      //     // _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
+      //     // _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
+      //     var map = {
+      //       "userId": addressMap['userAccountId'],
+      //       "id": addressMap['userAddressId'],
+      //       "name": addressMap['name'],
+      //       "email": addressMap['email'],
+      //       "phone": '9335828140',
+      //       "address": addressMap['address'],
+      //       "stateId": "qYMjvMvX",
+      //       "cityId": "z6KkbrMb",
+      //       "pincode": 400002,
+      //       "status": true,
+      //     };
+      //     Address address = Address.fromJson(map);
+      //     debugPrint(address.toJson().toString());
+      //     addressList.add(address);
+      //     //debugPrint(addressList.toString());
+      //   }
+      //
+      //   return addressList;
+      // });
 
-          //   id = json['id'],
-          // _name = json['name'],
-          // _pincode = (json['pincode'] as num?)?.toInt(),
-          // _userID = json['userID'],
-          // _phone = json['phone'],
-          // _email = json['email'],
-          // _address = json['address'],
-          // _status = json['status'],
-          // _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-          // _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
-          var map = {
-            "userId": addressMap['userAccountId'],
-            "id": addressMap['userAddressId'],
-            "name": addressMap['name'],
-            "email": addressMap['email'],
-            "phone": '9335828140',
-            "address": addressMap['address'],
-            "stateId": "qYMjvMvX",
-            "cityId": "z6KkbrMb",
-            "pincode": 400002,
-            "status": true,
-          };
-          Address address = Address.fromJson(map);
-          debugPrint(address.toJson().toString());
-          addressList.add(address);
-          //debugPrint(addressList.toString());
-        }
-
-        return addressList;
-      });
+      return list;
     } catch (e) {
       debugPrint(e.toString());
       return addressList;
@@ -127,7 +127,7 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
             // debugPrint(list.toString());
             // ref.read(userProvider);
             return Container(
-              margin: const EdgeInsets.only(top: 25, left: 10, right: 10),
+              margin: const EdgeInsets.only(top: 25, left: 5, right: 5),
               child: ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   shrinkWrap: true,
@@ -150,7 +150,7 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
     debugPrint('${address.id}');
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: text100,
         borderRadius: BorderRadius.circular(15),
@@ -193,7 +193,8 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (ctx) => const UpdateUserAddressPage()),
+                    builder: (ctx) =>
+                        UpdateUserAddressPage(addressForUpdation: address)),
               );
             },
             title: Column(
@@ -222,7 +223,7 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  '+91 ${address.phone}',
+                  '${address.phone}',
                   style: TextStyle(
                       fontSize: body2,
                       fontWeight: FontWeight.w600,

@@ -45,6 +45,26 @@ class UserNotifier extends StateNotifier<User?> {
   String? getDefaultBankId() {
     return state?.bankAccounts![0].id;
   }
+
+  void updateBankAccount({required BankAccount bankAccount}) {
+    List<BankAccount>? bankList = state?.bankAccounts;
+
+    if (bankList != null && bankList.isNotEmpty) {
+      int index =
+          bankList.indexWhere((element) => element.id == bankAccount.id);
+      bankList[index] = bankAccount;
+      state = state!.copyWith(bankAccounts: bankList);
+    }
+  }
+
+  void deleteBankAccount({required BankAccount bankAccount}) {
+    List<BankAccount>? bankList = state?.bankAccounts;
+
+    if (bankList != null && bankList.isNotEmpty) {
+      bankList.removeWhere((element) => element.id == bankAccount.id);
+      state = state!.copyWith(bankAccounts: bankList);
+    }
+  }
 }
 
 final userProvider =

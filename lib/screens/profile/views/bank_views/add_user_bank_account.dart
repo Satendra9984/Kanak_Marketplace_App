@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasvat/models/BankAccount.dart';
 import 'package:tasvat/models/function_lifetime_enum.dart';
+import 'package:tasvat/providers/user_provider.dart';
+import 'package:tasvat/services/gold_services.dart';
+import '../../../../models/User.dart';
+import '../../../../services/datastore_services.dart';
 import '../../../../utils/app_constants.dart';
 import '../../../../utils/ui_functions.dart';
 
-class AddUserBankDetailsPage extends StatefulWidget {
+class AddUserBankDetailsPage extends ConsumerStatefulWidget {
   const AddUserBankDetailsPage({super.key});
 
   @override
-  State<AddUserBankDetailsPage> createState() => _AddUserBankDetailsPageState();
+  ConsumerState<AddUserBankDetailsPage> createState() =>
+      _AddUserBankDetailsPageState();
 }
 
-class _AddUserBankDetailsPageState extends State<AddUserBankDetailsPage> {
+class _AddUserBankDetailsPageState
+    extends ConsumerState<AddUserBankDetailsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _accountNameCtrl = TextEditingController();
   final TextEditingController _accountNumberCtrl = TextEditingController();
@@ -209,12 +217,17 @@ class _AddUserBankDetailsPageState extends State<AddUserBankDetailsPage> {
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: ElevatedButton(
                 onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    setState(() {
-                      _functionLifetime = FunctionLifetime.calling;
-                    });
-                    await addUserBankDetails();
-                  }
+                  User? user = ref.read(userProvider)!;
+                  debugPrint(user.id.toString());
+
+                  await GoldServices.getUserBanksList(userId: user.id);
+
+                  // if (_formKey.currentState!.validate()) {
+                  //   setState(() {
+                  //     _functionLifetime = FunctionLifetime.calling;
+                  //   });
+                  //   await addUserBankDetails();
+                  // }
                 },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -241,34 +254,70 @@ class _AddUserBankDetailsPageState extends State<AddUserBankDetailsPage> {
   }
 
   Future<void> addUserBankDetails() async {
-    // TODO: SUBMIT USER ADDRESS DETAILS
+    // SUBMIT USER ADDRESS DETAILS
     try {
-      // await GoldServices.
-      Future.delayed(const Duration(seconds: 5)).then((value) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: success,
-            content: Text('Bank Added Successfully',
-                style: TextStyle(
-                  color: text500,
-                )),
-          ),
+      User user = ref.read(userProvider)!;
+      await GoldServices.createBankAccount(
+        accNo: _accountNumberCtrl.text,
+        accName: _accountNameCtrl.text,
+        ifsc: _ifscCodeCtrl.text,
+        userId: user.id,
+      ).then((response) async {
+        if (response == null) {
+          handleError();
+          return;
+        }
+        BankAccount bankAccount = BankAccount(
+          userID: user.id,
+          accName: response.accountName,
+          accNo: response.accountNumber,
+          ifsc: response.ifscCode,
+          bankId: response.userBankId,
+          status: response.status == 'active',
         );
-        setState(() {
-          _functionLifetime = FunctionLifetime.success;
+        await DatastoreServices.addBankAccount(account: bankAccount)
+            .then((value) {
+          if (value == null) {
+            handleError();
+            return;
+          }
+
+          ref.read(userProvider.notifier).addBankAccount(account: value);
+          handleSuccess();
         });
-        // Navigator.pop(context);
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: error,
-          content: Text('Bank Add Failed', style: TextStyle(color: text500)),
-        ),
-      );
-      setState(() {
-        _functionLifetime = FunctionLifetime.initialize;
-      });
+      handleError();
     }
+  }
+
+  void handleError() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: error,
+        content: Text('Bank Add Failed', style: TextStyle(color: text500)),
+      ),
+    );
+    setState(() {
+      _functionLifetime = FunctionLifetime.initialize;
+    });
+  }
+
+  void handleSuccess() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: success,
+        content: Text(
+          'Bank Added Successfully',
+          style: TextStyle(
+            color: text500,
+          ),
+        ),
+      ),
+    );
+    setState(() {
+      _functionLifetime = FunctionLifetime.success;
+    });
+    Navigator.pop(context);
   }
 }

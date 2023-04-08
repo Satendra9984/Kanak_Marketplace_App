@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/models/function_lifetime_enum.dart';
+import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/services/gold_services.dart';
 import '../../../../models/BankAccount.dart';
+import '../../../../models/User.dart';
+import '../../../../services/datastore_services.dart';
 import '../../../../utils/app_constants.dart';
 import '../../../../utils/ui_functions.dart';
 
-class UpdateUserBankDetailsPage extends StatefulWidget {
+class UpdateUserBankDetailsPage extends ConsumerStatefulWidget {
   final BankAccount bankAccount;
   const UpdateUserBankDetailsPage({
     super.key,
@@ -13,11 +17,12 @@ class UpdateUserBankDetailsPage extends StatefulWidget {
   });
 
   @override
-  State<UpdateUserBankDetailsPage> createState() =>
+  ConsumerState<UpdateUserBankDetailsPage> createState() =>
       _UpdateUserBankDetailsPageState();
 }
 
-class _UpdateUserBankDetailsPageState extends State<UpdateUserBankDetailsPage> {
+class _UpdateUserBankDetailsPageState
+    extends ConsumerState<UpdateUserBankDetailsPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _accountNameCtrl = TextEditingController();
   final TextEditingController _accountNumberCtrl = TextEditingController();
@@ -305,32 +310,73 @@ class _UpdateUserBankDetailsPageState extends State<UpdateUserBankDetailsPage> {
 
   Future<void> updateUserBankDetails() async {
     try {
-      // await GoldServices.
-      Future.delayed(const Duration(seconds: 5)).then((value) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: success,
-            content: Text('Updated Successfully',
-                style: TextStyle(
-                  color: text500,
-                )),
-          ),
+      User user = ref.read(userProvider)!;
+      await GoldServices.updateBankAccount(
+              bankAccount: BankAccount(
+                userID: user.id,
+                accNo: _accountNumberCtrl.text,
+                accName: _accountNameCtrl.text,
+                ifsc: _ifscCodeCtrl.text,
+              ),
+              userId: user.id)
+          .then((response) async {
+        if (response == null) {
+          handleError();
+          return;
+        }
+
+        BankAccount bankAccount = BankAccount(
+          userID: user.id,
+          accName: response.accountName,
+          accNo: response.accountNumber,
+          ifsc: response.ifscCode,
+          bankId: response.userBankId,
+          status: response.status == 'active',
         );
-        setState(() {
-          _functionLifetime = FunctionLifetime.success;
+        await DatastoreServices.updateBankAccount(bankAccount: bankAccount)
+            .then((value) {
+          if (value == null) {
+            handleError();
+            return;
+          }
+
+          // UPDATE IN USER
+          ref.read(userProvider.notifier).updateBankAccount(bankAccount: value);
+          handleSuccess();
         });
-        // Navigator.pop(context);
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: error,
-          content: Text('Update Failed', style: TextStyle(color: text500)),
-        ),
-      );
-      setState(() {
-        _functionLifetime = FunctionLifetime.initialize;
-      });
+      handleError();
     }
+  }
+
+  void handleError() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: error,
+        content: Text('Bank Update Failed', style: TextStyle(color: text500)),
+      ),
+    );
+    setState(() {
+      _functionLifetime = FunctionLifetime.initialize;
+    });
+  }
+
+  void handleSuccess() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: success,
+        content: Text(
+          'Bank Updated Successfully',
+          style: TextStyle(
+            color: text500,
+          ),
+        ),
+      ),
+    );
+    setState(() {
+      _functionLifetime = FunctionLifetime.success;
+    });
+    Navigator.pop(context);
   }
 }

@@ -12,9 +12,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UpdateUserAddressPage extends ConsumerStatefulWidget {
   final bool isUpdate;
-  final Address? addressForUpdation;
+  final Address addressForUpdation;
   const UpdateUserAddressPage(
-      {super.key, this.addressForUpdation, this.isUpdate = false});
+      {super.key, required this.addressForUpdation, this.isUpdate = false});
 
   @override
   ConsumerState<UpdateUserAddressPage> createState() => _UserAddressPageState();
@@ -24,6 +24,9 @@ class _UserAddressPageState extends ConsumerState<UpdateUserAddressPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _pinCodeCtrl = TextEditingController();
   final TextEditingController _addressCtrl = TextEditingController();
+  final TextEditingController _emailCtrl = TextEditingController();
+  final TextEditingController _nameCtrl = TextEditingController();
+  final TextEditingController _phoneCtrl = TextEditingController();
   List<Map<dynamic, dynamic>>? _statesList;
   List<Map<dynamic, dynamic>> _citiesList = [];
   FunctionLifetime _functionLifetime = FunctionLifetime.initialize;
@@ -71,6 +74,11 @@ class _UserAddressPageState extends ConsumerState<UpdateUserAddressPage> {
   @override
   void initState() {
     // _initializeStatesList();
+    _phoneCtrl.text = widget.addressForUpdation.phone ?? '';
+    _pinCodeCtrl.text = widget.addressForUpdation.pincode.toString() ?? '';
+    _addressCtrl.text = widget.addressForUpdation.address ?? '';
+    _emailCtrl.text = widget.addressForUpdation.email ?? '';
+    _nameCtrl.text = widget.addressForUpdation.name ?? '';
     super.initState();
   }
 
@@ -108,6 +116,143 @@ class _UserAddressPageState extends ConsumerState<UpdateUserAddressPage> {
                   ),
                 ),
                 const SizedBox(height: 25),
+
+                /// Name
+                Text(
+                  'Name',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    // color: text150,
+                  ),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: TextInputType.name,
+                    controller: _nameCtrl,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter your First Name';
+                      } else if (value.length > 30) {
+                        return 'Less than 30 letters';
+                      } else if (value.length < 2) {
+                        return 'Greater than 2 letters';
+                      }
+                      return null;
+                    },
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: accent2,
+                    ),
+                    decoration: getInputDecoration('First Name').copyWith(
+                      errorStyle: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: error,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                /// email
+                Text(
+                  'Email',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    // color: text150,
+                  ),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: TextInputType.emailAddress,
+                    controller: _emailCtrl,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter an email';
+                      } else {
+                        bool emailValid = RegExp(
+                                r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(value);
+                        if (!emailValid) {
+                          return 'Please Enter a valid email';
+                        }
+                      }
+
+                      return null;
+                    },
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: accent2,
+                    ),
+                    decoration: getInputDecoration('example123@gmail.com'),
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                /// phone
+                Text(
+                  'Phone Number',
+                  style: TextStyle(
+                    color: text500,
+                    fontSize: body2,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Container(
+                  // height: 60,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    controller: _phoneCtrl,
+                    onChanged: (value) {},
+                    validator: (value) {
+                      String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+                      RegExp regExp = RegExp(pattern);
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter mobile number';
+                      } else if (!regExp.hasMatch(value)) {
+                        return 'Please enter valid mobile number';
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.phone,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: accent2,
+                    ),
+                    decoration: getInputDecoration('Phone Number'),
+                  ),
+                ),
+                const SizedBox(height: 10),
 
                 /// address
                 Text(
@@ -192,259 +337,65 @@ class _UserAddressPageState extends ConsumerState<UpdateUserAddressPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-
-                /// state and city
-                Text(
-                  'State',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                FormField(
-                  initialValue: _state,
-                  validator: (state) {
-                    if (state == null) {
-                      return 'Select State';
-                    }
-                    return null;
-                  },
-                  builder: (formState) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: text100,
-                          ),
-                          child: FutureBuilder(
-                            future: _initializeStatesList(),
-                            builder: (context, snap) {
-                              if (snap.connectionState ==
-                                      ConnectionState.waiting ||
-                                  snap.hasError == false) {
-                                return DropdownButton<Map<dynamic, dynamic>>(
-                                  hint: Text(
-                                    'Delhi',
-                                    style: TextStyle(
-                                      color: accentBG,
-                                    ),
-                                  ),
-                                  value: _state == null || _state!.isEmpty
-                                      ? null
-                                      : _state,
-                                  items: _statesList == null
-                                      ? []
-                                      : _statesList!.map((state) {
-                                          return DropdownMenuItem(
-                                            value: state,
-                                            child: Text(
-                                              state['name'],
-                                              style: TextStyle(color: accent2),
-                                            ),
-                                          );
-                                        }).toList(),
-                                  onChanged: (value) async {
-                                    setState(() {
-                                      _state = value;
-                                      _city = null;
-                                      _citiesList = [];
-                                      debugPrint(_state.toString());
-                                    });
-                                    await getCitiesList();
-                                  },
-                                  menuMaxHeight: 400,
-                                  underline: Container(),
-                                  dropdownColor: text150,
-                                  isExpanded: true,
-                                  borderRadius: BorderRadius.circular(10),
-                                  icon: Icon(
-                                    Icons.arrow_drop_down,
-                                    color:
-                                        _statesList != null ? accent2 : text100,
-                                  ),
-                                );
-                              } else {
-                                return Container(
-                                  height: 45,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: text100,
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Something Went Wrong',
-                                    style: TextStyle(color: error),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                        if (formState.hasError)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 5),
-                            child: Text(
-                              formState.errorText.toString(),
-                              style: TextStyle(
-                                color: error,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                      ],
-                    );
-                  },
-                ),
-
-                const SizedBox(height: 25),
-                Text(
-                  'City',
-                  style: TextStyle(
-                    color: text500,
-                    fontSize: body2,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                FormField(
-                  initialValue: _city,
-                  validator: (city) {
-                    if (_state == null) {
-                      return 'First Select State';
-                    } else if (city == null) {
-                      return 'Select City';
-                    }
-                    return null;
-                  },
-                  builder: (formState) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: text100,
-                          ),
-                          child: DropdownButton<Map<dynamic, dynamic>>(
-                            hint: Text(
-                              'New Delhi',
-                              style: TextStyle(
-                                color: accentBG,
-                              ),
-                            ),
-                            value: _city != null ? _city! : null,
-                            items: _citiesList.map((city) {
-                              return DropdownMenuItem<Map<dynamic, dynamic>>(
-                                value: city,
-                                child: Text(
-                                  city['name'],
-                                  style: TextStyle(color: accent2),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              if (value != null) {
-                                setState(() {
-                                  _city = value;
-                                });
-                              }
-                            },
-                            menuMaxHeight: 400,
-                            underline: Container(),
-                            dropdownColor: text150,
-                            isExpanded: true,
-                            borderRadius: BorderRadius.circular(10),
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                              color: _citiesList.isNotEmpty ? accent2 : text100,
-                            ),
-                          ),
-                        ),
-                        if (formState.hasError)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 5),
-                            child: Text(
-                              formState.errorText.toString(),
-                              style: TextStyle(
-                                color: error,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                      ],
-                    );
-                  },
-                ),
               ],
             ),
           ),
         ),
       ),
-      bottomNavigationBar: Builder(
-        builder: (context) {
-          if (_functionLifetime == FunctionLifetime.calling) {
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(color: accent2),
-                  const SizedBox(width: 15),
-                  Text(
-                    'Updating',
-                    style: TextStyle(
-                        color: accent2,
-                        fontWeight: FontWeight.w500,
-                        fontSize: body1),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            /// FunctionLifetime.initialize
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2.5),
-              child: ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    setState(() {
-                      _functionLifetime = FunctionLifetime.calling;
-                    });
-                    await updateUserAddressDetails();
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  minimumSize: const Size(double.infinity, 50.0),
-                  maximumSize: const Size(double.infinity, 60.0),
-                  backgroundColor: accent1,
-                ),
-                child: Text(
-                  'Update',
-                  style: TextStyle(
-                    color: background,
-                    fontSize: heading2,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            );
-          }
-        },
-      ),
+      // bottomNavigationBar: Builder(
+      //   builder: (context) {
+      //     if (_functionLifetime == FunctionLifetime.calling) {
+      //       return Container(
+      //         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      //         child: Row(
+      //           mainAxisAlignment: MainAxisAlignment.center,
+      //           children: [
+      //             CircularProgressIndicator(color: accent2),
+      //             const SizedBox(width: 15),
+      //             Text(
+      //               'Updating',
+      //               style: TextStyle(
+      //                   color: accent2,
+      //                   fontWeight: FontWeight.w500,
+      //                   fontSize: body1),
+      //             ),
+      //           ],
+      //         ),
+      //       );
+      //     } else {
+      //       /// FunctionLifetime.initialize
+      //       return Container(
+      //         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2.5),
+      //         child: ElevatedButton(
+      //           onPressed: () async {
+      //             if (_formKey.currentState!.validate()) {
+      //               setState(() {
+      //                 _functionLifetime = FunctionLifetime.calling;
+      //               });
+      //               await updateUserAddressDetails();
+      //             }
+      //           },
+      //           style: ElevatedButton.styleFrom(
+      //             shape: RoundedRectangleBorder(
+      //               borderRadius: BorderRadius.circular(15),
+      //             ),
+      //             minimumSize: const Size(double.infinity, 50.0),
+      //             maximumSize: const Size(double.infinity, 60.0),
+      //             backgroundColor: accent1,
+      //           ),
+      //           child: Text(
+      //             'Update',
+      //             style: TextStyle(
+      //               color: background,
+      //               fontSize: heading2,
+      //               fontWeight: FontWeight.w600,
+      //             ),
+      //           ),
+      //         ),
+      //       );
+      //     }
+      //   },
+      // ),
     );
   }
 

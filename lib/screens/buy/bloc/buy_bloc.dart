@@ -13,6 +13,11 @@ import 'package:tasvat/services/gold_services.dart';
 part 'buy_event.dart';
 part 'buy_state.dart';
 
+enum PaymentMethod {
+  wallet,
+  external
+}
+
 class BuyBloc extends Bloc<BuyEvent, BuyState> {
   late Razorpay _razorpay;
   late Timer _timer;
@@ -64,16 +69,32 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
     on<TickEvent>((event, emit) {
       emit(state.copyWith(remainingTime: event.seconds));
-    });
+    });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
     // when user presses the confirm button
     on<ConfirmButtonPressedEvent>((event, emit) async {
-      emit(state.copyWith(status: BuyStatus.progress));
+      emit(state.copyWith(
+        status: BuyStatus.progress,
+        transaction: event.transaction
+      ));
+      add(ChoosePaymentMethod());
+    });
+
+    on<ChoosePaymentMethod>((event, emit) {
+      emit(state.copyWith(status: BuyStatus.choose));
+    });
+
+    on<PaymentMethodChosen>((event, emit) async {
       await DatastoreServices.addPendingTransaction(
-              transaction: event.transaction)
-          .then((tx) {
-        _checkOutPayment(event.user, state.transaction!.amount!);
+        transaction: state.transaction!
+      ).then((tx) {
+        if (event.method == PaymentMethod.external) {
+          _checkOutPayment(_user, state.transaction!.amount!);
+        } else if (event.method == PaymentMethod.wallet) {
+          
+        }
       });
+      
     });
 
     // when payment is successful

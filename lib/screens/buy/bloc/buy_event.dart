@@ -31,7 +31,25 @@ class ConfirmButtonPressedEvent extends BuyEvent {
     required this.user
   });
   @override
-  List<Object?> get props => [transaction];
+  List<Object?> get props => [
+    transaction
+  ];
+}
+
+class PaymentMethodChosen extends BuyEvent {
+  final PaymentMethod method;
+  PaymentMethodChosen({
+    required this.method
+  });
+  @override
+  List<Object?> get props => [
+    method
+  ];
+}
+
+class ChoosePaymentMethod extends BuyEvent {
+  @override
+  List<Object?> get props => [];
 }
 
 class PaymentErrorEvent extends BuyEvent {

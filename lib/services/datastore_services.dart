@@ -77,6 +77,10 @@ class DatastoreServices {
     return result;
   }
 
+
+  // deduct money from wallet
+  
+
   // mark failed transaction
   static Future<Transaction?> markFailedPurchase({
     required Transaction transaction
@@ -766,7 +770,6 @@ class DatastoreServices {
     required Address addr
   }) async {
     Address? result;
-    
     await getAddressVersion(addressId: addr.id).then((version) async {
       safePrint(version);
       const String updateQuery = """

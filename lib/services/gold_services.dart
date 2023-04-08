@@ -239,6 +239,9 @@ class GoldServices {
     return list;
   }
 
+  // get user main account
+  
+
   // create user account
   static Future<Map<String, dynamic>?> registerGoldUser(
       {required String phone,
@@ -952,7 +955,7 @@ class GoldServices {
   /// <----------------------------- Redeem ------------------------------------>
 
   // get user bank
-  static Future<UserBank?> getUserBank({required String userId}) async {
+  static Future<UserBank?> getUserBank({required String userId, required }) async {
     UserBank? userBankAcc;
     final authToken = await LocalDBServices.getGPAccessToken();
     await HttpServices.sendGetReq(

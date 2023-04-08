@@ -1,7 +1,6 @@
 part of 'sell_bloc.dart';
 
-abstract class SellEvent extends Equatable {
-  const SellEvent();
+class SellEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
@@ -10,7 +9,7 @@ class SellConfirmEvent extends SellEvent {
   final ExchangeRates rates;
   final User user;
   final double quantity;
-  const SellConfirmEvent({
+  SellConfirmEvent({
     required this.rates,
     required this.quantity,
     required this.user
@@ -25,12 +24,37 @@ class SellConfirmEvent extends SellEvent {
 
 class ConfirmButtonPressed extends SellEvent {
   final Transaction transaction;
-  const ConfirmButtonPressed({
+  ConfirmButtonPressed({
     required this.transaction
   });
   @override
   List<Object> get props => [
     transaction
+  ];
+}
+
+class PaymentMethodChosen extends SellEvent {
+  final PaymentMethodChosen method;
+  PaymentMethodChosen({
+    required this.method
+  });
+  @override
+  List<Object> get props => [];
+}
+
+class ChoosePaymentMethod extends SellEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class TickEvent extends SellEvent {
+  final int seconds;
+  TickEvent({
+    required this.seconds
+  });
+  @override
+  List<Object> get props => [
+    seconds
   ];
 }
 
@@ -57,4 +81,8 @@ class SellSuccess extends SellEvent {
 class SellFailure extends SellEvent {
   @override
   List<Object> get props => [];
+}
+
+class Wallet extends SellEvent {
+
 }

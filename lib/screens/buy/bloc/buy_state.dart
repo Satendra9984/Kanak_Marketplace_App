@@ -3,6 +3,7 @@ part of 'buy_bloc.dart';
 
 enum BuyStatus {
   initial,
+  choose,
   progress,
   success,
   failed,

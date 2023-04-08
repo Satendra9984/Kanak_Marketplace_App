@@ -451,7 +451,10 @@ class DatastoreServices {
         if (banks.data?.items != null && banks.data?.items.isNotEmpty == true) {
           List<BankAccount> bankList =
               banks.data!.items.map((e) => e!).toList();
-          fetchedUser = user.data!.copyWith(bankAccounts: bankList);
+          // fetchedUser = user.data!;
+          User newBUser = user.data!.copyWith(bankAccounts: bankList);
+          fetchedUser = newBUser;
+          fetchedUser;
           debugPrint(
               '---------------- banks from datastore\n ${fetchedUser?.bankAccounts?.length}');
         }
@@ -464,7 +467,9 @@ class DatastoreServices {
           if (addrs.data?.items != null &&
               addrs.data?.items.isNotEmpty == true) {
             List<Address> addrsList = addrs.data!.items.map((e) => e!).toList();
-            fetchedUser = user.data!.copyWith(address: addrsList);
+            User newAuser = fetchedUser!.copyWith(address: addrsList);
+            fetchedUser = newAuser;
+            fetchedUser;
           }
           final req =
               ModelQueries.get(Wallet.classType, user.data!.userWalletId!);
@@ -472,7 +477,8 @@ class DatastoreServices {
             if (wallet.data == null) {
               return;
             }
-            fetchedUser = user.data!.copyWith(wallet: wallet.data);
+            fetchedUser = fetchedUser!.copyWith(wallet: wallet.data);
+            fetchedUser;
           });
         });
       });

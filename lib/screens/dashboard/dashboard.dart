@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tasvat/screens/profile/views/profile_home_screen.dart';
 import 'package:tasvat/utils/app_constants.dart';
-import 'package:tasvat/widgets/gold_rate_graph.dart';
+import 'package:tasvat/screens/gold_rates/gold_rate_graph.dart';
 
 import '../../widgets/tabs.dart';
 

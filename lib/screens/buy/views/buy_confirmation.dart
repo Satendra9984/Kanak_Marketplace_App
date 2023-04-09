@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/buy/bloc/buy_bloc.dart';
 import 'package:tasvat/screens/buy/views/buy_completed.dart';
+import 'package:tasvat/screens/registration/bloc/registration_bloc.dart';
 import '../../../services/datastore_services.dart';
 import '../../../utils/app_constants.dart';
 import '../../../widgets/row_details_widget.dart';
@@ -50,9 +51,28 @@ class _BuyConfirmationScreenState extends ConsumerState<BuyConfirmationScreen> {
       ),
       body: BlocConsumer<BuyBloc, BuyState>(
         listener: (context, buyState) {
+          if (buyState.status == BuyStatus.choose) {
+            showModalBottomSheet(context: context, builder: ((context) => Column(
+              children: [
+                 InkWell(
+                  onTap: () {
+                _buyBloc.add(PaymentMethodChosen(method: PaymentMethod.wallet));
+                  },
+                  child: const Text('Wallet'),
+                ),
+                 InkWell(
+                  onTap: () {
+                    _buyBloc.add(PaymentMethodChosen(method: PaymentMethod.external));
+                  },
+                  child: const Text('External'),
+                )
+              ],
+            )));
+          }
           if (buyState.status == BuyStatus.success ||
               buyState.status == BuyStatus.failed) {
             _buyBloc.closeTimer();
+            ref.read(userProvider.notifier).syncDetails(user: _buyBloc.getUser);
             safePrint(
                 '***************************${buyState.status}*******************************');
             safePrint(

@@ -85,13 +85,24 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
     });
 
     on<PaymentMethodChosen>((event, emit) async {
+      emit(state.copyWith(status: BuyStatus.progress));
       await DatastoreServices.addPendingTransaction(
         transaction: state.transaction!
-      ).then((tx) {
+      ).then((tx) async {
         if (event.method == PaymentMethod.external) {
           _checkOutPayment(_user, state.transaction!.amount!);
         } else if (event.method == PaymentMethod.wallet) {
-          
+          await DatastoreServices.updateWalletBalance(
+            wallet: _user.wallet!,
+            balance: _user.wallet!.balance! - state.transaction!.amount!
+          ).then((wallet) {
+            if (wallet == null) {
+              add(PaymentErrorEvent());
+              return;
+            }
+            _user = _user.copyWith(wallet: wallet);
+            add(PaymentSuccessEvent(user: _user));
+          });
         }
       });
       
@@ -101,7 +112,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
     on<PaymentSuccessEvent>((event, emit) async {
       safePrint('|=======================> Successful Payment');
       await DatastoreServices.markSuccessfulPayment(
-              transaction: state.transaction!, txId: event.response.paymentId!)
+            transaction: state.transaction!, txId: event.response?.paymentId ?? 'wallet')
           .then((tx) async {
         if (tx == null) {
           safePrint('Error Marking txId');
@@ -109,7 +120,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
         }
         emit(state.copyWith(
           transaction: state.transaction!
-          .copyWith(txId: event.response.paymentId))
+          .copyWith(txId: event.response?.paymentId ?? 'wallet'))
         );
         await GoldServices.buyGold(
                 user: event.user,
@@ -140,7 +151,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       emit(state.copyWith(
         transaction: state.transaction!.copyWith(
           gpTxId: event.info.transactionId,
-          balance: double.parse(event.info.goldBalance)
+          gold_balance: double.parse(event.info.goldBalance)
         )
       ));
       await DatastoreServices.markSuccessfulPurchase(
@@ -152,13 +163,15 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
           return;
         }
         await DatastoreServices.updateWalletGoldBalance(
-                wallet: _user.wallet!, balance: tx.balance!)
+                wallet: _user.wallet!, goldBalance: tx.gold_balance!)
             .then((wallet) {
           if (wallet == null) {
             add(WalletUpdateFailedEvent());
             return;
           }
-          add(WalletUpdateSuccessEvent());
+          add(WalletUpdateSuccessEvent(
+            wallet: wallet
+          ));
         });
       });
     });
@@ -183,6 +196,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
     // when gold successfully added to wallet
     on<WalletUpdateSuccessEvent>((event, emit) {
+      _user = _user.copyWith(wallet: event.wallet);
       emit(state.copyWith(status: BuyStatus.success));
     });
   }
@@ -230,6 +244,8 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       safePrint(response.walletName);
     });
   }
+
+  get getUser => _user;
 
   void closeTimer() {
     _timer.cancel();

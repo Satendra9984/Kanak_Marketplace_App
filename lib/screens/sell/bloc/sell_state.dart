@@ -2,6 +2,7 @@ part of 'sell_bloc.dart';
 
 enum SellStatus {
   initial,
+  choose,
   progress,
   success,
   failed,

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/models/Token.dart' as tokenModel;
 import 'package:tasvat/models/gold_models/address_response.dart';
@@ -169,7 +168,7 @@ class DatastoreServices {
 
   // mark payment success
   static Future<Transaction?> markSuccessfulPayment(
-      {required Transaction transaction, required String txId}) async {
+      {required Transaction transaction, required String? txId}) async {
     Transaction? result;
     await getTransactionVersion(txId: transaction.id).then((version) async {
       safePrint(version);
@@ -209,7 +208,7 @@ class DatastoreServices {
   }
 
   // update wallet gold balance
-  static Future<Wallet?> updateWalletGoldBalance(
+  static Future<Wallet?> updateWalletBalance(
       {required Wallet wallet, required double balance}) async {
     Wallet? result;
     await getWalletVersion(id: wallet.id).then((version) async {
@@ -240,8 +239,49 @@ class DatastoreServices {
         if (response.data == null) {
           return;
         }
-        result = wallet.copyWith(gold_balance: balance);
+        result = wallet.copyWith(balance: balance);
         safePrint(result!.balance);
+      } catch (e) {
+        safePrint('Update failed: $e');
+      }
+    });
+    return result;
+  }
+
+  // update wallet gold balance
+  static Future<Wallet?> updateWalletGoldBalance(
+      {required Wallet wallet, required double goldBalance}) async {
+    Wallet? result;
+    await getWalletVersion(id: wallet.id).then((version) async {
+      safePrint(version);
+      const String updateQuery = """
+        mutation UpdateWallet(\$id: ID!, \$version: Int!, \$gold_balance: Float! ) {
+          updateWallet(input: {id: \$id, _version: \$version, gold_balance: \$gold_balance }) {
+            id
+            _version
+            gold_balance
+          }
+        }
+      """;
+      final variables = {
+        "id": wallet.id,
+        "gold_balance": goldBalance,
+        "version": version
+      };
+      try {
+        final response = await _instance
+            .mutate(
+              request: GraphQLRequest<String>(
+                document: updateQuery,
+                variables: variables,
+              ),
+            )
+            .response;
+        if (response.data == null) {
+          return;
+        }
+        result = wallet.copyWith(gold_balance: goldBalance);
+        safePrint(result!.gold_balance);
       } catch (e) {
         safePrint('Update failed: $e');
       }
@@ -455,9 +495,11 @@ class DatastoreServices {
         if (banks.data?.items != null && banks.data?.items.isNotEmpty == true) {
           List<BankAccount> bankList =
               banks.data!.items.map((e) => e!).toList();
-          fetchedUser = user.data!.copyWith(bankAccounts: bankList);
-          debugPrint(
-              '---------------- banks from datastore\n ${fetchedUser?.bankAccounts?.length}');
+          // fetchedUser = user.data!.copyWith(bankAccounts: bankList);
+
+          for (var b in bankList) {
+            fetchedUser?.bankAccounts?.add(b);
+          }
         }
         final req =
             ModelQueries.list(Address.classType, where: Address.USERID.eq(id));

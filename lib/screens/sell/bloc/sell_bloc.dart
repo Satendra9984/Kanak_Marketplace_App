@@ -14,6 +14,7 @@ class SellBloc extends Bloc<SellEvent, SellState> {
   late User _user;
   late Timer _timer;
   late String _bankId;
+
   SellBloc() : super(const SellState(
     status: SellStatus.initial
   )) {
@@ -48,27 +49,34 @@ class SellBloc extends Bloc<SellEvent, SellState> {
         }
       });
     });
+
+
     on<ConfirmButtonPressed>((event, emit) async {
-      emit(state.copyWith(status: SellStatus.progress));
       add(ChoosePaymentMethod());
-      
     });
 
     on<ChoosePaymentMethod>((event, emit) async {
-      await GoldServices.getUserBank(userId: _user.id).then((bank) async {
-
+      await GoldServices.getUserBankAccounts(userId: _user.id).then((banks) async {
+        safePrint(banks.length);
       });
     });
+
     on<TickEvent>((event, emit) {
       emit(state.copyWith(remainingTime: event.seconds));
     });
+
+
     on<PaymentMethodChosen>((event, emit) async {
+      emit(state.copyWith(status: SellStatus.progress));
       await DatastoreServices.addPendingTransaction(
-        transaction: state.transaction!)
+        transaction: state.transaction!
+      )
       .then((tx) async {
         add(PendingTransactionAdded());
       });
     });
+
+
     on<PendingTransactionAdded>((event, emit) async {
       await GoldServices.sellGold(
         user: _user,
@@ -77,7 +85,7 @@ class SellBloc extends Bloc<SellEvent, SellState> {
         rate: state.rates!
       ).then((value) {
         if (value == null) {
-          add(Pur)
+          // add(Pur)
         }
       });
     });

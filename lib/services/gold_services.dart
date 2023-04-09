@@ -110,23 +110,6 @@ class GoldServices {
     return addressList;
   }
 
-  static Future<List<dynamic>> getUserBanksList(
-      {required String userId}) async {
-    List<dynamic> bList = [];
-
-    try {
-      await HttpServices.sendGetReq('$_baseUrl/users/$userId/banks')
-          .then((banksList) {
-        debugPrint(banksList.toString());
-      });
-    } catch (e) {
-      debugPrint(e.toString());
-      return bList;
-    }
-
-    return bList;
-  }
-
   static Future<List<dynamic>> getStateCityList() async {
     List<dynamic> list = [];
     try {
@@ -171,8 +154,29 @@ class GoldServices {
     return list;
   }
 
-  // get user main account
-  
+  // get user bank accounts
+  static Future<List<UserBank>> getUserBankAccounts({
+    required String userId
+  }) async {
+    List<UserBank> result = [];
+    final authToken = await LocalDBServices.getGPAccessToken();
+    await HttpServices.sendGetReq('${_baseUrl}users/$userId/banks', extraHeaders: {
+      'Authorization': 'Bearer $authToken'
+    }).then((banksRes) {
+      if (banksRes == null) {
+        return;
+      }
+      if (!banksRes.containsKey('statusCode') || banksRes['statusCode'] != 200) {
+        return;
+      }
+      final List<Map<String, dynamic>> bankList = banksRes['result'];
+      for (var bank in bankList) {
+        result.add(UserBank.fromJson(bank));
+      }
+      safePrint(bankList.length);
+    });
+    return result;
+  }
 
   // create user account
   static Future<Map<String, dynamic>?> registerGoldUser(

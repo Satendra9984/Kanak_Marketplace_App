@@ -83,6 +83,7 @@ class SellFailure extends SellEvent {
   List<Object> get props => [];
 }
 
-class Wallet extends SellEvent {
-
+class WalletGoldDeduction extends SellEvent {
+  @override
+  List<Object> get props => [];
 }

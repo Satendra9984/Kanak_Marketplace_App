@@ -356,6 +356,7 @@ class _UserAddressPageState extends ConsumerState<AddUserAddressPage> {
       User? user = ref.read(userProvider)!;
       await GoldServices.addGoldUserAddress(
         user: user,
+        email: _emailCtrl.text,
         name: _nameCtrl.text,
         address: _addressCtrl.text,
         pincode: int.parse(_pinCodeCtrl.text),

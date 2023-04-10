@@ -50,8 +50,6 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
                     builder: (context) => const UserDetailsPage()));
             return;
           }
-          safePrint(
-              'currUsr details called\n ${currUser.bankAccounts?.length.toString()}');
           ref.read(userProvider.notifier).syncDetails(user: currUser);
           await DatastoreServices.checkRequiredData(uid: user.userId)
               .then((value) async {

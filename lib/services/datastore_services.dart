@@ -33,12 +33,9 @@ class DatastoreServices {
       {required Transaction transaction}) async {
     Transaction? result;
     await getTransactionVersion(txId: transaction.id).then((version) async {
-      safePrint(version);
-      safePrint(transaction.balance);
-      safePrint(transaction.gpTxId);
       const String updateQuery = """
         mutation UpdateTransaction(\$id: ID!, \$status: TransactionStatus!, \$version: Int!, \$balance: Float!, \$gpTxId: String! ) {
-          updateTransaction(input: {id: \$id, status: \$status, _version: \$version, gpTxId: \$gpTxId, balance: \$balance }) {
+          updateTransaction(input: {id: \$id, status: \$status, _version: \$version, gpTxId: \$gpTxId, gold_balance: \$balance }) {
             id
             _version
             status
@@ -51,7 +48,7 @@ class DatastoreServices {
         "id": transaction.id,
         "status": "SUCCESSFUL",
         "gpTxId": transaction.gpTxId,
-        "balance": transaction.balance,
+        "balance": transaction.gold_balance,
         "version": version
       };
       try {
@@ -530,6 +527,8 @@ class DatastoreServices {
     });
 
     safePrint(fetchedUser?.address?.length.toString());
+    safePrint('ghigiiutginyoy;nn--------------->');
+    safePrint(fetchedUser?.wallet?.toJson());
 
     return fetchedUser;
   }

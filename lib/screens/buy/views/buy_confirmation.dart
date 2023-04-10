@@ -40,6 +40,8 @@ class _BuyConfirmationScreenState extends ConsumerState<BuyConfirmationScreen> {
     super.didChangeDependencies();
   }
 
+  bool choosing = false;
+
   @override
   Widget build(BuildContext context) {
     _buyBloc = BlocProvider.of<BuyBloc>(context);
@@ -52,13 +54,26 @@ class _BuyConfirmationScreenState extends ConsumerState<BuyConfirmationScreen> {
       body: BlocConsumer<BuyBloc, BuyState>(
         listener: (context, buyState) {
           if (buyState.status == BuyStatus.choose) {
-            showModalBottomSheet(context: context, builder: ((context) => Column(
+            if (choosing) {
+              return;
+            }
+            choosing = true;
+            showModalBottomSheet(
+              constraints: BoxConstraints.tight(Size(double.infinity, MediaQuery.of(context).size.height / 5)),
+              context: context, builder: ((context) => Column(
               children: [
                  InkWell(
                   onTap: () {
-                _buyBloc.add(PaymentMethodChosen(method: PaymentMethod.wallet));
+                    _buyBloc.add(PaymentMethodChosen(method: PaymentMethod.wallet));
                   },
-                  child: const Text('Wallet'),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 10,
+                    child: Column(
+                      children: const [
+                        Text('Wallet'),
+                      ],
+                    )
+                  ),
                 ),
                  InkWell(
                   onTap: () {

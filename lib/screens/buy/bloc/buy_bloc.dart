@@ -112,7 +112,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
     on<PaymentSuccessEvent>((event, emit) async {
       safePrint('|=======================> Successful Payment');
       await DatastoreServices.markSuccessfulPayment(
-            transaction: state.transaction!, txId: event.response?.paymentId ?? 'wallet')
+            transaction: state.transaction!, txId: event.response?.paymentId ?? 'wallet-${state.transaction!.id}')
           .then((tx) async {
         if (tx == null) {
           safePrint('Error Marking txId');
@@ -190,14 +190,24 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       await DatastoreServices.markWalletUpdateFail(
               transaction: state.transaction!)
           .then((value) {
-        emit(state.copyWith(status: BuyStatus.failed));
+        emit(
+          state.copyWith(
+            status: BuyStatus.failed,
+            transaction: state.transaction?.copyWith(status: TransactionStatus.FAILED)
+          )
+        );
       });
     });
 
     // when gold successfully added to wallet
     on<WalletUpdateSuccessEvent>((event, emit) {
       _user = _user.copyWith(wallet: event.wallet);
-      emit(state.copyWith(status: BuyStatus.success));
+      emit(state.copyWith(
+        status: BuyStatus.success,
+        transaction: state.transaction
+        ?.copyWith(status: TransactionStatus.SUCCESSFUL)
+        )
+      );
     });
   }
 

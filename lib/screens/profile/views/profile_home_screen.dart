@@ -1,18 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/profile/views/account_details.dart';
 import 'package:tasvat/screens/profile/views/bank_views/user_banks_list_screen.dart';
 import 'package:tasvat/utils/app_constants.dart';
 
+import '../../../models/User.dart';
 import '../../add_money/views/add_money_screen.dart';
 import 'address_views/address_list_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    User user = ref.watch(userProvider)!;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: background,
       appBar: AppBar(
         backgroundColor: background,
@@ -33,8 +38,7 @@ class ProfileScreen extends StatelessWidget {
           ListTile(
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (ctx) => const AccountDetailsScreen()),
+                MaterialPageRoute(builder: (ctx) => AccountDetailsScreen()),
               );
             },
             leading: CircleAvatar(
@@ -45,7 +49,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             title: Text(
-              'Satendra Pal',
+              '${user.fname} ${user.lname}',
               style: TextStyle(
                 fontSize: heading1,
                 fontWeight: FontWeight.w500,
@@ -116,21 +120,27 @@ class ProfileScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                   color: accentBG.withOpacity(0.5),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.add,
-                      size: 16,
-                      color: accent2,
-                    ),
-                    Text(
-                      'Add Money',
-                      style: TextStyle(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (ctx) => AddMoneyScreen()));
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.add,
+                        size: 16,
                         color: accent2,
                       ),
-                    ),
-                  ],
+                      Text(
+                        'Add Money',
+                        style: TextStyle(
+                          color: accent2,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

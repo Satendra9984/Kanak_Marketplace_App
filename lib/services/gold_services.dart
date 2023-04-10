@@ -115,8 +115,14 @@ class GoldServices {
     List<dynamic> bList = [];
 
     try {
-      await HttpServices.sendGetReq('$_baseUrl/users/$userId/banks')
-          .then((banksList) {
+      String? token = await LocalDBServices.getGPAccessToken();
+      if (token == null) {
+        return bList;
+      }
+      await HttpServices.sendGetReq('$_baseUrl/users/$userId/banks',
+          extraHeaders: {
+            'Authorization': 'Bearer $token',
+          }).then((banksList) {
         debugPrint(banksList.toString());
       });
     } catch (e) {
@@ -905,16 +911,14 @@ class GoldServices {
         },
         body: {
           'bankId': bankAccount.bankId,
-          'accountNumber': bankAccount.accNo,
+          'accountNumber': int.parse(bankAccount.accNo!),
           'accountName': bankAccount.accName,
           'ifscCode': bankAccount.ifsc,
-          'status': bankAccount.status == true ? 'active' : 'deactive',
-          // '_method': 'PUT',
+          '_method': 'PUT',
         }).then((value) {
       if (value == null) {
         return;
       }
-      debugPrint('status of bank update-----------> ${value['statusCode']}');
       if (!value.containsKey('statusCode') || value['statusCode'] != 200) {
         return;
       }

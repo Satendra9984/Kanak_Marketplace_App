@@ -54,6 +54,7 @@ type Transaction @model @auth(rules: [{allow: public}]) {
   quantity: Float
   blockId: String
   gpTxId: String
+  gold_balance: Float
   balance: Float
   failType: FailType
 }

@@ -22,6 +22,7 @@
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/foundation.dart';
 
+
 /** This is an auto generated class representing the Address type in your schema. */
 @immutable
 class Address extends Model {
@@ -39,211 +40,150 @@ class Address extends Model {
 
   @override
   getInstanceType() => classType;
-
-  @Deprecated(
-      '[getId] is being deprecated in favor of custom primary key feature. Use getter [modelIdentifier] to get model identifier.')
+  
+  @Deprecated('[getId] is being deprecated in favor of custom primary key feature. Use getter [modelIdentifier] to get model identifier.')
   @override
   String getId() => id;
-
+  
   AddressModelIdentifier get modelIdentifier {
-    return AddressModelIdentifier(id: id);
+      return AddressModelIdentifier(
+        id: id
+      );
   }
-
+  
   String? get name {
     return _name;
   }
-
+  
   int? get pincode {
     return _pincode;
   }
-
+  
   String get userID {
     try {
       return _userID!;
-    } catch (e) {
+    } catch(e) {
       throw new AmplifyCodeGenModelException(
-          AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion: AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString());
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String? get phone {
     return _phone;
   }
-
+  
   String? get email {
     return _email;
   }
-
+  
   String? get address {
     return _address;
   }
-
+  
   bool? get status {
     return _status;
   }
-
+  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
-
+  
   TemporalDateTime? get updatedAt {
     return _updatedAt;
   }
-
-  const Address._internal(
-      {required this.id,
-      name,
-      pincode,
-      required userID,
-      phone,
-      email,
-      address,
-      status,
-      createdAt,
-      updatedAt})
-      : _name = name,
-        _pincode = pincode,
-        _userID = userID,
-        _phone = phone,
-        _email = email,
-        _address = address,
-        _status = status,
-        _createdAt = createdAt,
-        _updatedAt = updatedAt;
-
-  factory Address(
-      {String? id,
-      String? name,
-      int? pincode,
-      required String userID,
-      String? phone,
-      String? email,
-      String? address,
-      bool? status}) {
+  
+  const Address._internal({required this.id, name, pincode, required userID, phone, email, address, status, createdAt, updatedAt}): _name = name, _pincode = pincode, _userID = userID, _phone = phone, _email = email, _address = address, _status = status, _createdAt = createdAt, _updatedAt = updatedAt;
+  
+  factory Address({String? id, String? name, int? pincode, required String userID, String? phone, String? email, String? address, bool? status}) {
     return Address._internal(
-        id: id == null ? UUID.getUUID() : id,
-        name: name,
-        pincode: pincode,
-        userID: userID,
-        phone: phone,
-        email: email,
-        address: address,
-        status: status);
+      id: id == null ? UUID.getUUID() : id,
+      name: name,
+      pincode: pincode,
+      userID: userID,
+      phone: phone,
+      email: email,
+      address: address,
+      status: status);
   }
-
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is Address &&
-        id == other.id &&
-        _name == other._name &&
-        _pincode == other._pincode &&
-        _userID == other._userID &&
-        _phone == other._phone &&
-        _email == other._email &&
-        _address == other._address &&
-        _status == other._status;
+      id == other.id &&
+      _name == other._name &&
+      _pincode == other._pincode &&
+      _userID == other._userID &&
+      _phone == other._phone &&
+      _email == other._email &&
+      _address == other._address &&
+      _status == other._status;
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("Address {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("name=" + "$_name" + ", ");
-    buffer.write(
-        "pincode=" + (_pincode != null ? _pincode!.toString() : "null") + ", ");
+    buffer.write("pincode=" + (_pincode != null ? _pincode!.toString() : "null") + ", ");
     buffer.write("userID=" + "$_userID" + ", ");
     buffer.write("phone=" + "$_phone" + ", ");
     buffer.write("email=" + "$_email" + ", ");
     buffer.write("address=" + "$_address" + ", ");
-    buffer.write(
-        "status=" + (_status != null ? _status!.toString() : "null") + ", ");
-    buffer.write("createdAt=" +
-        (_createdAt != null ? _createdAt!.format() : "null") +
-        ", ");
-    buffer.write(
-        "updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
+    buffer.write("status=" + (_status != null ? _status!.toString() : "null") + ", ");
+    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
-  Address copyWith(
-      {String? name,
-      int? pincode,
-      String? userID,
-      String? phone,
-      String? email,
-      String? address,
-      bool? status}) {
+  
+  Address copyWith({String? name, int? pincode, String? userID, String? phone, String? email, String? address, bool? status}) {
     return Address._internal(
-        id: id,
-        name: name ?? this.name,
-        pincode: pincode ?? this.pincode,
-        userID: userID ?? this.userID,
-        phone: phone ?? this.phone,
-        email: email ?? this.email,
-        address: address ?? this.address,
-        status: status ?? this.status);
+      id: id,
+      name: name ?? this.name,
+      pincode: pincode ?? this.pincode,
+      userID: userID ?? this.userID,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
+      address: address ?? this.address,
+      status: status ?? this.status);
   }
-
-  Address.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        _name = json['name'],
-        _pincode = (json['pincode'] as num?)?.toInt(),
-        _userID = json['userID'],
-        _phone = json['phone'],
-        _email = json['email'],
-        _address = json['address'],
-        _status = json['status'],
-        _createdAt = json['createdAt'] != null
-            ? TemporalDateTime.fromString(json['createdAt'])
-            : null,
-        _updatedAt = json['updatedAt'] != null
-            ? TemporalDateTime.fromString(json['updatedAt'])
-            : null;
-
+  
+  Address.fromJson(Map<String, dynamic> json)  
+    : id = json['id'],
+      _name = json['name'],
+      _pincode = (json['pincode'] as num?)?.toInt(),
+      _userID = json['userID'],
+      _phone = json['phone'],
+      _email = json['email'],
+      _address = json['address'],
+      _status = json['status'],
+      _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
+      _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
+  
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': _name,
-        'pincode': _pincode,
-        'userID': _userID,
-        'phone': _phone,
-        'email': _email,
-        'address': _address,
-        'status': _status,
-        'createdAt': _createdAt?.format(),
-        'updatedAt': _updatedAt?.format()
-      };
-
+    'id': id, 'name': _name, 'pincode': _pincode, 'userID': _userID, 'phone': _phone, 'email': _email, 'address': _address, 'status': _status, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+  };
+  
   Map<String, Object?> toMap() => {
-        'id': id,
-        'name': _name,
-        'pincode': _pincode,
-        'userID': _userID,
-        'phone': _phone,
-        'email': _email,
-        'address': _address,
-        'status': _status,
-        'createdAt': _createdAt,
-        'updatedAt': _updatedAt
-      };
+    'id': id, 'name': _name, 'pincode': _pincode, 'userID': _userID, 'phone': _phone, 'email': _email, 'address': _address, 'status': _status, 'createdAt': _createdAt, 'updatedAt': _updatedAt
+  };
 
-  static final QueryModelIdentifier<AddressModelIdentifier> MODEL_IDENTIFIER =
-      QueryModelIdentifier<AddressModelIdentifier>();
+  static final QueryModelIdentifier<AddressModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<AddressModelIdentifier>();
   static final QueryField ID = QueryField(fieldName: "id");
   static final QueryField NAME = QueryField(fieldName: "name");
   static final QueryField PINCODE = QueryField(fieldName: "pincode");
@@ -252,83 +192,93 @@ class Address extends Model {
   static final QueryField EMAIL = QueryField(fieldName: "email");
   static final QueryField ADDRESS = QueryField(fieldName: "address");
   static final QueryField STATUS = QueryField(fieldName: "status");
-  static var schema =
-      Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
+  static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Address";
     modelSchemaDefinition.pluralName = "Addresses";
-
+    
     modelSchemaDefinition.authRules = [
-      AuthRule(authStrategy: AuthStrategy.PUBLIC, operations: const [
-        ModelOperation.CREATE,
-        ModelOperation.UPDATE,
-        ModelOperation.DELETE,
-        ModelOperation.READ
-      ])
+      AuthRule(
+        authStrategy: AuthStrategy.PUBLIC,
+        operations: [
+          ModelOperation.CREATE,
+          ModelOperation.UPDATE,
+          ModelOperation.DELETE,
+          ModelOperation.READ
+        ])
     ];
-
+    
     modelSchemaDefinition.indexes = [
       ModelIndex(fields: const ["userID"], name: "byUser")
     ];
-
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
-
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Address.NAME,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: Address.NAME,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Address.PINCODE,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.int)));
-
+      key: Address.PINCODE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.int)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Address.USERID,
-        isRequired: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: Address.USERID,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Address.PHONE,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: Address.PHONE,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Address.EMAIL,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: Address.EMAIL,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Address.ADDRESS,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
-
+      key: Address.ADDRESS,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Address.STATUS,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.bool)));
-
+      key: Address.STATUS,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.bool)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-        fieldName: 'createdAt',
-        isRequired: false,
-        isReadOnly: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
-
+      fieldName: 'createdAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
-        fieldName: 'updatedAt',
-        isRequired: false,
-        isReadOnly: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+      fieldName: 'updatedAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
   });
 }
 
 class _AddressModelType extends ModelType<Address> {
   const _AddressModelType();
-
+  
   @override
   Address fromJson(Map<String, dynamic> jsonData) {
     return Address.fromJson(jsonData);
   }
-
+  
   @override
   String modelName() {
     return 'Address';
@@ -344,32 +294,37 @@ class AddressModelIdentifier implements ModelIdentifier<Address> {
   final String id;
 
   /** Create an instance of AddressModelIdentifier using [id] the primary key. */
-  const AddressModelIdentifier({required this.id});
-
+  const AddressModelIdentifier({
+    required this.id});
+  
   @override
-  Map<String, dynamic> serializeAsMap() => (<String, dynamic>{'id': id});
-
+  Map<String, dynamic> serializeAsMap() => (<String, dynamic>{
+    'id': id
+  });
+  
   @override
   List<Map<String, dynamic>> serializeAsList() => serializeAsMap()
-      .entries
-      .map((entry) => (<String, dynamic>{entry.key: entry.value}))
-      .toList();
-
+    .entries
+    .map((entry) => (<String, dynamic>{ entry.key: entry.value }))
+    .toList();
+  
   @override
   String serializeAsString() => serializeAsMap().values.join('#');
-
+  
   @override
   String toString() => 'AddressModelIdentifier(id: $id)';
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
-
-    return other is AddressModelIdentifier && id == other.id;
+    
+    return other is AddressModelIdentifier &&
+      id == other.id;
   }
-
+  
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode =>
+    id.hashCode;
 }

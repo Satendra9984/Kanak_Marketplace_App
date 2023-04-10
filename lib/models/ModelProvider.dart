@@ -41,7 +41,7 @@ export 'Wallet.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "0461bb9f628e7573318fe13e05cf3ce5";
+  String version = "e30a5d92a607e8432b127ca5c27c4560";
   @override
   List<ModelSchema> modelSchemas = [Address.schema, BankAccount.schema, MarketRate.schema, Token.schema, Transaction.schema, User.schema, Wallet.schema];
   static final ModelProvider _instance = ModelProvider();

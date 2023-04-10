@@ -90,7 +90,7 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,7 +105,7 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
                 //     width: 60,
                 //   ),
                 // ),
-                GoldRateGraph(),
+                const GoldRateGraph(),
                 const SizedBox(height: 25),
                 Text(
                   'Live Gold Rate: ${widget.goldApiRateData['current_price']} ₹',
@@ -416,7 +416,7 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
                 children: [
                   /// CASH BALANCE
                   Text(
-                    'Cash Balance: ${user!.wallet?.gold_balance} ₹',
+                    'Cash Balance: ${user?.wallet?.balance} ₹',
                     style: TextStyle(
                       fontSize: body2,
                       color: text300,

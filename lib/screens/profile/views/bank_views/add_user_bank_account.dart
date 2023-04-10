@@ -220,7 +220,7 @@ class _AddUserBankDetailsPageState
                   User? user = ref.read(userProvider)!;
                   debugPrint(user.id.toString());
 
-                  await GoldServices.getUserBanksList(userId: user.id);
+                  await GoldServices.getUserBankAccounts(userId: user.id);
 
                   if (_formKey.currentState!.validate()) {
                     setState(() {

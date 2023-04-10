@@ -31,21 +31,39 @@ class ConfirmButtonPressedEvent extends BuyEvent {
     required this.user
   });
   @override
-  List<Object?> get props => [transaction];
+  List<Object?> get props => [
+    transaction
+  ];
+}
+
+class PaymentMethodChosen extends BuyEvent {
+  final PaymentMethod method;
+  PaymentMethodChosen({
+    required this.method
+  });
+  @override
+  List<Object?> get props => [
+    method
+  ];
+}
+
+class ChoosePaymentMethod extends BuyEvent {
+  @override
+  List<Object?> get props => [];
 }
 
 class PaymentErrorEvent extends BuyEvent {
-  final PaymentFailureResponse response;
-  PaymentErrorEvent({required this.response});
+  final PaymentFailureResponse? response;
+  PaymentErrorEvent({this.response});
   @override
   List<Object?> get props => [response];
 }
 
 class PaymentSuccessEvent extends BuyEvent {
   final User user;
-  final PaymentSuccessResponse response;
+  final PaymentSuccessResponse? response;
   PaymentSuccessEvent({
-    required this.response,
+    this.response,
     required this.user
   });
   @override
@@ -78,8 +96,12 @@ class PurchaseSuccessEvent extends BuyEvent {
 }
 
 class WalletUpdateSuccessEvent extends BuyEvent {
+  final Wallet wallet;
+  WalletUpdateSuccessEvent({
+    required this.wallet
+  });
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [wallet];
 }
 
 class WalletUpdateFailedEvent extends BuyEvent {

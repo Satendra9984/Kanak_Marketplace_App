@@ -110,29 +110,6 @@ class GoldServices {
     return addressList;
   }
 
-  static Future<List<dynamic>> getUserBanksList(
-      {required String userId}) async {
-    List<dynamic> bList = [];
-
-    try {
-      String? token = await LocalDBServices.getGPAccessToken();
-      if (token == null) {
-        return bList;
-      }
-      await HttpServices.sendGetReq('$_baseUrl/users/$userId/banks',
-          extraHeaders: {
-            'Authorization': 'Bearer $token',
-          }).then((banksList) {
-        debugPrint(banksList.toString());
-      });
-    } catch (e) {
-      debugPrint(e.toString());
-      return bList;
-    }
-
-    return bList;
-  }
-
   static Future<List<dynamic>> getStateCityList() async {
     List<dynamic> list = [];
     try {
@@ -175,6 +152,30 @@ class GoldServices {
       return list;
     }
     return list;
+  }
+
+  // get user bank accounts
+  static Future<List<UserBank>> getUserBankAccounts({
+    required String userId
+  }) async {
+    List<UserBank> result = [];
+    final authToken = await LocalDBServices.getGPAccessToken();
+    await HttpServices.sendGetReq('${_baseUrl}users/$userId/banks', extraHeaders: {
+      'Authorization': 'Bearer $authToken'
+    }).then((banksRes) {
+      if (banksRes == null) {
+        return;
+      }
+      if (!banksRes.containsKey('statusCode') || banksRes['statusCode'] != 200) {
+        return;
+      }
+      final List<Map<String, dynamic>> bankList = banksRes['result'];
+      for (var bank in bankList) {
+        result.add(UserBank.fromJson(bank));
+      }
+      safePrint(bankList.length);
+    });
+    return result;
   }
 
   // create user account
@@ -911,14 +912,16 @@ class GoldServices {
         },
         body: {
           'bankId': bankAccount.bankId,
-          'accountNumber': int.parse(bankAccount.accNo!),
+          'accountNumber': bankAccount.accNo,
           'accountName': bankAccount.accName,
           'ifscCode': bankAccount.ifsc,
-          '_method': 'PUT',
+          'status': bankAccount.status == true ? 'active' : 'deactive',
+          // '_method': 'PUT',
         }).then((value) {
       if (value == null) {
         return;
       }
+      debugPrint('status of bank update-----------> ${value['statusCode']}');
       if (!value.containsKey('statusCode') || value['statusCode'] != 200) {
         return;
       }
@@ -929,7 +932,7 @@ class GoldServices {
   }
 
   // get user bank
-  static Future<UserBank?> getUserBank({required String userId}) async {
+  static Future<UserBank?> getUserBank({required String userId, required }) async {
     UserBank? userBankAcc;
     final authToken = await LocalDBServices.getGPAccessToken();
     await HttpServices.sendGetReq(

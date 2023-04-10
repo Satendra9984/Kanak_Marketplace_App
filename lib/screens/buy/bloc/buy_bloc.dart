@@ -13,6 +13,11 @@ import 'package:tasvat/services/gold_services.dart';
 part 'buy_event.dart';
 part 'buy_state.dart';
 
+enum PaymentMethod {
+  wallet,
+  external
+}
+
 class BuyBloc extends Bloc<BuyEvent, BuyState> {
   late Razorpay _razorpay;
   late Timer _timer;
@@ -64,23 +69,50 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
     on<TickEvent>((event, emit) {
       emit(state.copyWith(remainingTime: event.seconds));
-    });
+    });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 
     // when user presses the confirm button
     on<ConfirmButtonPressedEvent>((event, emit) async {
+      emit(state.copyWith(
+        status: BuyStatus.progress,
+        transaction: event.transaction
+      ));
+      add(ChoosePaymentMethod());
+    });
+
+    on<ChoosePaymentMethod>((event, emit) {
+      emit(state.copyWith(status: BuyStatus.choose));
+    });
+
+    on<PaymentMethodChosen>((event, emit) async {
       emit(state.copyWith(status: BuyStatus.progress));
       await DatastoreServices.addPendingTransaction(
-              transaction: event.transaction)
-          .then((tx) {
-        _checkOutPayment(event.user, state.transaction!.amount!);
+        transaction: state.transaction!
+      ).then((tx) async {
+        if (event.method == PaymentMethod.external) {
+          _checkOutPayment(_user, state.transaction!.amount!);
+        } else if (event.method == PaymentMethod.wallet) {
+          await DatastoreServices.updateWalletBalance(
+            wallet: _user.wallet!,
+            balance: _user.wallet!.balance! - state.transaction!.amount!
+          ).then((wallet) {
+            if (wallet == null) {
+              add(PaymentErrorEvent());
+              return;
+            }
+            _user = _user.copyWith(wallet: wallet);
+            add(PaymentSuccessEvent(user: _user));
+          });
+        }
       });
+      
     });
 
     // when payment is successful
     on<PaymentSuccessEvent>((event, emit) async {
       safePrint('|=======================> Successful Payment');
       await DatastoreServices.markSuccessfulPayment(
-              transaction: state.transaction!, txId: event.response.paymentId!)
+            transaction: state.transaction!, txId: event.response?.paymentId ?? 'wallet-${state.transaction!.id}')
           .then((tx) async {
         if (tx == null) {
           safePrint('Error Marking txId');
@@ -88,7 +120,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
         }
         emit(state.copyWith(
           transaction: state.transaction!
-          .copyWith(txId: event.response.paymentId))
+          .copyWith(txId: event.response?.paymentId ?? 'wallet'))
         );
         await GoldServices.buyGold(
                 user: event.user,
@@ -119,7 +151,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       emit(state.copyWith(
         transaction: state.transaction!.copyWith(
           gpTxId: event.info.transactionId,
-          balance: double.parse(event.info.goldBalance)
+          gold_balance: double.parse(event.info.goldBalance)
         )
       ));
       await DatastoreServices.markSuccessfulPurchase(
@@ -131,13 +163,15 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
           return;
         }
         await DatastoreServices.updateWalletGoldBalance(
-                wallet: _user.wallet!, balance: tx.balance!)
+                wallet: _user.wallet!, goldBalance: tx.gold_balance!)
             .then((wallet) {
           if (wallet == null) {
             add(WalletUpdateFailedEvent());
             return;
           }
-          add(WalletUpdateSuccessEvent());
+          add(WalletUpdateSuccessEvent(
+            wallet: wallet
+          ));
         });
       });
     });
@@ -156,13 +190,24 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       await DatastoreServices.markWalletUpdateFail(
               transaction: state.transaction!)
           .then((value) {
-        emit(state.copyWith(status: BuyStatus.failed));
+        emit(
+          state.copyWith(
+            status: BuyStatus.failed,
+            transaction: state.transaction?.copyWith(status: TransactionStatus.FAILED)
+          )
+        );
       });
     });
 
     // when gold successfully added to wallet
     on<WalletUpdateSuccessEvent>((event, emit) {
-      emit(state.copyWith(status: BuyStatus.success));
+      _user = _user.copyWith(wallet: event.wallet);
+      emit(state.copyWith(
+        status: BuyStatus.success,
+        transaction: state.transaction
+        ?.copyWith(status: TransactionStatus.SUCCESSFUL)
+        )
+      );
     });
   }
 
@@ -209,6 +254,8 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       safePrint(response.walletName);
     });
   }
+
+  get getUser => _user;
 
   void closeTimer() {
     _timer.cancel();

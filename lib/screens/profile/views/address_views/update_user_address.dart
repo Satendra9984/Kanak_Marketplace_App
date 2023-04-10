@@ -75,7 +75,7 @@ class _UserAddressPageState extends ConsumerState<UpdateUserAddressPage> {
   void initState() {
     // _initializeStatesList();
     _phoneCtrl.text = widget.addressForUpdation.phone ?? '';
-    _pinCodeCtrl.text = widget.addressForUpdation.pincode.toString() ?? '';
+    _pinCodeCtrl.text = widget.addressForUpdation.pincode.toString();
     _addressCtrl.text = widget.addressForUpdation.address ?? '';
     _emailCtrl.text = widget.addressForUpdation.email ?? '';
     _nameCtrl.text = widget.addressForUpdation.name ?? '';

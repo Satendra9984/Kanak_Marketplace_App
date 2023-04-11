@@ -9,33 +9,32 @@ import 'package:tasvat/models/gold_models/buy_info_model.dart';
 import 'package:tasvat/models/gold_models/rate_model.dart';
 import 'package:tasvat/services/datastore_services.dart';
 import 'package:tasvat/services/gold_services.dart';
+import 'package:tasvat/utils/loggs.dart';
 
 part 'buy_event.dart';
 part 'buy_state.dart';
-
-enum PaymentMethod {
-  wallet,
-  external
-}
 
 class BuyBloc extends Bloc<BuyEvent, BuyState> {
   late Razorpay _razorpay;
   late Timer _timer;
   late User _user;
 
-  BuyBloc() : super(const BuyState(status: BuyStatus.initial)) {
-
+  BuyBloc() : super(const BuyState(status: BuyStatus.initial, method: PaymentMethod.wallet)) {
     on<ResetEvent>((event, emit) {
+      logWithColor(message: 'RESET EVENT');
       _user = User();
       emit( const BuyState(
+        method: PaymentMethod.wallet,
         transaction: null,
         rates: null,
         remainingTime: 180,
         status: BuyStatus.initial
       ));
     });
+
     // starting event for buy confirm screen
     on<RateConfirmEvent>((event, emit) async {
+      logWithColor(message: 'RATE EVENT');
       _razorpayInit();
       _user = event.user;
       emit(state.copyWith(
@@ -73,25 +72,14 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
     // when user presses the confirm button
     on<ConfirmButtonPressedEvent>((event, emit) async {
-      emit(state.copyWith(
-        status: BuyStatus.progress,
-        transaction: event.transaction
-      ));
-      add(ChoosePaymentMethod());
-    });
-
-    on<ChoosePaymentMethod>((event, emit) {
-      emit(state.copyWith(status: BuyStatus.choose));
-    });
-
-    on<PaymentMethodChosen>((event, emit) async {
+      logWithColor(message: 'CONFIRM BUTTON PRESSED EVENT');
       emit(state.copyWith(status: BuyStatus.progress));
       await DatastoreServices.addPendingTransaction(
         transaction: state.transaction!
       ).then((tx) async {
-        if (event.method == PaymentMethod.external) {
+        if (state.method == PaymentMethod.external) {
           _checkOutPayment(_user, state.transaction!.amount!);
-        } else if (event.method == PaymentMethod.wallet) {
+        } else if (state.method == PaymentMethod.wallet) {
           await DatastoreServices.updateWalletBalance(
             wallet: _user.wallet!,
             balance: _user.wallet!.balance! - state.transaction!.amount!
@@ -105,22 +93,31 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
           });
         }
       });
-      
+    });
+
+    on<ChoosePaymentMethod>((event, emit) {
+      logWithColor(message: 'CHOOSE PAYMENT EVENT');
+      emit(state.copyWith(status: BuyStatus.choose));
+    });
+
+    on<PaymentMethodChosen>((event, emit) async {
+      logWithColor(message: 'METHOD CHOSEN EVENT');
+      emit(state.copyWith(method: event.method, status: BuyStatus.initial));
     });
 
     // when payment is successful
     on<PaymentSuccessEvent>((event, emit) async {
-      safePrint('|=======================> Successful Payment');
+      logWithColor(message: '|=======================> Successful Payment', color: 'green');
       await DatastoreServices.markSuccessfulPayment(
-            transaction: state.transaction!, txId: event.response?.paymentId ?? 'wallet-${state.transaction!.id}')
+            transaction: state.transaction!,
+            txId: event.response?.paymentId ?? 'wallet-${state.transaction!.id}')
           .then((tx) async {
         if (tx == null) {
-          safePrint('Error Marking txId');
+          logWithColor(message: 'Error Marking txId', color: 'red');
           return;
         }
         emit(state.copyWith(
-          transaction: state.transaction!
-          .copyWith(txId: event.response?.paymentId ?? 'wallet'))
+          transaction: tx)
         );
         await GoldServices.buyGold(
                 user: event.user,
@@ -138,7 +135,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
     // when gold purchase fails
     on<PaymentErrorEvent>((event, emit) async {
-      safePrint('|=======================> Failed Payment');
+      logWithColor(message: '|=======================> Failed Payment', color: 'red');
       await DatastoreServices.markFailedPayment(
           transaction: state.transaction!).then((value) {
             emit(state.copyWith(status: BuyStatus.failed));
@@ -147,7 +144,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
     // when gold purchase is successful
     on<PurchaseSuccessEvent>((event, emit) async {
-      safePrint(event.info.goldBalance + event.info.transactionId);
+      logWithColor(message: event.info.goldBalance + event.info.transactionId);
       emit(state.copyWith(
         transaction: state.transaction!.copyWith(
           gpTxId: event.info.transactionId,
@@ -178,6 +175,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
     // when gold purchase failed
     on<PurchaseErrorEvent>((event, emit) async {
+      logWithColor(message: 'PURCHASE ERROR EVENT', color: 'red');
       await DatastoreServices.markFailedPurchase(
               transaction: state.transaction!)
           .then((value) {
@@ -187,6 +185,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
     // when gold adding to wallet is failed
     on<WalletUpdateFailedEvent>((event, emit) async {
+      logWithColor(message: 'WALLET UPADTE FAILED EVENT', color: 'red');
       await DatastoreServices.markWalletUpdateFail(
               transaction: state.transaction!)
           .then((value) {
@@ -201,6 +200,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
 
     // when gold successfully added to wallet
     on<WalletUpdateSuccessEvent>((event, emit) {
+      logWithColor(message: 'WALLET UPDATE SUCCESS EVENT', color: 'red');
       _user = _user.copyWith(wallet: event.wallet);
       emit(state.copyWith(
         status: BuyStatus.success,
@@ -230,8 +230,8 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
       'name': 'Tasvat Private Ltd.',
       'key': 'rzp_test_nxde3wSg0ubBiN',
       'prefill': {
-        'contact': '7029096692',
-        'email': 'subhadeepchowdhury41@gmail.com'
+        'contact': user.phone,
+        'email': user.email
       },
       'external': {
         'wallet': ['paytm', 'gpay']

@@ -5,8 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/buy/bloc/buy_bloc.dart';
 import 'package:tasvat/screens/buy/views/buy_completed.dart';
-import 'package:tasvat/screens/registration/bloc/registration_bloc.dart';
-import '../../../services/datastore_services.dart';
 import '../../../utils/app_constants.dart';
 import '../../../widgets/row_details_widget.dart';
 
@@ -24,7 +22,6 @@ class _BuyConfirmationScreenState extends ConsumerState<BuyConfirmationScreen> {
 
   @override
   void dispose() {
-    safePrint('XXXXXXXXXXXXXXXXXXXXXXXXXX| Disposed');
     _buyBloc.closeTimer();
     _buyBloc.add(ResetEvent());
     super.dispose();
@@ -56,7 +53,6 @@ class _BuyConfirmationScreenState extends ConsumerState<BuyConfirmationScreen> {
               context: context,
               builder: ((context) => BlocBuilder<BuyBloc, BuyState>(
                     builder: (context, state) {
-                      safePrint('.......${state.method}');
                       return Column(
                         children: [
                           Container(

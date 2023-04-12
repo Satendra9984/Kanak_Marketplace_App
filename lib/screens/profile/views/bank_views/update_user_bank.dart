@@ -42,6 +42,7 @@ class _UpdateUserBankDetailsPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       backgroundColor: background,
       body: Form(
         key: _formKey,

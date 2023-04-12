@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:tasvat/services/graph_services.dart';
 import '../../utils/app_colors.dart';
+import '../../utils/app_constants.dart';
 
 class GoldRateGraph extends StatefulWidget {
   const GoldRateGraph({super.key});
@@ -10,104 +14,123 @@ class GoldRateGraph extends StatefulWidget {
 }
 
 class _GoldRateGraphState extends State<GoldRateGraph> {
+  @override
+  initState() {
+    super.initState();
+
+    debugPrint('graph init state');
+  }
+
   List<Color> gradientColors = [
-    AppColors.contentColorCyan,
-    AppColors.contentColorBlue,
+    AppColors.contentColorYellow,
+    AppColors.contentColorYellow,
   ];
 
-  bool showAvg = false;
+  GraphTimeRange _graphTimeRange = GraphTimeRange.week;
+
+  Future<ChartDataHelper?> _getChartData() async {
+    try {
+      if (_graphTimeRange == GraphTimeRange.week) {
+        return _get1WeekData();
+      } else if (_graphTimeRange == GraphTimeRange.year) {
+        return _get1YearData();
+      }
+    } catch (e) {
+      // debugPrint(e.toString());
+      rethrow;
+    }
+    return null;
+  }
+
+  Future<ChartDataHelper?> _get1YearData() async {
+    await GraphServices.get1YearData().then((graphList) {
+      if (graphList != null) {
+        return ChartDataHelper.fromJson(graphList: graphList);
+      }
+    });
+    return null;
+  }
+
+  Future<ChartDataHelper?> _get1WeekData() async {
+    try {
+      await GraphServices.get1WeekData().then((graphList) {
+        debugPrint(graphList.toString());
+        if (graphList != null) {
+          return ChartDataHelper.fromJson(graphList: graphList);
+        }
+      });
+    } catch (E) {
+      debugPrint(E.toString());
+      rethrow;
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: 1.70,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              right: 10,
-              left: 10,
-              top: 8,
-              bottom: 5,
-            ),
-            child: LineChart(
-              showAvg ? avgData() : mainData(),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 60,
-          height: 34,
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                showAvg = !showAvg;
-              });
-            },
-            child: Text(
-              'avg',
-              style: TextStyle(
-                fontSize: 12,
-                color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
+    debugPrint('graph build');
+    return FutureBuilder(
+        future: _getChartData(),
+        builder: (context, AsyncSnapshot<ChartDataHelper?> snap) {
+          if (snap.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snap.hasError) {
+            return Center(child: Text('Something Went Wrong ${snap.error}'));
+          } else if (snap.data == null) {
+            return const Center(child: Text('Data is null'));
+          }
+
+          return Column(
+            children: [
+              Stack(
+                children: <Widget>[
+                  AspectRatio(
+                    aspectRatio: 1.70,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        right: 10,
+                        left: 10,
+                        top: 8,
+                        bottom: 5,
+                      ),
+                      child: LineChart(
+                        mainData(snap.data!),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-        ),
-      ],
-    );
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: () async {
+                      setState(() {
+                        _graphTimeRange = GraphTimeRange.week;
+                      });
+                    },
+                    child: Text(
+                      '1W',
+                      style: TextStyle(
+                        color: text500,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                      onPressed: () async {
+                        setState(() {
+                          _graphTimeRange = GraphTimeRange.year;
+                        });
+                      },
+                      child: Text('1Y', style: TextStyle(color: text500))),
+                ],
+              ),
+            ],
+          );
+        });
   }
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-    );
-    Widget text;
-    switch (value.toInt()) {
-      case 2:
-        text = const Text('MAR', style: style);
-        break;
-      case 5:
-        text = const Text('JUN', style: style);
-        break;
-      case 8:
-        text = const Text('SEP', style: style);
-        break;
-      default:
-        text = const Text('', style: style);
-        break;
-    }
-
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      child: text,
-    );
-  }
-
-  // Widget leftTitleWidgets(double value, TitleMeta meta) {
-  //   const style = TextStyle(
-  //     fontWeight: FontWeight.bold,
-  //     fontSize: 15,
-  //   );
-  //   String text;
-  //   switch (value.toInt()) {
-  //     case 1:
-  //       text = '10K';
-  //       break;
-  //     case 3:
-  //       text = '30k';
-  //       break;
-  //     case 5:
-  //       text = '50k';
-  //       break;
-  //     default:
-  //       return Container();
-  //   }
-  //
-  //   return Text(text, style: style, textAlign: TextAlign.left);
-  // }
-
-  LineChartData mainData() {
+  LineChartData mainData(ChartDataHelper charHelperData) {
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -137,10 +160,10 @@ class _GoldRateGraphState extends State<GoldRateGraph> {
         ),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
-            showTitles: true,
+            showTitles: false,
             reservedSize: 30,
             interval: 1,
-            getTitlesWidget: bottomTitleWidgets,
+            getTitlesWidget: null,
           ),
         ),
         leftTitles: AxisTitles(
@@ -153,33 +176,29 @@ class _GoldRateGraphState extends State<GoldRateGraph> {
         ),
       ),
       borderData: FlBorderData(
-        show: true,
+        show: false,
         border: Border.all(color: const Color(0xff37434d)),
       ),
-      minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
+      minX: charHelperData.minX,
+      maxX: charHelperData.maxX,
+      minY: charHelperData.minY,
+      maxY: charHelperData.maxY,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 3),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
-          ],
+          // spots: const [
+          //   FlSpot(0, 3),
+          //   FlSpot(2.6, 2),
+          //   FlSpot(4.9, 5),
+          //   FlSpot(6.8, 3.1),
+          //   FlSpot(8, 4),
+          //   FlSpot(9.5, 3),
+          //   FlSpot(11, 4),
+          // ],
+          spots: charHelperData.charFlSpotList,
           isCurved: true,
-          gradient: LinearGradient(
-            colors: gradientColors,
-          ),
-          barWidth: 5,
+          gradient: LinearGradient(colors: gradientColors),
+          barWidth: 2.5,
           isStrokeCapRound: true,
-          dotData: FlDotData(
-            show: false,
-          ),
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
@@ -190,103 +209,95 @@ class _GoldRateGraphState extends State<GoldRateGraph> {
           ),
         ),
       ],
+      // TODO: SHOW TOOL TIP INDICATORS PARAMETERS
+      // showingTooltipIndicators: charHelperData.showToolTipIndicators,
     );
   }
 
-  LineChartData avgData() {
-    return LineChartData(
-      lineTouchData: LineTouchData(enabled: false),
-      gridData: FlGridData(
-        show: true,
-        drawHorizontalLine: true,
-        verticalInterval: 1,
-        horizontalInterval: 1,
-        getDrawingVerticalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            getTitlesWidget: bottomTitleWidgets,
-            interval: 1,
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: null,
-            reservedSize: 42,
-            interval: 1,
-          ),
-        ),
-        topTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        rightTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      ),
-      borderData: FlBorderData(
-        show: true,
-        border: Border.all(color: const Color(0xff37434d)),
-      ),
-      minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
-      lineBarsData: [
-        LineChartBarData(
-          spots: const [
-            FlSpot(0, 3.44),
-            FlSpot(2.6, 3.44),
-            FlSpot(4.9, 3.44),
-            FlSpot(6.8, 3.44),
-            FlSpot(8, 3.44),
-            FlSpot(9.5, 3.44),
-            FlSpot(11, 3.44),
-          ],
-          isCurved: true,
-          gradient: LinearGradient(
-            colors: [
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-            ],
-          ),
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: FlDotData(
-            show: false,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: [
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-              ],
-            ),
-          ),
-        ),
-      ],
+  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+    );
+    Widget text;
+    switch (value.toInt()) {
+      case 2:
+        text = const Text('MAR', style: style);
+        break;
+      case 5:
+        text = const Text('JUN', style: style);
+        break;
+      case 8:
+        text = const Text('SEP', style: style);
+        break;
+      default:
+        text = const Text('', style: style);
+        break;
+    }
+
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      child: text,
+    );
+  }
+}
+
+enum GraphTimeRange {
+  day,
+  week,
+  year,
+  threeYear,
+  fiveYear,
+}
+
+class ChartDataHelper {
+  final List<FlSpot> charFlSpotList;
+  // final List<ShowingTooltipIndicators> showToolTipIndicators;
+  final double minX;
+  final double minY;
+  final double maxX;
+  final double maxY;
+
+  ChartDataHelper({
+    required this.charFlSpotList,
+    // required this.showToolTipIndicators,
+    required this.maxX,
+    required this.maxY,
+    required this.minX,
+    required this.minY,
+  });
+
+  factory ChartDataHelper.fromJson({required Map<String, dynamic> graphList}) {
+    double minx = 0;
+    double miny = double.infinity;
+    double maxx = double.minPositive;
+    double maxy = double.minPositive;
+
+    List<FlSpot> charFlSpotList = [];
+    List<ShowingTooltipIndicators> showToolTipData = [];
+    double x = 0;
+    for (String? key in graphList.keys) {
+      if (key == null) {
+        continue;
+      }
+      double price = double.tryParse(graphList[key]['INR']) ?? 0.0;
+      FlSpot spot = FlSpot(x, price);
+      charFlSpotList.add(spot);
+
+      // showToolTipData.add('$key\n${price.toStringAsFixed(4)}');
+
+      maxx++;
+      miny = min(miny, price);
+      maxy = max(maxy, price);
+    }
+
+    return ChartDataHelper(
+      charFlSpotList: charFlSpotList,
+      // showToolTipIndicators: showToolTipData,
+      maxX: maxx,
+      maxY: maxy,
+      minX: minx,
+      minY: miny,
     );
   }
 }

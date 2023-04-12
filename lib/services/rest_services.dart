@@ -18,7 +18,7 @@ class HttpServices {
         result = jsonDecode(res.body) as Map<String, dynamic>;
       }
     });
-    //debugPrint('result : $result');
+    // debugPrint('result : $result');
     return result;
   }
 

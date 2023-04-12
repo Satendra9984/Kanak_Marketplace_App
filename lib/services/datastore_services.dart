@@ -496,6 +496,9 @@ class DatastoreServices {
           // fetchedUser = user.data!;
           User newBUser = user.data!.copyWith(bankAccounts: bankList);
           fetchedUser = newBUser;
+          fetchedUser;
+          debugPrint(
+              '---------------- banks from datastore\n ${fetchedUser?.bankAccounts?.length}');
         }
         final req =
             ModelQueries.list(Address.classType, where: Address.USERID.eq(id));

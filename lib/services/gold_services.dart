@@ -15,32 +15,50 @@ class GoldServices {
   static const String _baseUrl =
       'https://uat-api.augmontgold.com/api/merchant/v1/';
 
-  static Future<Map<dynamic, dynamic>> getUserDetails() async {
-    Map<dynamic, dynamic> detailsMap = {};
+  static Future<Map<String, dynamic>?> getUserDetails(
+      {required String userId}) async {
+    Map<String, dynamic>? detailsMap;
 
-    detailsMap = {
-      "statusCode": 200,
-      "message": "User details retrieved successfully.",
-      "result": {
-        "data": {
-          "userName": "Vikrant Lad",
-          "dateOfBirth": "1994-01-24",
-          "gender": null,
-          "userEmail": "vikrant@gmail.com",
-          "userAddress": "Sej Plaze, Malad West",
-          "userStateId": "qYMjvMvX",
-          "userCityId": "z6KkbrMb",
-          "userPincode": "401105",
-          "nomineeName": "Vishal",
-          "nomineeRelation": "Brother",
-          "nomineeDateOfBirth": "2001-02-11",
-          "kycStatus": "Pending",
-          "userState": "Maharashtra",
-          "userCity": "Mumbai City"
-        }
+    String? token = await LocalDBServices.getGPAccessToken();
+    if (token == null) {
+      return null;
+    }
+    await HttpServices.sendGetReq('${_baseUrl}users/$userId', extraHeaders: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    }).then((response) {
+      if (response == null || response['statusCode'] != 200) {
+        return null;
       }
-    };
-    return detailsMap['result']['data'];
+      // debugPrint(
+      //     'getdata\n: $response, \ntype: ${response['result']['data'].runtimeType}');
+      // debugPrint(response['result']['data'].toString());
+      detailsMap = response['result']['data'] as Map<String, dynamic>;
+    });
+
+    // detailsMap = {
+    //   "statusCode": 200,
+    //   "message": "User details retrieved successfully.",
+    //   "result": {
+    //     "data": {
+    //       "userName": "Vikrant Lad",
+    //       "dateOfBirth": "1994-01-24",
+    //       "gender": null,
+    //       "userEmail": "vikrant@gmail.com",
+    //       "userAddress": "Sej Plaze, Malad West",
+    //       "userStateId": "qYMjvMvX",
+    //       "userCityId": "z6KkbrMb",
+    //       "userPincode": "401105",
+    //       "nomineeName": "Vishal",
+    //       "nomineeRelation": "Brother",
+    //       "nomineeDateOfBirth": "2001-02-11",
+    //       "kycStatus": "Pending",
+    //       "userState": "Maharashtra",
+    //       "userCity": "Mumbai City"
+    //     }
+    //   }
+    // };
+    return detailsMap;
   }
 
   static Future<List<dynamic>> getAddressList() async {
@@ -155,18 +173,17 @@ class GoldServices {
   }
 
   // get user bank accounts
-  static Future<List<UserBank>> getUserBankAccounts({
-    required String userId
-  }) async {
+  static Future<List<UserBank>> getUserBankAccounts(
+      {required String userId}) async {
     List<UserBank> result = [];
     final authToken = await LocalDBServices.getGPAccessToken();
-    await HttpServices.sendGetReq('${_baseUrl}users/$userId/banks', extraHeaders: {
-      'Authorization': 'Bearer $authToken'
-    }).then((banksRes) {
+    await HttpServices.sendGetReq('${_baseUrl}users/$userId/banks',
+        extraHeaders: {'Authorization': 'Bearer $authToken'}).then((banksRes) {
       if (banksRes == null) {
         return;
       }
-      if (!banksRes.containsKey('statusCode') || banksRes['statusCode'] != 200) {
+      if (!banksRes.containsKey('statusCode') ||
+          banksRes['statusCode'] != 200) {
         return;
       }
       final List<Map<String, dynamic>> bankList = banksRes['result'];
@@ -932,7 +949,8 @@ class GoldServices {
   }
 
   // get user bank
-  static Future<UserBank?> getUserBank({required String userId, required }) async {
+  static Future<UserBank?> getUserBank(
+      {required String userId, required}) async {
     UserBank? userBankAcc;
     final authToken = await LocalDBServices.getGPAccessToken();
     await HttpServices.sendGetReq(

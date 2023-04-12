@@ -312,8 +312,11 @@ class _UpdateUserBankDetailsPageState
   Future<void> updateUserBankDetails() async {
     try {
       User user = ref.read(userProvider)!;
+      // await GoldServices.getUserBanksList(userId: user.id);
+      debugPrint(widget.bankAccount.bankId);
       await GoldServices.updateBankAccount(
               bankAccount: BankAccount(
+                bankId: widget.bankAccount.bankId,
                 userID: user.id,
                 accNo: _accountNumberCtrl.text,
                 accName: _accountNameCtrl.text,
@@ -347,6 +350,7 @@ class _UpdateUserBankDetailsPageState
         });
       });
     } catch (e) {
+      debugPrint(e.toString());
       handleError();
     }
   }

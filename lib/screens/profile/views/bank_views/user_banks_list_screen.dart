@@ -26,7 +26,10 @@ class _UserBanksListScreenState extends ConsumerState<UserBanksListScreen> {
       if (banks != null && banks.isNotEmpty) {
         banksList = banks;
       }
-      debugPrint('-------------------bankslist\n ${banksList.length}');
+      // debugPrint('-------------------bankslist\n ${banksList.length}');
+      // for (BankAccount account in banksList) {
+      //   debugPrint('bankId: ${account.bankId}\n');
+      // }
       return banksList;
     } catch (e) {
       debugPrint(e.toString());

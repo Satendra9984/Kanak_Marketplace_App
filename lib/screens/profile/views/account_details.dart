@@ -1,17 +1,43 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/services/gold_services.dart';
 import 'package:tasvat/utils/app_constants.dart';
 
-class AccountDetailsScreen extends StatelessWidget {
+import '../../../models/Address.dart';
+import '../../../models/User.dart';
+
+class AccountDetailsScreen extends ConsumerWidget {
   const AccountDetailsScreen({Key? key}) : super(key: key);
 
-  Future<Map<dynamic, dynamic>> getProfileDetails() async {
-    return await GoldServices.getUserDetails();
+  Future<Map<String, dynamic>?> getProfileDetails(WidgetRef ref) async {
+    try {
+      String uid = ref.read(userProvider)!.id;
+      Map<String, dynamic>? res =
+          await GoldServices.getUserDetails(userId: uid);
+      debugPrint(res.toString());
+      return res;
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  String _getDefaultAddress(WidgetRef ref) {
+    User user = ref.read(userProvider)!;
+    List<Address> addList = user.address ?? [];
+    String? defaultAddress = user.defaultAddr;
+    debugPrint('defaultAddress: $defaultAddress');
+    Address defAdd =
+        addList.firstWhere((element) => element.id == defaultAddress);
+    return defAdd.address!;
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    double height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: background,
       appBar: AppBar(
@@ -20,14 +46,14 @@ class AccountDetailsScreen extends StatelessWidget {
         title: const Text('Account details'),
       ),
       body: FutureBuilder(
-        future: getProfileDetails(),
-        builder: (context, listSnap) {
+        future: getProfileDetails(ref),
+        builder: (context, AsyncSnapshot<Map<String, dynamic>?> listSnap) {
           if (listSnap.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
             );
-          } else if (listSnap.hasError == false) {
-            Map<dynamic, dynamic> list = listSnap.data!;
+          } else if (listSnap.hasError == false && listSnap.data != null) {
+            Map<String, dynamic> list = listSnap.data!;
 
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -35,6 +61,78 @@ class AccountDetailsScreen extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 25, left: 10, right: 10),
                 child: Column(
                   children: [
+                    Stack(
+                      children: <Widget>[
+                        Positioned(
+                          top: height * 0,
+                          height: height * 0.4,
+                          child: Container(
+                            // margin: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 20),
+                            decoration: BoxDecoration(
+                              color: text100,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Personal Details',
+                                  style: TextStyle(
+                                    fontSize: heading2,
+                                    color: text500,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                rowDetailUser('Username', list['userName']),
+                                rowDetailUser(
+                                    'Date of Birth', list['dateOfBirth']),
+                                rowDetailUser(
+                                    'Gender', list['gender'].toString()),
+                                rowDetailUser(
+                                    'User Email', list['userEmail'].toString()),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: height * 0.3,
+                          child: Container(
+                            // margin: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 20),
+                            decoration: BoxDecoration(
+                              color: text100,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Personal Details',
+                                  style: TextStyle(
+                                    fontSize: heading2,
+                                    color: text500,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                rowDetailUser('Username', list['userName']),
+                                rowDetailUser(
+                                    'Date of Birth', list['dateOfBirth']),
+                                rowDetailUser(
+                                    'Gender', list['gender'].toString()),
+                                rowDetailUser(
+                                    'User Email', list['userEmail'].toString()),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 15),
                     CircleAvatar(
                       radius: 64,
                       backgroundColor: accentBG.withOpacity(0.75),
@@ -91,8 +189,9 @@ class AccountDetailsScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          rowDetailUser('Address', list['userAddress']),
-                          rowDetailUser('State', list['userState']),
+                          // rowDetailUser(
+                          //     'Address', list['userAddress'].toString()),
+                          rowDetailUser('State', list['userState'].toString()),
                           rowDetailUser('City', list['userCity'].toString()),
                           rowDetailUser(
                               'Pincode', list['userPincode'].toString()),
@@ -145,9 +244,10 @@ class AccountDetailsScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          rowDetailUser('Nominee Name', list['nomineeName']),
                           rowDetailUser(
-                              'Nominee Relation', list['nomineeRelation']),
+                              'Nominee Name', list['nomineeName'].toString()),
+                          rowDetailUser('Nominee Relation',
+                              list['nomineeRelation'].toString()),
                           rowDetailUser('Nominee D.O.B.',
                               list['nomineeDateOfBirth'].toString()),
                         ],
@@ -159,9 +259,7 @@ class AccountDetailsScreen extends StatelessWidget {
               ),
             );
           } else {
-            return const Center(
-              child: Text('Something Went Wrong'),
-            );
+            return const Center(child: Text('Something Went Wrong'));
           }
         },
       ),

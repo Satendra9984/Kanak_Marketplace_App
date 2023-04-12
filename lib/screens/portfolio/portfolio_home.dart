@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/portfolio/gold_asset_details.dart';
 import 'package:tasvat/screens/portfolio/portfolio_sell_list.dart';
 import 'package:tasvat/utils/app_constants.dart';
-import 'package:tasvat/screens/portfolio/portfolio_assets.dart';
 import 'package:tasvat/screens/portfolio/portfolio_transactions.dart';
 import 'package:tasvat/screens/portfolio/portfolio_withdraw_orders.dart';
+import '../../models/User.dart';
 import '../../widgets/tabs.dart';
 import '../profile/views/profile_home_screen.dart';
 
-class PortfolioHome extends StatefulWidget {
+class PortfolioHome extends ConsumerStatefulWidget {
   const PortfolioHome({super.key});
 
   @override
-  State<PortfolioHome> createState() => _PortfolioHomeState();
+  ConsumerState<PortfolioHome> createState() => _PortfolioHomeState();
 }
 
-class _PortfolioHomeState extends State<PortfolioHome> {
+class _PortfolioHomeState extends ConsumerState<PortfolioHome> {
   late ScrollController _scrollController;
   int _currentTabNumber = 0;
   late PageController _pageController;
@@ -29,6 +31,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
 
   @override
   Widget build(BuildContext context) {
+    User user = ref.read(userProvider)!;
     return Scaffold(
       backgroundColor: background,
       appBar: AppBar(
@@ -48,7 +51,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (ctx) => ProfileScreen(),
+                    builder: (ctx) => const ProfileScreen(),
                   ),
                 );
               },
@@ -113,7 +116,7 @@ class _PortfolioHomeState extends State<PortfolioHome> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              '30.0',
+                              '${user.wallet?.gold_balance ?? 0.0}',
                               style: TextStyle(
                                 fontSize: heading2,
                                 color: text500,
@@ -158,11 +161,9 @@ class _PortfolioHomeState extends State<PortfolioHome> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        // const SizedBox(height: 10),
-
                         const SizedBox(height: 10),
                         Text(
-                          '9,000.00 INR',
+                          '${user.wallet?.balance} INR',
                           style: TextStyle(
                             color: text500,
                             fontSize: heading2,

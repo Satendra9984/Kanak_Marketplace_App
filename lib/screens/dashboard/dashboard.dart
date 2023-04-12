@@ -40,12 +40,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 );
               },
-              child: const CircleAvatar(
+              child: CircleAvatar(
                 // borderRadius: BorderRadius.circular(100),
                 radius: 16,
-                backgroundImage: AssetImage(
-                  'assets/images/a_man_reading.png',
-                ),
+                child: Icon(Icons.person, color: information),
+                // backgroundImage: AssetImage(
+                //   'assets/images/a_man_reading.png',
+                // ),
               ),
             ),
           ),
@@ -115,7 +116,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
             ),
-
             const SizedBox(height: 10),
 
             /// Real-Time gold price data
@@ -201,8 +201,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
 
-                  // TODO: GOLD PRICE GRAPH
-                  // GoldRateGraph(),
+                  // GOLD PRICE GRAPH
+                  GoldRateGraph(),
                 ],
               ),
             ),

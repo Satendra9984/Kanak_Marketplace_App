@@ -10,14 +10,21 @@ enum BuyStatus {
   timeout
 }
 
+enum PaymentMethod {
+  wallet,
+  external
+}
+
 @immutable
 class BuyState extends Equatable {
   final Transaction? transaction;
   final ExchangeRates? rates;
   final int? remainingTime;
   final BuyStatus? status;
+  final PaymentMethod? method;
 
   const BuyState({
+    this.method,
     this.status,
     this.transaction,
     this.rates,
@@ -27,6 +34,7 @@ class BuyState extends Equatable {
   @override
   List<Object?> get props => [
     transaction,
+    method,
     status,
     rates,
     remainingTime
@@ -36,9 +44,11 @@ class BuyState extends Equatable {
     Transaction? transaction,
     ExchangeRates? rates,
     int? remainingTime,
-    BuyStatus? status
+    BuyStatus? status,
+    PaymentMethod? method
   }) {
     return BuyState(
+      method: method ?? this.method,
       transaction: transaction ?? this.transaction,
       rates: rates ?? this.rates,
       remainingTime: remainingTime ?? this.remainingTime,

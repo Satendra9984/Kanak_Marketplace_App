@@ -166,7 +166,7 @@ class DatastoreServices {
 
   // mark payment success
   static Future<Transaction?> markSuccessfulPayment(
-      {required Transaction transaction, required String? txId}) async {
+      {required Transaction transaction, required String txId}) async {
     Transaction? result;
     await getTransactionVersion(txId: transaction.id).then((version) async {
       safePrint(version);
@@ -196,7 +196,7 @@ class DatastoreServices {
         if (response.data == null) {
           return;
         }
-        result = transaction.copyWith(failType: FailType.PURCHASEFAIL);
+        result = transaction.copyWith(failType: FailType.PURCHASEFAIL, txId: txId);
         safePrint(result!.status);
       } catch (e) {
         safePrint('Update failed: $e');
@@ -497,6 +497,8 @@ class DatastoreServices {
           User newBUser = user.data!.copyWith(bankAccounts: bankList);
           fetchedUser = newBUser;
           fetchedUser;
+          debugPrint(
+              '---------------- banks from datastore\n ${fetchedUser?.bankAccounts?.length}');
         }
         final req =
             ModelQueries.list(Address.classType, where: Address.USERID.eq(id));
@@ -509,7 +511,6 @@ class DatastoreServices {
             List<Address> addrsList = addrs.data!.items.map((e) => e!).toList();
             User newAuser = fetchedUser!.copyWith(address: addrsList);
             fetchedUser = newAuser;
-            fetchedUser;
           }
           final req =
               ModelQueries.get(Wallet.classType, user.data!.userWalletId!);
@@ -518,15 +519,10 @@ class DatastoreServices {
               return;
             }
             fetchedUser = fetchedUser!.copyWith(wallet: wallet.data);
-            fetchedUser;
           });
         });
       });
     });
-
-    safePrint(fetchedUser?.address?.length.toString());
-    safePrint('ghigiiutginyoy;nn--------------->');
-    safePrint(fetchedUser?.wallet?.toJson());
 
     return fetchedUser;
   }

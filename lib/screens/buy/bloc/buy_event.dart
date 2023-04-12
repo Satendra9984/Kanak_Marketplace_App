@@ -10,6 +10,8 @@ class ResetEvent extends BuyEvent {
   List<Object?> get props => [];
 }
 
+
+
 class RateConfirmEvent extends BuyEvent {
   final double quantity;
   final User user;
@@ -24,16 +26,9 @@ class RateConfirmEvent extends BuyEvent {
 }
 
 class ConfirmButtonPressedEvent extends BuyEvent {
-  final Transaction transaction;
-  final User user;
-  ConfirmButtonPressedEvent({
-    required this.transaction,
-    required this.user
-  });
+  ConfirmButtonPressedEvent();
   @override
-  List<Object?> get props => [
-    transaction
-  ];
+  List<Object?> get props => [];
 }
 
 class PaymentMethodChosen extends BuyEvent {
@@ -48,6 +43,11 @@ class PaymentMethodChosen extends BuyEvent {
 }
 
 class ChoosePaymentMethod extends BuyEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class ChooseSheetClose extends BuyEvent {
   @override
   List<Object?> get props => [];
 }

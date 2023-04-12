@@ -116,7 +116,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
             ),
-
             const SizedBox(height: 10),
 
             /// Real-Time gold price data
@@ -202,7 +201,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
 
-                  // TODO: GOLD PRICE GRAPH
+                  // GOLD PRICE GRAPH
                   GoldRateGraph(),
                 ],
               ),

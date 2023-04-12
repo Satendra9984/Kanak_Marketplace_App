@@ -38,7 +38,8 @@ class ProfileScreen extends ConsumerWidget {
           ListTile(
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => AccountDetailsScreen()),
+                MaterialPageRoute(
+                    builder: (ctx) => const AccountDetailsScreen()),
               );
             },
             leading: CircleAvatar(

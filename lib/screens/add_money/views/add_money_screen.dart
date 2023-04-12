@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/providers/user_provider.dart';
+import '../../../models/User.dart';
 import '../../../utils/app_constants.dart';
 
 class AddMoneyScreen extends ConsumerStatefulWidget {
-  AddMoneyScreen({Key? key}) : super(key: key);
+  const AddMoneyScreen({Key? key}) : super(key: key);
 
   @override
   ConsumerState<AddMoneyScreen> createState() => _AddMoneyScreenState();
@@ -32,6 +33,7 @@ class _AddMoneyScreenState extends ConsumerState<AddMoneyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    User user = ref.watch(userProvider)!;
     return WillPopScope(
       onWillPop: () async {
         // Size size = MediaQuery.of(context).size;
@@ -67,7 +69,7 @@ class _AddMoneyScreenState extends ConsumerState<AddMoneyScreen> {
                   children: [
                     const SizedBox(height: 15),
                     Text(
-                      '${0}₹ available',
+                      '${user.wallet?.balance} ₹ available',
                       style: TextStyle(
                         fontSize: body1,
                         color: text400,
@@ -158,11 +160,11 @@ class _AddMoneyScreenState extends ConsumerState<AddMoneyScreen> {
                                           keyboardType: TextInputType.number,
                                         ),
                                       ),
-                                      IconButton(
-                                          onPressed: () {
-                                            _amountCtrl.text = '';
-                                          },
-                                          icon: const Icon(Icons.cancel)),
+                                      // IconButton(
+                                      //     onPressed: () {
+                                      //       _amountCtrl.text = '';
+                                      //     },
+                                      //     icon: const Icon(Icons.cancel)),
                                     ],
                                   ),
                                 ],

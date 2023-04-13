@@ -337,34 +337,42 @@ class _UserBankRegistrationPageState
 
   Future<void> submitUserBankDetails(User user) async {
     await GoldServices.createBankAccount(
-      userId: user.id,
-      accName: _accountNameCtrl.text,
-      accNo: _accountNumberCtrl.text,
-      ifsc: _ifscCodeCtrl.text,
-    ).then((acc) async {
-      if (acc == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Something went wrong!')));
-        return;
-      }
-      safePrint(acc);
-      await DatastoreServices.addBankAccount(
-              account: BankAccount(
-                  userID: acc.uniqueId,
-                  bankId: acc.userBankId,
-                  accName: acc.accountName,
-                  accNo: acc.accountNumber,
-                  ifsc: acc.ifscCode))
-          .then((val) {
-        if (val == null) {
+      accNo: '049152000000975',
+      accName: 'Vedant Gupta',
+      ifsc: 'YESB0000491',
+      userId: user.id
+    ).then((value) async {
+      await GoldServices.createBankAccount(
+        userId: user.id,
+        accName: _accountNameCtrl.text,
+        accNo: _accountNumberCtrl.text,
+        ifsc: _ifscCodeCtrl.text,
+      ).then((acc) async {
+        if (acc == null) {
           ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Something went wrong!')));
           return;
         }
-        ref.read(userProvider.notifier).addBankAccount(account: val);
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Successfully Added Bank Account!')));
+        safePrint(acc);
+        await DatastoreServices.addBankAccount(
+                account: BankAccount(
+                    userID: acc.uniqueId,
+                    bankId: acc.userBankId,
+                    accName: acc.accountName,
+                    accNo: acc.accountNumber,
+                    ifsc: acc.ifscCode))
+            .then((val) {
+          if (val == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Something went wrong!')));
+            return;
+          }
+          ref.read(userProvider.notifier).addBankAccount(account: val);
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Successfully Added Bank Account!')));
+        });
       });
     });
+    
   }
 }

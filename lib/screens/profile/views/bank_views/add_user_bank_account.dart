@@ -162,12 +162,12 @@ class _AddUserBankDetailsPageState
                   ),
                   child: TextFormField(
                     autovalidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.text,
                     controller: _ifscCodeCtrl,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter the IFSC Code';
-                      } else if (value.length < 11 || value.length < 11) {
+                      } else if (value.length < 11) {
                         return 'IFSC Code must be equal 11 character';
                       }
                       bool ifscValid =

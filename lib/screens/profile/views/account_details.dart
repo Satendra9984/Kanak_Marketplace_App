@@ -7,6 +7,7 @@ import 'package:tasvat/utils/app_constants.dart';
 
 import '../../../models/Address.dart';
 import '../../../models/User.dart';
+import 'address_views/add_user_address_screen.dart';
 
 class AccountDetailsScreen extends ConsumerWidget {
   const AccountDetailsScreen({Key? key}) : super(key: key);
@@ -58,92 +59,26 @@ class AccountDetailsScreen extends ConsumerWidget {
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Container(
-                margin: const EdgeInsets.only(top: 25, left: 10, right: 10),
+
+                margin: const EdgeInsets.symmetric(
+                    horizontal: 10),
                 child: Column(
                   children: [
-                    Stack(
-                      children: <Widget>[
-                        Positioned(
-                          top: height * 0,
-                          height: height * 0.4,
-                          child: Container(
-                            // margin: const EdgeInsets.all(10),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 20),
-                            decoration: BoxDecoration(
-                              color: text100,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Personal Details',
-                                  style: TextStyle(
-                                    fontSize: heading2,
-                                    color: text500,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                rowDetailUser('Username', list['userName']),
-                                rowDetailUser(
-                                    'Date of Birth', list['dateOfBirth']),
-                                rowDetailUser(
-                                    'Gender', list['gender'].toString()),
-                                rowDetailUser(
-                                    'User Email', list['userEmail'].toString()),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: height * 0.3,
-                          child: Container(
-                            // margin: const EdgeInsets.all(10),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 20),
-                            decoration: BoxDecoration(
-                              color: text100,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Personal Details',
-                                  style: TextStyle(
-                                    fontSize: heading2,
-                                    color: text500,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                rowDetailUser('Username', list['userName']),
-                                rowDetailUser(
-                                    'Date of Birth', list['dateOfBirth']),
-                                rowDetailUser(
-                                    'Gender', list['gender'].toString()),
-                                rowDetailUser(
-                                    'User Email', list['userEmail'].toString()),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    CircleAvatar(
-                      radius: 64,
-                      backgroundColor: accentBG.withOpacity(0.75),
-                      child: Icon(Icons.person,
-                          size: 78, color: accent1.withOpacity(0.5)),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: CircleAvatar(
+                        backgroundColor: accentBG.withOpacity(0.65),
+                        minRadius: 60,
+                        maxRadius: 60,
+                        child: Icon(Icons.person,
+                            size: 80, color: accent1.withOpacity(0.5)),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     Container(
-                      // margin: const EdgeInsets.all(10),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 20),
+                          horizontal: 20, vertical: 10),
                       decoration: BoxDecoration(
                         color: text100,
                         borderRadius: BorderRadius.circular(15),
@@ -151,46 +86,81 @@ class AccountDetailsScreen extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Personal Details',
+                                style: TextStyle(
+                                  fontSize: body2,
+                                  color: text400,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                    IconButton(onPressed: (){}, icon: const Icon(Icons.edit)),
+                                  IconButton(onPressed: (){}, icon: const Icon(Icons.camera_alt_outlined)),
+                                ],
+                              ),
+                            ],
+                          ),
                           Text(
-                            'Personal Details',
+                            list['userName'],
                             style: TextStyle(
-                              fontSize: heading2,
-                              color: text500,
-                              fontWeight: FontWeight.w600,
-                            ),
+                                fontSize: heading1, fontWeight: FontWeight.w400, color: text500),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            ref.read(userProvider)?.phone ?? '----',
+                            style: TextStyle(
+                                fontSize: body2, fontWeight: FontWeight.w500, color: text500),
                           ),
                           const SizedBox(height: 10),
-                          rowDetailUser('Username', list['userName']),
-                          rowDetailUser('Date of Birth', list['dateOfBirth']),
-                          rowDetailUser('Gender', list['gender'].toString()),
-                          rowDetailUser(
-                              'User Email', list['userEmail'].toString()),
+                          Text(
+                            list['userEmail'],
+                            style: TextStyle(
+                                fontSize: body1, fontWeight: FontWeight.w400, color: text500),
+                          ),
+                          const SizedBox(height: 10),
+
                         ],
                       ),
                     ),
                     const SizedBox(height: 10),
                     Container(
-                      // margin: const EdgeInsets.all(10),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 20),
+                          horizontal: 15, vertical: 10),
                       decoration: BoxDecoration(
-                        color: text100,
+                        color: Colors.grey.shade900,
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Address',
-                            style: TextStyle(
-                              fontSize: heading2,
-                              color: text500,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Address',
+                                style: TextStyle(
+                                  fontSize: body2,
+                                  color: text400,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              TextButton(onPressed: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                                  return const AddUserAddressPage();
+                                }));
+                              }, child: Text('Add new', style: TextStyle(
+                                fontSize:caption,
+                                color: warning,
+                                fontWeight: FontWeight.w600,
+                              ),)),
+                            ],
                           ),
-                          const SizedBox(height: 10),
-                          // rowDetailUser(
-                          //     'Address', list['userAddress'].toString()),
+                          // const SizedBox(height: 10),
                           rowDetailUser('State', list['userState'].toString()),
                           rowDetailUser('City', list['userCity'].toString()),
                           rowDetailUser(
@@ -268,25 +238,22 @@ class AccountDetailsScreen extends ConsumerWidget {
 
   Widget rowDetailUser(String key, String value) {
     return Container(
+      width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            flex: 5,
-            child: Text(
-              key,
-              style: TextStyle(
-                  fontSize: body1, fontWeight: FontWeight.w400, color: text400),
-            ),
+          Text(
+            key,
+            style: TextStyle(
+                fontSize: body2, fontWeight: FontWeight.w400, color: text400),
           ),
-          Expanded(
-            flex: 7,
-            child: Text(
-              value,
-              style: TextStyle(
-                  fontSize: body1, fontWeight: FontWeight.w500, color: text500),
-            ),
+          const SizedBox(height: 2.5),
+          Text(
+            value,
+            style: TextStyle(
+                fontSize: body1, fontWeight: FontWeight.w500, color: text500),
           ),
         ],
       ),

@@ -72,9 +72,7 @@ class DatastoreServices {
     return result;
   }
 
-
   // deduct money from wallet
-  
 
   // mark failed transaction
   static Future<Transaction?> markFailedPurchase(
@@ -196,7 +194,8 @@ class DatastoreServices {
         if (response.data == null) {
           return;
         }
-        result = transaction.copyWith(failType: FailType.PURCHASEFAIL, txId: txId);
+        result =
+            transaction.copyWith(failType: FailType.PURCHASEFAIL, txId: txId);
         safePrint(result!.status);
       } catch (e) {
         safePrint('Update failed: $e');
@@ -486,19 +485,47 @@ class DatastoreServices {
       final req = ModelQueries.list(BankAccount.classType,
           where: BankAccount.USERID.eq(id));
 
-      await _instance.query(request: req).response.then((banks) async {
+      String query = """ 
+      ListBankAccounts (\$userID: String!) {
+        query listBankAccounts(filter: {userID: {eq: \$userID}}) {
+          id
+          userID
+          status
+          accName
+          accNo
+          _deleted
+        }
+      }""";
+      await _instance
+          .query(
+            request: GraphQLRequest<String>(
+              document: query,
+              variables: {
+                // 'id': id,
+                'userID': user.data!.id,
+              },
+            ),
+          )
+          .response
+          .then((banks) async {
+        debugPrint('query successfull: ${user.data!.id}');
         if (banks.data == null) {
           return;
         }
-        if (banks.data?.items != null && banks.data?.items.isNotEmpty == true) {
-          List<BankAccount> bankList =
-              banks.data!.items.map((e) => e!).toList();
-          // fetchedUser = user.data!;
-          User newBUser = user.data!.copyWith(bankAccounts: bankList);
-          fetchedUser = newBUser;
-          fetchedUser;
-          debugPrint(
-              '---------------- banks from datastore\n ${fetchedUser?.bankAccounts?.length}');
+        // debugPrint('banksData: ${banks.toString()}');
+        var banksData = jsonDecode(banks.data!);
+        debugPrint('------------->banksData: $banksData\n\n');
+
+        if (banksData != null && banksData?.items.isNotEmpty == true) {
+          debugPrint('------------->banksData: $banksData\n\n');
+          // List<BankAccount> bankList =
+          //     banks.data!.items.map((e) => e!).toList();
+          // // fetchedUser = user.data!;
+          // User newBUser = user.data!.copyWith(bankAccounts: bankList);
+          // fetchedUser = newBUser;
+          // fetchedUser;
+          // debugPrint(
+          //     '---------------- banks from datastore\n ${fetchedUser?.bankAccounts?.length}');
         }
         final req =
             ModelQueries.list(Address.classType, where: Address.USERID.eq(id));
@@ -789,19 +816,19 @@ class DatastoreServices {
         "version": version
       };
       try {
-      final response = await _instance
-          .mutate(
-            request: GraphQLRequest<String>(
-              document: updateQuery,
-              variables: variables,
-            ),
-          )
-          .response;
-      if (response.data == null) {
-        return;
-      }
-      result = addr;
-      safePrint(result);
+        final response = await _instance
+            .mutate(
+              request: GraphQLRequest<String>(
+                document: updateQuery,
+                variables: variables,
+              ),
+            )
+            .response;
+        if (response.data == null) {
+          return;
+        }
+        result = addr;
+        safePrint(result);
       } catch (e) {
         safePrint('Update failed: $e');
       }

@@ -31,14 +31,8 @@ class ResetEvent extends SellEvent {
 }
 
 class ConfirmButtonPressed extends SellEvent {
-  final Transaction transaction;
-  ConfirmButtonPressed({
-    required this.transaction
-  });
   @override
-  List<Object> get props => [
-    transaction
-  ];
+  List<Object> get props => [];
 }
 
 class GoldDeductedEvent extends SellEvent {

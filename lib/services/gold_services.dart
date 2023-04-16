@@ -186,9 +186,9 @@ class GoldServices {
           banksRes['statusCode'] != 200) {
         return;
       }
-      final List<Map<String, dynamic>> bankList = banksRes['result'];
+      final List<dynamic> bankList = banksRes['result'];
       for (var bank in bankList) {
-        result.add(UserBank.fromJson(bank));
+        result.add(UserBank.fromJson(bank as Map<String, dynamic>));
       }
       safePrint(bankList.length);
     });

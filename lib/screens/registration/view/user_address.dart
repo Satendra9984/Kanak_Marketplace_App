@@ -86,7 +86,6 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
             pincode: int.parse(_pinCodeCtrl.text),
             dob: user.dob!.getDateTime().toIso8601String().split('T')[0])
         .then((goldUser) async {
-      safePrint('Gold User Creation---> ${goldUser.toString()}');
       if (goldUser == null) {
         return;
       }
@@ -94,7 +93,6 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
       /// Updating in the Tasvat Database
       await DatastoreServices.updateGPDetails(user: user, details: goldUser)
           .then((updatedUser) async {
-        safePrint('User with GP Details----------> ${updatedUser.toString()}');
         if (updatedUser == null) {
           return;
         }
@@ -108,12 +106,10 @@ class _UserAddressPageState extends ConsumerState<UserAddressRegistrationPage> {
                 state: _state!['id'],
                 city: _city!['id'])
             .then((rsp) async {
-              safePrint('Gold User Address Response----------------> ${rsp?.toJson()}');
           if (rsp == null) {
             return;
           }
           await DatastoreServices.addUserAddress(rsp: rsp, userId: user.id).then((addr) {
-            safePrint('Added User Address-------------------> ${addr?.toJson()}');
             if (addr == null) {
               return;
             }

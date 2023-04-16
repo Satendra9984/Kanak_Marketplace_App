@@ -450,7 +450,7 @@ class _SellAssetBodyState extends ConsumerState<SellAssetBody> {
               children: [
                 /// CASH BALANCE
                 Text(
-                  'Gold Balance : 20 grams',
+                  'Gold Balance : ${ref.read(userProvider)!.wallet!.gold_balance} grams',
                   style: TextStyle(
                     fontSize: body2,
                     color: text400,
@@ -469,21 +469,25 @@ class _SellAssetBodyState extends ConsumerState<SellAssetBody> {
                           .read(goldRateProvider.notifier)
                           .updateRates()
                           .then((rate) {
-                            final user = ref.read(userProvider);
-                        context.read<SellBloc>().add(
-                          SellConfirmEvent(
-                            rates: ref.read(goldRateProvider),
-                            quantity: double.parse(_qtyController.text),
-                            user: user!,
-                            banks: [ref.read(inhouseAccountProvider)!, ...user.bankAccounts!.map((acc) => UserBank.fromJson({
-                              'userBankId': acc.bankId,
-                              'uniqueId': acc.userID,
-                              'accountNumber': acc.accNo,
-                              'accountName': acc.accName,
-                              'ifscCode': acc.ifsc,
-                              'status': acc.status
-                            })).toList()]
-                          ));
+                        final user = ref.read(userProvider);
+                        safePrint(user!.bankAccounts![0]);
+                        context.read<SellBloc>().add(SellConfirmEvent(
+                                rates: ref.read(goldRateProvider),
+                                quantity: double.parse(_qtyController.text),
+                                user: user,
+                                banks: [
+                                  ref.read(inhouseAccountProvider)!,
+                                  ...user.bankAccounts!
+                                      .map((acc) => UserBank.fromJson({
+                                            'userBankId': acc.bankId,
+                                            'uniqueId': acc.userID,
+                                            'accountNumber': acc.accNo,
+                                            'accountName': acc.accName,
+                                            'ifscCode': acc.ifsc,
+                                            'status': acc.status
+                                          }))
+                                      .toList()
+                                ]));
                         Navigator.push(
                           context,
                           MaterialPageRoute(

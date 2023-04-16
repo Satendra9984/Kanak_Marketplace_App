@@ -52,7 +52,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
               ),
               userId: event.user.id,
               dateTime: TemporalDateTime.now(),
-              transactionReceiverId: '6f6d07c8-9dab-485d-9423-4b16152af571',
+              transactionReceiverId: 'efafbe90-1889-4953-8d84-7addf0c3cb50',
               transactionSenderId: event.user.id
         )
       ));

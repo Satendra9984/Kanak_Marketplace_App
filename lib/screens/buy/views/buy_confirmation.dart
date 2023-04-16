@@ -185,8 +185,8 @@ class _BuyConfirmationScreenState extends ConsumerState<BuyConfirmationScreen> {
                           onPressed: () async {
                             // Proceed for Transaction
                             context.read<BuyBloc>().add(
-                                  ConfirmButtonPressedEvent(),
-                                );
+                              ConfirmButtonPressedEvent(),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(

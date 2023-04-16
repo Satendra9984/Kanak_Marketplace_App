@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/amplifyconfiguration.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/providers/auth_provider.dart';
+import 'package:tasvat/providers/inhouse_account_provider.dart';
 import 'package:tasvat/providers/token_provider.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/home_screen.dart';
@@ -14,9 +15,8 @@ import 'package:tasvat/screens/registration/view/user_kyc_page.dart';
 import 'package:tasvat/screens/registration/view/user_address.dart';
 import 'package:tasvat/screens/registration/view/user_bank_details.dart';
 import 'package:tasvat/screens/registration/view/user_details.dart';
-import 'package:tasvat/services/auth_services.dart';
 import 'package:tasvat/services/datastore_services.dart';
-import 'package:tasvat/services/local_db_services.dart';
+import 'package:tasvat/services/gold_services.dart';
 import 'package:tasvat/utils/app_constants.dart';
 
 class OnBoardingPage extends ConsumerStatefulWidget {
@@ -54,14 +54,16 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
           await DatastoreServices.checkRequiredData(uid: user.userId)
               .then((value) async {
             if (value == null) {
-              await DatastoreServices.fetchUserById(user.userId).then((value) {
-                if (value == null) {
-                  return;
-                }
-                Navigator.of(context).pushAndRemoveUntil(
+                await GoldServices.getUserBankAccounts(userId: user.userId)
+                    .then((userAccs) {
+                  safePrint(userAccs[0]);
+                  ref
+                      .read(inhouseAccountProvider.notifier)
+                      .setAccount(userAccs[0]);
+                  Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const HomeScreen()),
                     (route) => true);
-              });
+                });
             } else if (value == 'Address') {
               await DatastoreServices.fetchUserById(user.userId).then((value) {
                 if (value == null) {

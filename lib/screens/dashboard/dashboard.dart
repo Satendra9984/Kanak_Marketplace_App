@@ -36,7 +36,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (ctx) => ProfileScreen(),
+                    builder: (ctx) => const ProfileScreen(),
                   ),
                 );
               },

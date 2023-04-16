@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:flutter/material.dart';
 import 'package:tasvat/models/ModelProvider.dart';
 import 'package:tasvat/models/Token.dart' as tokenModel;
 import 'package:tasvat/models/gold_models/address_response.dart';
@@ -484,6 +483,7 @@ class DatastoreServices {
             userID
             accName
             accNo
+            bankId
             ifsc
             status
             addressId
@@ -526,7 +526,7 @@ class DatastoreServices {
     List<Address> addList = [];
     String query = """ 
       query ListAddress(\$userID: ID!) {
-        listAddresses {
+        listAddresses(filter: {userID: {eq: \$userID}}) {
           items {
             _deleted
             address
@@ -537,8 +537,6 @@ class DatastoreServices {
             pincode
             status
             userID
-            updatedAt
-            createdAt
           }
         }
     }""";
@@ -556,10 +554,10 @@ class DatastoreServices {
       if (addresses.data == null) {
         return;
       }
-      dynamic addressData = jsonDecode(addresses.data!);
+      Map<String, dynamic>? addressData = jsonDecode(addresses.data!);
 
       if (addressData != null) {
-        List<dynamic> bankList = (addressData!['listBankAccounts']['items']);
+        List<dynamic> bankList = (addressData['listAddresses']['items']);
         List<Address> accounts = [];
         for (dynamic acc in bankList) {
           if (acc['_deleted'] == null) {
@@ -635,17 +633,12 @@ class DatastoreServices {
 
       /// Add banks list
       List<BankAccount> accounts = await getBanksList(id);
-      User newBUser = user.data!.copyWith(bankAccounts: accounts);
-      fetchedUser = newBUser;
-      fetchedUser;
+      fetchedUser = fetchedUser!.copyWith(bankAccounts: accounts);
 
       /// add address list
       List<Address> addresses = await getAddressList(id);
-      User newAUser = user.data!.copyWith(address: addresses);
-      fetchedUser = newAUser;
-      fetchedUser;
+      fetchedUser = fetchedUser!.copyWith(address: addresses);
 
-      /// TODO: Add wallet data
       final req = ModelQueries.get(Wallet.classType, user.data!.userWalletId!);
       await _instance.query(request: req).response.then((wallet) {
         if (wallet.data == null) {
@@ -952,8 +945,9 @@ class DatastoreServices {
   }
 
   /// <---------------------------------------- Delete ----------------------------------->
-  /// 
-  static Future<bool?> deleteUserBank({required BankAccount bankAccount}) async {
+  ///
+  static Future<bool?> deleteUserBank(
+      {required BankAccount bankAccount}) async {
     bool? deleted;
     await getBankAccountVersion(bankId: bankAccount.id).then((version) async {
       safePrint(version);
@@ -966,10 +960,7 @@ class DatastoreServices {
           }
         }
       """;
-      final variables = {
-        "id": bankAccount.id,
-        "version": version
-      };
+      final variables = {"id": bankAccount.id, "version": version};
       final response = await _instance
           .mutate(
             request: GraphQLRequest<String>(

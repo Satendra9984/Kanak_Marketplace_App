@@ -58,8 +58,9 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
                 if (value == null) {
                   return;
                 }
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => const HomeScreen()));
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    (route) => true);
               });
             } else if (value == 'Address') {
               await DatastoreServices.fetchUserById(user.userId).then((value) {

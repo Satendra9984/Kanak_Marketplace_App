@@ -22,7 +22,7 @@ class UserBank {
     return UserBank(
       userBankId: json['userBankId'],
       uniqueId: json['uniqueId'],
-      accountNumber: json['accountNumber'],
+      accountNumber: json['accountNumber'].toString(),
       accountName: json['accountName'],
       ifscCode: json['ifscCode'],
       status: json['status'],

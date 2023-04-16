@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/providers/token_provider.dart';
 import 'package:tasvat/screens/buy/bloc/buy_bloc.dart';
-import 'package:tasvat/screens/home_screen.dart';
 import 'package:tasvat/screens/login/bloc/login_bloc.dart';
 import 'package:tasvat/screens/onboarding/onboarding_page.dart';
+import 'package:tasvat/screens/sell/bloc/sell_bloc.dart';
 import 'package:tasvat/screens/signup/bloc/sign_up_bloc.dart';
 import 'package:tasvat/services/auth_services.dart';
 
@@ -22,7 +22,8 @@ void main() {
               ),
             ),
             BlocProvider(create: (context) => SignUpBloc()),
-            BlocProvider(create: (context) => BuyBloc())
+            BlocProvider(create: (context) => BuyBloc()),
+            BlocProvider(create: (context) => SellBloc())
           ],
           child: const Tasvat(),
         ),

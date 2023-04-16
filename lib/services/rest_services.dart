@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:tasvat/utils/loggs.dart';
 
 class HttpServices {
   static Future<Map<String, dynamic>?> sendGetReq(String path,
@@ -30,7 +31,7 @@ class HttpServices {
             headers: {'Content-Type': 'application/json', ...?extraHeaders},
             body: jsonEncode(body))
         .then((res) {
-      safePrint(res.body);
+      logWithColor(message: 'Response----> ${res.body}', color: 'cyan');
       if (res.body.isNotEmpty) {
         result = jsonDecode(res.body);
       }
@@ -38,17 +39,18 @@ class HttpServices {
     return result;
   }
 
-  static Future<bool> sendDeleteRequest(
+  static Future<bool?> sendDeleteRequest(
     String path,
   ) async {
+    bool? result;
     await http.delete(Uri.parse(path)).then((res) {
-      if (res.statusCode == 200) {
+      if (res.statusCode != 200) {
         debugPrint('delete from http request');
-        return true;
+        return;
       }
-      return false;
+      result = true;
     });
-    return false;
+    return result;
   }
 
   //

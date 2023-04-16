@@ -267,15 +267,13 @@ class _AddUserBankDetailsPageState
           handleError();
           return;
         }
-        BankAccount bankAccount = BankAccount(
-          userID: user.id,
+        await DatastoreServices.addBankAccount(account: BankAccount(
+          userID: response.uniqueId,
           accName: response.accountName,
           accNo: response.accountNumber,
           ifsc: response.ifscCode,
           bankId: response.userBankId,
-          status: response.status == 'active',
-        );
-        await DatastoreServices.addBankAccount(account: bankAccount)
+        ))
             .then((value) {
           if (value == null) {
             handleError();

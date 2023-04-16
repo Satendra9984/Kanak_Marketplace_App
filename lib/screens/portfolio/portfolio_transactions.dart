@@ -56,9 +56,9 @@ class PortfolioBuyTransactions extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> getBuyList() async {
     List<Map<String, dynamic>> buyList = [];
-    await GoldServices.getUserBuyList().then((list) {
-      buyList = list;
-    });
+    // await GoldServices.getUserBuyList().then((list) {
+    //   buyList = list;
+    // });
     return buyList;
   }
 

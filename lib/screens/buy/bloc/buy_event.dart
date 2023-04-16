@@ -10,8 +10,6 @@ class ResetEvent extends BuyEvent {
   List<Object?> get props => [];
 }
 
-
-
 class RateConfirmEvent extends BuyEvent {
   final double quantity;
   final User user;

@@ -44,7 +44,7 @@ class _UserBanksListScreenState extends ConsumerState<UserBanksListScreen> {
       await GoldServices.deleteUserBank(
               bankAccount: bankAccount, userId: user.id)
           .then((response) async {
-        if (response == false) {
+        if (response == null) {
           debugPrint(
               '-------------not deleted from augmont ----------------------');
           handleError();
@@ -53,14 +53,13 @@ class _UserBanksListScreenState extends ConsumerState<UserBanksListScreen> {
         debugPrint('------------- deleted from augmont ----------------------');
         await DatastoreServices.deleteUserBank(bankAccount: bankAccount)
             .then((value) {
-          if (value == false) {
+          if (value == null) {
             handleError();
             return;
           }
           debugPrint('------------- deleted from aws ----------------------');
 
-          ref
-              .read(userProvider.notifier)
+          ref.read(userProvider.notifier)
               .deleteBankAccount(bankAccount: bankAccount);
           handleSuccess();
         });

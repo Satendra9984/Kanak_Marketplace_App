@@ -952,15 +952,38 @@ class DatastoreServices {
   }
 
   /// <---------------------------------------- Delete ----------------------------------->
-
-  static Future<bool> deleteUserBank({required BankAccount bankAccount}) async {
-    final request = ModelMutations.delete(bankAccount);
-    final response = await Amplify.API.mutate(request: request).response;
-    // print('Response: $response');
-
-    if (response.data != null) {
-      return true;
-    }
-    return false;
+  /// 
+  static Future<bool?> deleteUserBank({required BankAccount bankAccount}) async {
+    bool? deleted;
+    await getBankAccountVersion(bankId: bankAccount.id).then((version) async {
+      safePrint(version);
+      const String updateQuery = """
+        mutation DeleteBankAccount(\$id: ID!, \$version: Int!) {
+          deleteBankAccount(input: {id: \$id, _version: \$version, }) {
+            id
+            bankId
+            _version
+          }
+        }
+      """;
+      final variables = {
+        "id": bankAccount.id,
+        "version": version
+      };
+      final response = await _instance
+          .mutate(
+            request: GraphQLRequest<String>(
+              document: updateQuery,
+              variables: variables,
+            ),
+          )
+          .response;
+      safePrint(response.data);
+      if (response.data == null) {
+        return;
+      }
+      deleted = true;
+    });
+    return deleted;
   }
 }

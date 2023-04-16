@@ -18,9 +18,9 @@ class SellInfoScreen extends StatelessWidget {
   Future<Map<String, dynamic>> getSellInfo() async {
     Map<String, dynamic> sellInfo = {};
 
-    await GoldServices.getSellInfo(sellTxnId: sellMerchantTxnId).then((value) {
-      sellInfo = value;
-    });
+    // await GoldServices.getSellInfo(sellTxnId: sellMerchantTxnId).then((value) {
+    //   sellInfo = value;
+    // });
 
     return sellInfo;
   }

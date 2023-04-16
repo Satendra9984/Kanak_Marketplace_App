@@ -473,7 +473,157 @@ class DatastoreServices {
     return version;
   }
 
-  // fetch full user details
+  /// Get All banks of User
+  static Future<List<BankAccount>> getBanksList(String id) async {
+    List<BankAccount> bankAcc = [];
+    String query = """ 
+      query ListBankAccounts(\$userID: ID!) {
+        listBankAccounts(filter: {userID: {eq: \$userID}}) {
+          items {
+            id
+            userID
+            accName
+            accNo
+            ifsc
+            status
+            addressId
+            _deleted
+          }
+        }
+      }""";
+    await _instance
+        .query(
+          request: GraphQLRequest<String>(
+            document: query,
+            variables: {
+              'userID': id,
+            },
+          ),
+        )
+        .response
+        .then((banks) async {
+      if (banks.data == null) {
+        return;
+      }
+      dynamic banksData = jsonDecode(banks.data!);
+
+      if (banksData != null) {
+        List<dynamic> bankList = (banksData!['listBankAccounts']['items']);
+        List<BankAccount> accounts = [];
+        for (dynamic acc in bankList) {
+          if (acc['_deleted'] == null) {
+            accounts.add(BankAccount.fromJson(acc));
+          }
+        }
+        bankAcc.addAll(accounts);
+      }
+    });
+    return bankAcc;
+  }
+
+  /// Get All addresses of User
+  static Future<List<Address>> getAddressList(String id) async {
+    List<Address> addList = [];
+    String query = """ 
+      query ListAddress(\$userID: ID!) {
+        listAddresses {
+          items {
+            _deleted
+            address
+            email
+            id
+            name
+            phone
+            pincode
+            status
+            userID
+            updatedAt
+            createdAt
+          }
+        }
+    }""";
+    await _instance
+        .query(
+          request: GraphQLRequest<String>(
+            document: query,
+            variables: {
+              'userID': id,
+            },
+          ),
+        )
+        .response
+        .then((addresses) async {
+      if (addresses.data == null) {
+        return;
+      }
+      dynamic addressData = jsonDecode(addresses.data!);
+
+      if (addressData != null) {
+        List<dynamic> bankList = (addressData!['listBankAccounts']['items']);
+        List<Address> accounts = [];
+        for (dynamic acc in bankList) {
+          if (acc['_deleted'] == null) {
+            accounts.add(Address.fromJson(acc));
+          }
+        }
+        addList.addAll(accounts);
+      }
+    });
+    return addList;
+  }
+
+  /// Get Wallet data of User
+  static Future<List<Address>> getWalletData(String id) async {
+    List<Address> addList = [];
+    String query = """ 
+      query WalletData(\$userID: ID!) {
+        walletData {
+          items {
+            _deleted
+            address
+            email
+            id
+            name
+            phone
+            pincode
+            status
+            userID
+            updatedAt
+            createdAt
+          }
+        }
+    }""";
+    await _instance
+        .query(
+          request: GraphQLRequest<String>(
+            document: query,
+            variables: {
+              'userID': id,
+            },
+          ),
+        )
+        .response
+        .then((addresses) async {
+      if (addresses.data == null) {
+        return;
+      }
+      dynamic addressData = jsonDecode(addresses.data!);
+
+      if (addressData != null) {
+        List<dynamic> bankList = (addressData!['listBankAccounts']['items']);
+        List<Address> accounts = [];
+        for (dynamic acc in bankList) {
+          if (acc['_deleted'] == null) {
+            accounts.add(Address.fromJson(acc));
+          }
+        }
+        addList.addAll(accounts);
+      }
+    });
+    return addList;
+  }
+
+  /// Fetch full user details
   static Future<User?> fetchUserById(String id) async {
     User? fetchedUser;
     final request = ModelQueries.get(User.classType, id);
@@ -482,115 +632,30 @@ class DatastoreServices {
         return;
       }
       fetchedUser = user.data;
-      final req = ModelQueries.list(BankAccount.classType,
-          where: BankAccount.USERID.eq(id));
 
-      String query = """ 
-      ListBankAccounts (\$userID: String!) {
-        query listBankAccounts(filter: {userID: {eq: \$userID}}) {
-          id
-          userID
-          status
-          accName
-          accNo
-          _deleted
-        }
-      }""";
-      await _instance
-          .query(
-            request: GraphQLRequest<String>(
-              document: query,
-              variables: {
-                // 'id': id,
-                'userID': user.data!.id,
-              },
-            ),
-          )
-          .response
-          .then((banks) async {
-        debugPrint('query successfull: ${user.data!.id}');
-        if (banks.data == null) {
+      /// Add banks list
+      List<BankAccount> accounts = await getBanksList(id);
+      User newBUser = user.data!.copyWith(bankAccounts: accounts);
+      fetchedUser = newBUser;
+      fetchedUser;
+
+      /// add address list
+      List<Address> addresses = await getAddressList(id);
+      User newAUser = user.data!.copyWith(address: addresses);
+      fetchedUser = newAUser;
+      fetchedUser;
+
+      /// TODO: Add wallet data
+      final req = ModelQueries.get(Wallet.classType, user.data!.userWalletId!);
+      await _instance.query(request: req).response.then((wallet) {
+        if (wallet.data == null) {
           return;
         }
-        // debugPrint('banksData: ${banks.toString()}');
-        var banksData = jsonDecode(banks.data!);
-        debugPrint('------------->banksData: $banksData\n\n');
-
-        if (banksData != null && banksData?.items.isNotEmpty == true) {
-          debugPrint('------------->banksData: $banksData\n\n');
-          // List<BankAccount> bankList =
-          //     banks.data!.items.map((e) => e!).toList();
-          // // fetchedUser = user.data!;
-          // User newBUser = user.data!.copyWith(bankAccounts: bankList);
-          // fetchedUser = newBUser;
-          // fetchedUser;
-          // debugPrint(
-          //     '---------------- banks from datastore\n ${fetchedUser?.bankAccounts?.length}');
-        }
-        final req =
-            ModelQueries.list(Address.classType, where: Address.USERID.eq(id));
-        await _instance.query(request: req).response.then((addrs) async {
-          if (addrs.data == null) {
-            return;
-          }
-          if (addrs.data?.items != null &&
-              addrs.data?.items.isNotEmpty == true) {
-            List<Address> addrsList = addrs.data!.items.map((e) => e!).toList();
-            User newAuser = fetchedUser!.copyWith(address: addrsList);
-            fetchedUser = newAuser;
-          }
-          final req =
-              ModelQueries.get(Wallet.classType, user.data!.userWalletId!);
-          await _instance.query(request: req).response.then((wallet) {
-            if (wallet.data == null) {
-              return;
-            }
-            fetchedUser = fetchedUser!.copyWith(wallet: wallet.data);
-          });
-        });
+        fetchedUser = fetchedUser!.copyWith(wallet: wallet.data);
       });
     });
 
     return fetchedUser;
-  }
-
-  // fetch all addresses of user
-  static Future<List<Address>> getAddressesOfUser(String userId) async {
-    var list = <Address>[];
-    _instance
-        .query(
-            request: ModelQueries.list(Address.classType,
-                where: Address.USERID.eq(userId)))
-        .response
-        .then((addresses) {
-      if (addresses.data == null || addresses.data!.items.isEmpty) {
-        return;
-      }
-      for (var addr in addresses.data!.items) {
-        list.add(addr!);
-      }
-    });
-    return list;
-  }
-
-  // fetch all bank accounts of user
-  static Future<List<BankAccount>> getBankAccountsOfUser(
-      {required String userId}) async {
-    var list = <BankAccount>[];
-    _instance
-        .query(
-            request: ModelQueries.list(BankAccount.classType,
-                where: BankAccount.USERID.eq(userId)))
-        .response
-        .then((accounts) {
-      if (accounts.data == null || accounts.data!.items.isEmpty) {
-        return;
-      }
-      for (var acc in accounts.data!.items) {
-        list.add(acc!);
-      }
-    });
-    return list;
   }
 
   // fetch token for app

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/profile/views/address_views/update_user_address.dart';
+import 'package:tasvat/services/gold_services.dart';
 import 'package:tasvat/utils/app_constants.dart';
 import '../../../../models/Address.dart';
 import 'add_user_address_screen.dart';
@@ -18,54 +19,8 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
   Future<List<Address>> getAddress() async {
     List<Address> addressList = [];
     try {
+      await GoldServices.getAddressList();
       List<Address> list = ref.read(userProvider)!.address ?? [];
-      // await GoldServices.getAddressList().then((addList) {
-      //   debugPrint('addressList\ntype: ${addressList.runtimeType}');
-      //   // debugPrint('${addList}');
-      //   for (var addressMap in addList) {
-      //     //   {
-      //     // "userAddressId": "vLB5pWGY",
-      //     // "userAccountId": "g5K3yBeO",
-      //     // "name": "Sunil Shukla",
-      //     // "email": "sunil.shukla@gmail.com",
-      //     // "address": "Zaveri Bazaar, Kalbadevi, Mumbai",
-      //     // "stateId": "qYMjvMvX",
-      //     // "cityId": "z6KkbrMb",
-      //     // "pincode": 400002,
-      //     // "status": "active"
-      //     // };
-      //
-      //     //   id = json['id'],
-      //     // _name = json['name'],
-      //     // _pincode = (json['pincode'] as num?)?.toInt(),
-      //     // _userID = json['userID'],
-      //     // _phone = json['phone'],
-      //     // _email = json['email'],
-      //     // _address = json['address'],
-      //     // _status = json['status'],
-      //     // _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
-      //     // _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
-      //     var map = {
-      //       "userId": addressMap['userAccountId'],
-      //       "id": addressMap['userAddressId'],
-      //       "name": addressMap['name'],
-      //       "email": addressMap['email'],
-      //       "phone": '9335828140',
-      //       "address": addressMap['address'],
-      //       "stateId": "qYMjvMvX",
-      //       "cityId": "z6KkbrMb",
-      //       "pincode": 400002,
-      //       "status": true,
-      //     };
-      //     Address address = Address.fromJson(map);
-      //     debugPrint(address.toJson().toString());
-      //     addressList.add(address);
-      //     //debugPrint(addressList.toString());
-      //   }
-      //
-      //   return addressList;
-      // });
-
       return list;
     } catch (e) {
       debugPrint(e.toString());
@@ -75,7 +30,7 @@ class _AddressListScreenState extends ConsumerState<AddressListScreen> {
   }
 
   Future<void> deleteUserAddress() async {
-    // TODO: DELETE USER ADDRESS
+    // DELETE USER ADDRESS
   }
 
   @override

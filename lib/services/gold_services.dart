@@ -65,17 +65,17 @@ class GoldServices {
     List<dynamic> addressList = [];
 
     try {
-      // String? uid = await LocalDBServices.getGPMerchantId();
-      // if (uid == null) {
-      //   return addressList;
-      // }
-      // await HttpServices.sendGetReq('${_baseUrl}users/$uid/banks')
-      //     .then((listMap) {
-      //   if (listMap != null && listMap['statusCode'] == 200) {
-      //     addressList = listMap['result'];
-      //     return addressList;
-      //   }
-      // });
+      String? uid = await LocalDBServices.getGPMerchantId();
+      if (uid == null) {
+        return addressList;
+      }
+      await HttpServices.sendGetReq('${_baseUrl}users/$uid/address')
+          .then((listMap) {
+        if (listMap != null && listMap['statusCode'] == 200) {
+          addressList = listMap['result'];
+          return addressList;
+        }
+      });
 
       Map<dynamic, dynamic> listMap = {
         "statusCode": 200,

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/profile/views/account_details.dart';
 import 'package:tasvat/screens/profile/views/bank_views/user_banks_list_screen.dart';
+import 'package:tasvat/screens/profile/views/wallet_details.dart';
 import 'package:tasvat/utils/app_constants.dart';
 
 import '../../../models/User.dart';
@@ -83,6 +84,11 @@ class ProfileScreen extends ConsumerWidget {
 
           /// BALANCE
           ListTile(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+                return WalletDetailsScreen();
+              }));
+            },
             leading: CircleAvatar(
               backgroundColor: background,
               child: Icon(
@@ -91,7 +97,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             title: Text(
-              '₹ 20,000',
+              '₹ ${ref.watch(userProvider)!.wallet!.balance ?? '--'}',
               style: TextStyle(
                 fontSize: heading2,
                 fontWeight: FontWeight.w500,

@@ -30,24 +30,28 @@ class _WithdrawMoneyScreenState extends ConsumerState<WithdrawMoneyScreen> {
     // TODO: TRANSACTION MODEL
     Transaction transaction = Transaction(
       userId: user.id,
-
-    );
-    // TODO: PENDING TRANSACTION REQUEST
-
-
-
-    // TODO: MARK SUCCESSFUL / FAILED
-    await DatastoreServices.updateWalletBalance(
-      wallet: user.wallet!,
+      type: TransactionType.,
       balance: balance - _availableAmount,
-    ).then((updatedWallet) {
-      if(updatedWallet == null){
-        return;
-      }
-      ref.read(userProvider.notifier).updateWalletBalance(wallet: updatedWallet);
-      Navigator.push(context, MaterialPageRoute(builder: (ctx){
-        return
-      }));
+    );
+
+    /// PENDING TRANSACTION REQUEST
+    await DatastoreServices.addPendingTransaction(transaction: transaction)
+        .then((tran1) async {
+      // TODO: MARK SUCCESSFUL / FAILED
+      await DatastoreServices.updateWalletBalance(
+        wallet: user.wallet!,
+        balance: balance - _availableAmount,
+      ).then((updatedWallet) {
+        if (updatedWallet == null) {
+          return;
+        }
+        ref
+            .read(userProvider.notifier)
+            .updateWalletBalance(wallet: updatedWallet);
+        // Navigator.push(context, MaterialPageRoute(builder: (ctx){
+        //   return
+        // }));
+      });
     });
   }
 

@@ -28,6 +28,7 @@ import 'package:flutter/foundation.dart';
 class MarketRate extends Model {
   static const classType = const _MarketRateModelType();
   final String id;
+  final TemporalDateTime? _dateTime;
   final String? _blockId;
   final double? _sell;
   final double? _buy;
@@ -45,6 +46,10 @@ class MarketRate extends Model {
       return MarketRateModelIdentifier(
         id: id
       );
+  }
+  
+  TemporalDateTime? get dateTime {
+    return _dateTime;
   }
   
   String get blockId {
@@ -94,11 +99,12 @@ class MarketRate extends Model {
     return _updatedAt;
   }
   
-  const MarketRate._internal({required this.id, required blockId, required sell, required buy, createdAt, updatedAt}): _blockId = blockId, _sell = sell, _buy = buy, _createdAt = createdAt, _updatedAt = updatedAt;
+  const MarketRate._internal({required this.id, dateTime, required blockId, required sell, required buy, createdAt, updatedAt}): _dateTime = dateTime, _blockId = blockId, _sell = sell, _buy = buy, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory MarketRate({String? id, required String blockId, required double sell, required double buy}) {
+  factory MarketRate({String? id, TemporalDateTime? dateTime, required String blockId, required double sell, required double buy}) {
     return MarketRate._internal(
       id: id == null ? UUID.getUUID() : id,
+      dateTime: dateTime,
       blockId: blockId,
       sell: sell,
       buy: buy);
@@ -113,6 +119,7 @@ class MarketRate extends Model {
     if (identical(other, this)) return true;
     return other is MarketRate &&
       id == other.id &&
+      _dateTime == other._dateTime &&
       _blockId == other._blockId &&
       _sell == other._sell &&
       _buy == other._buy;
@@ -127,6 +134,7 @@ class MarketRate extends Model {
     
     buffer.write("MarketRate {");
     buffer.write("id=" + "$id" + ", ");
+    buffer.write("dateTime=" + (_dateTime != null ? _dateTime!.format() : "null") + ", ");
     buffer.write("blockId=" + "$_blockId" + ", ");
     buffer.write("sell=" + (_sell != null ? _sell!.toString() : "null") + ", ");
     buffer.write("buy=" + (_buy != null ? _buy!.toString() : "null") + ", ");
@@ -137,9 +145,10 @@ class MarketRate extends Model {
     return buffer.toString();
   }
   
-  MarketRate copyWith({String? blockId, double? sell, double? buy}) {
+  MarketRate copyWith({TemporalDateTime? dateTime, String? blockId, double? sell, double? buy}) {
     return MarketRate._internal(
       id: id,
+      dateTime: dateTime ?? this.dateTime,
       blockId: blockId ?? this.blockId,
       sell: sell ?? this.sell,
       buy: buy ?? this.buy);
@@ -147,6 +156,7 @@ class MarketRate extends Model {
   
   MarketRate.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
+      _dateTime = json['dateTime'] != null ? TemporalDateTime.fromString(json['dateTime']) : null,
       _blockId = json['blockId'],
       _sell = (json['sell'] as num?)?.toDouble(),
       _buy = (json['buy'] as num?)?.toDouble(),
@@ -154,15 +164,16 @@ class MarketRate extends Model {
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'blockId': _blockId, 'sell': _sell, 'buy': _buy, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'dateTime': _dateTime?.format(), 'blockId': _blockId, 'sell': _sell, 'buy': _buy, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
-    'id': id, 'blockId': _blockId, 'sell': _sell, 'buy': _buy, 'createdAt': _createdAt, 'updatedAt': _updatedAt
+    'id': id, 'dateTime': _dateTime, 'blockId': _blockId, 'sell': _sell, 'buy': _buy, 'createdAt': _createdAt, 'updatedAt': _updatedAt
   };
 
   static final QueryModelIdentifier<MarketRateModelIdentifier> MODEL_IDENTIFIER = QueryModelIdentifier<MarketRateModelIdentifier>();
   static final QueryField ID = QueryField(fieldName: "id");
+  static final QueryField DATETIME = QueryField(fieldName: "dateTime");
   static final QueryField BLOCKID = QueryField(fieldName: "blockId");
   static final QueryField SELL = QueryField(fieldName: "sell");
   static final QueryField BUY = QueryField(fieldName: "buy");
@@ -173,7 +184,7 @@ class MarketRate extends Model {
     modelSchemaDefinition.authRules = [
       AuthRule(
         authStrategy: AuthStrategy.PUBLIC,
-        operations: const [
+        operations: [
           ModelOperation.CREATE,
           ModelOperation.UPDATE,
           ModelOperation.DELETE,
@@ -182,6 +193,12 @@ class MarketRate extends Model {
     ];
     
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: MarketRate.DATETIME,
+      isRequired: false,
+      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
+    ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: MarketRate.BLOCKID,

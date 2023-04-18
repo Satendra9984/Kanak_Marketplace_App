@@ -36,6 +36,7 @@ enum TransactionType {
   BUY
   SELL
   EXCHANGE
+  WALLET
   GIFT
 }
 
@@ -51,8 +52,10 @@ type Transaction @model @auth(rules: [{allow: public}]) {
   lockPrice: String
   userId: String
   quantity: Float
+  bankId: String
   blockId: String
   gpTxId: String
+  alteredAmount: Float
   gold_balance: Float
   balance: Float
   failType: FailType
@@ -80,6 +83,7 @@ type User @model @auth(rules: [{allow: public}]) {
   dob: AWSDate
   defaultAddr: String
   defaultBankId: String
+  moneySpent: Float
 }
 
 type Token @model @auth(rules: [{allow: public}]) {
@@ -90,6 +94,7 @@ type Token @model @auth(rules: [{allow: public}]) {
 
 type MarketRate @model @auth(rules: [{allow: public}]) {
   id: ID!
+  dateTime: AWSDateTime,
   blockId: String!
   sell: Float!
   buy: Float!

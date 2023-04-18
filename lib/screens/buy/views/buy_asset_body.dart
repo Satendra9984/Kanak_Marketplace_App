@@ -84,8 +84,6 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
 
   @override
   void initState() {
-    // TODO: implement initState
-    // _amountController.text = '0.0';
     super.initState();
   }
 
@@ -97,6 +95,7 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
+          mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -442,7 +441,6 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
                         if (_formKey.currentState != null &&
                             _formKey.currentState!.validate()) {
                           // PROCEED TO CONFIRMATION SCREEN
-
                           await ref
                               .read(goldRateProvider.notifier)
                               .updateRates()
@@ -475,52 +473,6 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
                       ),
                     ),
                   ),
-                  // ElevatedButton(
-                  //   onPressed: () async {
-                  //     // PROCEED TO BUY
-                  //     closeKeyboard(context);
-                  //     if (_formKey.currentState != null &&
-                  //         _formKey.currentState!.validate()) {
-                  //       // PROCEED TO CONFIRMATION SCREEN
-                  //
-                  //       await ref
-                  //           .read(goldRateProvider.notifier)
-                  //           .updateRates()
-                  //           .then(
-                  //         (value) {
-                  //           final rate = ref.read(goldRateProvider);
-                  //           debugPrint(rate.gBuy);
-                  //           context.read<BuyBloc>().add(RateConfirmEvent(
-                  //               user: ref.read(userProvider)!,
-                  //               exchangeRates: rate,
-                  //               quantity: double.parse(_qtyController.text)));
-                  //           Navigator.push(
-                  //             context,
-                  //             MaterialPageRoute(
-                  //               builder: (ctx) => const BuyConfirmationScreen(),
-                  //             ),
-                  //           );
-                  //         },
-                  //       );
-                  //     }
-                  //   },
-                  //   style: ElevatedButton.styleFrom(
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(15),
-                  //     ),
-                  //     minimumSize: const Size(double.infinity, 50.0),
-                  //     maximumSize: const Size(double.infinity, 60.0),
-                  //     backgroundColor: accent1,
-                  //   ),
-                  //   child: Text(
-                  //     'Continue',
-                  //     style: TextStyle(
-                  //       color: background,
-                  //       fontSize: heading2,
-                  //       fontWeight: FontWeight.w600,
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
             ),

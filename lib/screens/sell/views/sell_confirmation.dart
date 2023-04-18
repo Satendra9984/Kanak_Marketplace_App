@@ -35,8 +35,6 @@ class _SellConfirmationScreenState extends State<SellConfirmationScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<SellBloc, SellState>(
       listener: (context, state) {
-        // safePrint(state.transaction);
-        // safePrint(state.status);
         if (state.status == SellStatus.choose) {
           if (choosing) {
             return;

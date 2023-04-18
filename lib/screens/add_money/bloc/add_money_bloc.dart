@@ -1,10 +1,7 @@
-import 'dart:async';
 import 'package:amplify_core/amplify_core.dart';
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../../models/Transaction.dart';
 import '../../../models/TransactionStatus.dart';
@@ -13,6 +10,8 @@ import '../../../models/User.dart';
 import '../../../models/Wallet.dart';
 import '../../../services/datastore_services.dart';
 import '../../../utils/loggs.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 part 'add_money_event.dart';
 part 'add_money_state.dart';
 

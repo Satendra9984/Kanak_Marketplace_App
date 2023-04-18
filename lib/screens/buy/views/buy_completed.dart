@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../models/Transaction.dart';
 import '../../../models/TransactionStatus.dart';
 import '../../../utils/app_constants.dart';
 import '../../../widgets/row_details_widget.dart';
-import '../bloc/buy_bloc.dart';
 
 class BuyCompletedScreen extends StatelessWidget {
   final bool backToHome;

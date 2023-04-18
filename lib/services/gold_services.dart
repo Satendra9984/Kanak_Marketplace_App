@@ -381,7 +381,6 @@ class GoldServices {
         "transactionId": "MD755616025611553150068217"
       }
     };
-
     return buyInfo['result']['data'];
   }
 
@@ -393,24 +392,28 @@ class GoldServices {
       required ExchangeRates rate}) async {
     SellInfo? info;
     final authToken = await LocalDBServices.getGPAccessToken();
-    await HttpServices.sendPostReq('sell', body: {
+    await HttpServices.sendPostReq('${_baseUrl}sell', body: {
       'uniqueId': user.id,
-      'mobileNumber': user.phone,
-      'lockPrice': int.parse(rate.gSell!),
+      'mobileNumber': user.phone!.substring(3),
+      'lockPrice': double.parse(rate.gSell!),
       'blockId': rate.blockId,
       'metalType': 'gold',
-      'quantity': transaction.amount,
+      'quantity': transaction.quantity,
       'merchantTransactionId': transaction.id,
-      'bankId': bankId
+      'userBank': {'userBankId': bankId}
     }, extraHeaders: {
       'Authorization': 'Bearer $authToken'
     }).then((res) {
+      safePrint(res);
       if (res == null) {
         return;
       }
       if (!res.containsKey('statusCode') || res['statusCode'] != 200) {
-        info = SellInfo.fromJson(res['result']['data']);
+        return;
       }
+      info = SellInfo.fromJson(res['result']['data']);
+    }).catchError((err) {
+      safePrint(err);
     });
     return info;
   }

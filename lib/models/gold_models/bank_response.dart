@@ -6,7 +6,7 @@ class UserBank {
   String accountNumber;
   String accountName;
   String ifscCode;
-  String status;
+  String? status;
 
   UserBank({
     required this.userBankId,
@@ -14,7 +14,7 @@ class UserBank {
     required this.accountNumber,
     required this.accountName,
     required this.ifscCode,
-    required this.status,
+    this.status,
   });
 
   factory UserBank.fromJson(Map<String, dynamic> json) {

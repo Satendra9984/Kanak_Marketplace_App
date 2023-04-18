@@ -167,14 +167,14 @@ class _UserBankRegistrationPageState
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter the IFSC Code';
-                      } else if (value.length < 11) {
+                      } else if (value.length != 11) {
                         return 'IFSC Code must be equal 11 character';
                       }
-                      // bool ifscValid =
-                      //     RegExp(r'/^[A-Za-z]{4}[0-9]{7}$/').hasMatch(value);
-                      // if (ifscValid == false) {
-                      //   return 'Please enter a valid IFSC Code';
-                      // }
+                      bool ifscValid =
+                          RegExp(r'^[A-Z]{4}[0-9]{7}$').hasMatch(value);
+                      if (ifscValid == false) {
+                        return 'Please enter a valid IFSC Code';
+                      }
                       return null;
                     },
                     style: TextStyle(
@@ -337,11 +337,11 @@ class _UserBankRegistrationPageState
 
   Future<void> submitUserBankDetails(User user) async {
     await GoldServices.createBankAccount(
-      accNo: '049152000000975',
-      accName: 'Vedant Gupta',
-      ifsc: 'YESB0000491',
-      userId: user.id
-    ).then((value) async {
+            accNo: '049152000000975',
+            accName: 'Vedant Gupta',
+            ifsc: 'YESB0000491',
+            userId: user.id)
+        .then((value) async {
       await GoldServices.createBankAccount(
         userId: user.id,
         accName: _accountNameCtrl.text,
@@ -357,6 +357,7 @@ class _UserBankRegistrationPageState
         await DatastoreServices.addBankAccount(
                 account: BankAccount(
                     userID: acc.uniqueId,
+                    status: acc.status == "active",
                     bankId: acc.userBankId,
                     accName: acc.accountName,
                     accNo: acc.accountNumber,
@@ -368,11 +369,13 @@ class _UserBankRegistrationPageState
             return;
           }
           ref.read(userProvider.notifier).addBankAccount(account: val);
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Successfully Added Bank Account!')));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Successfully Added Bank Account!')));
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const UserKYCPage()),
+              (route) => false);
         });
       });
     });
-    
   }
 }

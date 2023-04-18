@@ -2,9 +2,15 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tasvat/models/BankAccount.dart';
+import 'package:tasvat/models/gold_models/bank_response.dart';
+import 'package:tasvat/providers/gold_rate_provider.dart';
+import 'package:tasvat/providers/inhouse_account_provider.dart';
+import 'package:tasvat/screens/sell/bloc/sell_bloc.dart';
 import 'package:tasvat/screens/sell/views/sell_confirmation.dart';
+import 'package:tasvat/services/gold_services.dart';
 import '../../../providers/user_provider.dart';
 import '../../../utils/app_constants.dart';
 
@@ -86,9 +92,8 @@ class _SellAssetBodyState extends ConsumerState<SellAssetBody> {
 
   @override
   Widget build(BuildContext context) {
-    BankAccount? bank =
-        ref.watch(userProvider)!.bankAccounts?[0];
-        safePrint(bank);
+    BankAccount? bank = ref.watch(userProvider)!.bankAccounts?[0];
+    safePrint(bank);
     return Form(
       key: _formKey,
       child: Column(
@@ -445,7 +450,7 @@ class _SellAssetBodyState extends ConsumerState<SellAssetBody> {
               children: [
                 /// CASH BALANCE
                 Text(
-                  'Gold Balance : 20 grams',
+                  'Gold Balance : ${ref.read(userProvider)!.wallet!.gold_balance} grams',
                   style: TextStyle(
                     fontSize: body2,
                     color: text400,
@@ -454,21 +459,45 @@ class _SellAssetBodyState extends ConsumerState<SellAssetBody> {
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     // PROCEED TO BUY
                     closeKeyboard(context);
                     if (_formKey.currentState != null &&
                         _formKey.currentState!.validate() &&
                         bank != null) {
-                      // PROCEED TO CONFIRMATION SCREEN
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (ctx) => SellConfirmationScreen(
-                            quantity: _qtyController.text,
+                      await ref
+                          .read(goldRateProvider.notifier)
+                          .updateRates()
+                          .then((rate) {
+                        final user = ref.read(userProvider);
+                        safePrint(user!.bankAccounts![0]);
+                        context.read<SellBloc>().add(SellConfirmEvent(
+                                rates: ref.read(goldRateProvider),
+                                quantity: double.parse(_qtyController.text),
+                                user: user,
+                                banks: [
+                                  ref.read(inhouseAccountProvider)!,
+                                  ...user.bankAccounts!
+                                      .map((acc) => UserBank.fromJson({
+                                            'userBankId': acc.bankId,
+                                            'uniqueId': acc.userID,
+                                            'accountNumber': acc.accNo,
+                                            'accountName': acc.accName,
+                                            'ifscCode': acc.ifsc,
+                                            'status': acc.status
+                                          }))
+                                      .toList()
+                                ]));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) => SellConfirmationScreen(
+                              quantity: _qtyController.text,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      });
+                      // PROCEED TO CONFIRMATION SCREEN
                     }
                   },
                   style: ElevatedButton.styleFrom(

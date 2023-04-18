@@ -77,7 +77,7 @@ class SellBloc extends Bloc<SellEvent, SellState> {
     });
 
     on<PaymentMethodChosen>((event, emit) async {
-      emit(state.copyWith(chosenBank: event.chosen));
+      emit(state.copyWith(chosenBank: event.chosen, status: SellStatus.initial));
     });
 
     on<PendingTransactionAdded>((event, emit) async {

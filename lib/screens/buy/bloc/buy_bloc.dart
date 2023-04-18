@@ -18,6 +18,7 @@ class BuyBloc extends Bloc<BuyEvent, BuyState> {
   late Razorpay _razorpay;
   late Timer _timer;
   late User _user;
+  
 
   BuyBloc() : super(const BuyState(status: BuyStatus.initial, method: PaymentMethod.wallet)) {
     on<ResetEvent>((event, emit) {

@@ -77,10 +77,12 @@ class SellBloc extends Bloc<SellEvent, SellState> {
     });
 
     on<PaymentMethodChosen>((event, emit) async {
-      emit(state.copyWith(chosenBank: event.chosen, status: SellStatus.initial));
+      emit(
+          state.copyWith(chosenBank: event.chosen, status: SellStatus.initial));
     });
 
     on<PendingTransactionAdded>((event, emit) async {
+      logWithColor(message: 'PENDING TRANSACTION ADDED', color: 'green');
       await DatastoreServices.updateWalletGoldBalance(
               wallet: _user.wallet!,
               goldBalance:
@@ -95,6 +97,7 @@ class SellBloc extends Bloc<SellEvent, SellState> {
     });
 
     on<GoldDeductedEvent>((event, emit) async {
+      logWithColor(message: 'GOLD DEDUCTED FROM WALLET', color: 'green');
       await GoldServices.sellGold(
               user: _user,
               bankId: state.banks![state.chosenBank!].userBankId,
@@ -111,6 +114,7 @@ class SellBloc extends Bloc<SellEvent, SellState> {
     });
 
     on<SellPurchaseSuccess>((event, emit) async {
+      logWithColor(message: 'SUCCESSFUL GOLD SELL', color: 'green');
       emit(state.copyWith(
           transaction: state.transaction!.copyWith(
         gpTxId: event.info.transactionId,
@@ -124,6 +128,10 @@ class SellBloc extends Bloc<SellEvent, SellState> {
           if (updatedWallet == null) {
             return;
           }
+          _user = _user.copyWith(wallet: updatedWallet);
+          emit(state.copyWith(
+              transaction:
+                  state.transaction!.copyWith(balance: updatedWallet.balance)));
           add(MoneyAddedEvent());
         });
       } else {
@@ -138,19 +146,20 @@ class SellBloc extends Bloc<SellEvent, SellState> {
             balance: state.transaction!.balance,
             gold_balance: state.transaction!.gold_balance,
           ));
+          logWithColor(message: 'SELL SUCCESS', color: 'green');
           emit(state.copyWith(status: SellStatus.success));
         });
       }
     });
     on<MoneyAddedEvent>((event, emit) async {
-      await DatastoreServices.updateWalletBalance(
-        wallet: _user.wallet!,
-        balance: state.transaction!.balance!,
-      ).then((wallet) {
-        if (wallet == null) {
+      logWithColor(message: 'MONEY ADDED EVENT', color: 'green');
+      await DatastoreServices.markSuccessfulPurchase(
+        transaction: state.transaction!,
+      ).then((tx) {
+        if (tx == null) {
           return;
         }
-        _user = _user.copyWith(wallet: wallet);
+        logWithColor(message: 'SELL SUCCESS', color: 'green');
         emit(state.copyWith(status: SellStatus.success));
       });
     });
@@ -158,6 +167,7 @@ class SellBloc extends Bloc<SellEvent, SellState> {
       await DatastoreServices.markFailedPurchase(
               transaction: state.transaction!)
           .then((tx) {
+        logWithColor(message: 'SELL FAILURE', color: 'red');
         emit(state.copyWith(status: SellStatus.failed));
       });
     });

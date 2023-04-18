@@ -19,6 +19,13 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "function": {
+    "getdailygoldrates": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
     "ratesync": {
       "Arn": "string",
       "CloudWatchEventRule": "string",
@@ -26,6 +33,9 @@ export type AmplifyDependentResourcesAttributes = {
       "LambdaExecutionRoleArn": "string",
       "Name": "string",
       "Region": "string"
+    },
+    "tasvattasvatlamdalayer": {
+      "Arn": "string"
     }
   },
   "storage": {

@@ -51,6 +51,20 @@
     }
   },
   "function": {
+    "getdailygoldrates": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "tasvattasvatlamdalayer"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "ratesync": {
       "build": true,
       "dependsOn": [
@@ -66,9 +80,30 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "tasvattasvatlamdalayer": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "LambdaLayer"
     }
   },
   "parameters": {
+    "AMPLIFY_function_getdailygoldrates_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getdailygoldrates"
+        }
+      ]
+    },
+    "AMPLIFY_function_getdailygoldrates_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "getdailygoldrates"
+        }
+      ]
+    },
     "AMPLIFY_function_ratesync_deploymentBucketName": {
       "usedBy": [
         {
@@ -98,6 +133,22 @@
         {
           "category": "function",
           "resourceName": "ratesync"
+        }
+      ]
+    },
+    "AMPLIFY_function_tasvattasvatlamdalayer_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tasvattasvatlamdalayer"
+        }
+      ]
+    },
+    "AMPLIFY_function_tasvattasvatlamdalayer_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "tasvattasvatlamdalayer"
         }
       ]
     }

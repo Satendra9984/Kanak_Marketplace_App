@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_swipe_button/flutter_swipe_button.dart';
 import 'package:tasvat/providers/gold_rate_provider.dart';
 import 'package:tasvat/providers/user_provider.dart';
 import 'package:tasvat/screens/buy/bloc/buy_bloc.dart';
@@ -53,7 +54,8 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
     }
   }
 
-  void _addAmountFromOptions({required String amountS}) {
+  void _addAmountFromOptions(
+      {required String amountS, required FormFieldState state}) {
     // debugPrint(_amountController.text);
     double amount = 0.0;
     if (_amountController.text.isNotEmpty) {
@@ -63,9 +65,11 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
     // double totalA = amount * currentPrice;
     _amountController.text = amount.toStringAsFixed(4);
     _setValues(goldRate: widget.goldApiRateData['current_price']);
+    state.didChangeDependencies();
   }
 
-  void _addQuantityFromOptions({required String qtyS}) {
+  void _addQuantityFromOptions(
+      {required String qtyS, required FormFieldState state}) {
     double qty = 0.0;
     if (_qtyController.text.isNotEmpty) {
       qty = double.parse(_qtyController.text);
@@ -75,6 +79,7 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
     _qtyController.text = qty.toStringAsFixed(4);
     _setValues(
         goldRate: widget.goldApiRateData['current_price'], byAmount: false);
+    state.didChangeDependencies();
   }
 
   @override
@@ -97,14 +102,6 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
           children: [
             Column(
               children: [
-                // const SizedBox(height: 25),
-                // ClipRRect(
-                //   child: Image.asset(
-                //     'assets/images/coin.png',
-                //     height: 80,
-                //     width: 60,
-                //   ),
-                // ),
                 const GoldRateGraph(),
                 const SizedBox(height: 25),
                 Text(
@@ -224,18 +221,21 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
                               children: [
                                 TextButton(
                                   onPressed: () {
-                                    _addAmountFromOptions(amountS: '1000.0');
+                                    _addAmountFromOptions(
+                                        amountS: '1000.0', state: formState);
                                   },
                                   child: Text('+1000', style: _optionsStyle),
                                 ),
                                 TextButton(
                                     onPressed: () {
-                                      _addAmountFromOptions(amountS: '5000.0');
+                                      _addAmountFromOptions(
+                                          amountS: '5000.0', state: formState);
                                     },
                                     child: Text('+5000', style: _optionsStyle)),
                                 TextButton(
                                     onPressed: () {
-                                      _addAmountFromOptions(amountS: '10000.0');
+                                      _addAmountFromOptions(
+                                          amountS: '10000.0', state: formState);
                                     },
                                     child:
                                         Text('+10000', style: _optionsStyle)),
@@ -367,22 +367,26 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
                               children: [
                                 TextButton(
                                     onPressed: () {
-                                      _addQuantityFromOptions(qtyS: '1');
+                                      _addQuantityFromOptions(
+                                          qtyS: '1', state: formState);
                                     },
                                     child: Text('+1gm', style: _optionsStyle)),
                                 TextButton(
                                     onPressed: () {
-                                      _addQuantityFromOptions(qtyS: '5');
+                                      _addQuantityFromOptions(
+                                          qtyS: '5', state: formState);
                                     },
                                     child: Text('+5', style: _optionsStyle)),
                                 TextButton(
                                     onPressed: () {
-                                      _addQuantityFromOptions(qtyS: '10');
+                                      _addQuantityFromOptions(
+                                          qtyS: '10', state: formState);
                                     },
                                     child: Text('+10', style: _optionsStyle)),
                                 TextButton(
                                     onPressed: () {
-                                      _addQuantityFromOptions(qtyS: '100');
+                                      _addQuantityFromOptions(
+                                          qtyS: '100', state: formState);
                                     },
                                     child: Text('+100', style: _optionsStyle)),
                               ],
@@ -416,60 +420,107 @@ class _BuyAssetBodyState extends ConsumerState<BuyAssetBody>
                 children: [
                   /// CASH BALANCE
                   Text(
-                    'Cash Balance: ${user?.wallet?.balance} ₹',
+                    'Cash Balance : ${user?.wallet?.balance ?? '--'} ₹',
                     style: TextStyle(
                       fontSize: body2,
                       color: text300,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () async {
-                      // PROCEED TO BUY
-                      closeKeyboard(context);
-                      if (_formKey.currentState != null &&
-                          _formKey.currentState!.validate()) {
-                        // PROCEED TO CONFIRMATION SCREEN
-
-                        await ref
-                            .read(goldRateProvider.notifier)
-                            .updateRates()
-                            .then(
-                          (value) {
-                            final rate = ref.read(goldRateProvider);
-                            debugPrint(rate.gBuy);
-                            context.read<BuyBloc>().add(RateConfirmEvent(
-                                user: ref.read(userProvider)!,
-                                exchangeRates: rate,
-                                quantity: double.parse(_qtyController.text)));
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (ctx) => const BuyConfirmationScreen(),
-                              ),
-                            );
-                          },
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                  const SizedBox(height: 5),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: SwipeButton.expand(
+                      thumb: const Icon(
+                        Icons.double_arrow_rounded,
+                        color: Colors.green,
                       ),
-                      minimumSize: const Size(double.infinity, 50.0),
-                      maximumSize: const Size(double.infinity, 60.0),
-                      backgroundColor: accent1,
-                    ),
-                    child: Text(
-                      'Continue',
-                      style: TextStyle(
-                        color: background,
-                        fontSize: heading2,
-                        fontWeight: FontWeight.w600,
+                      activeThumbColor: accent2,
+                      activeTrackColor: accentBG,
+                      onSwipe: () async {
+                        closeKeyboard(context);
+                        if (_formKey.currentState != null &&
+                            _formKey.currentState!.validate()) {
+                          // PROCEED TO CONFIRMATION SCREEN
+
+                          await ref
+                              .read(goldRateProvider.notifier)
+                              .updateRates()
+                              .then(
+                            (value) {
+                              final rate = ref.read(goldRateProvider);
+                              debugPrint(rate.gBuy);
+                              context.read<BuyBloc>().add(RateConfirmEvent(
+                                  user: ref.read(userProvider)!,
+                                  exchangeRates: rate,
+                                  quantity: double.parse(_qtyController.text)));
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (ctx) =>
+                                      const BuyConfirmationScreen(),
+                                ),
+                              );
+                            },
+                          );
+                        }
+                      },
+                      child: Text(
+                        "Continue ...",
+                        style: TextStyle(
+                          color: background,
+                          fontSize: body1,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
+                  // ElevatedButton(
+                  //   onPressed: () async {
+                  //     // PROCEED TO BUY
+                  //     closeKeyboard(context);
+                  //     if (_formKey.currentState != null &&
+                  //         _formKey.currentState!.validate()) {
+                  //       // PROCEED TO CONFIRMATION SCREEN
+                  //
+                  //       await ref
+                  //           .read(goldRateProvider.notifier)
+                  //           .updateRates()
+                  //           .then(
+                  //         (value) {
+                  //           final rate = ref.read(goldRateProvider);
+                  //           debugPrint(rate.gBuy);
+                  //           context.read<BuyBloc>().add(RateConfirmEvent(
+                  //               user: ref.read(userProvider)!,
+                  //               exchangeRates: rate,
+                  //               quantity: double.parse(_qtyController.text)));
+                  //           Navigator.push(
+                  //             context,
+                  //             MaterialPageRoute(
+                  //               builder: (ctx) => const BuyConfirmationScreen(),
+                  //             ),
+                  //           );
+                  //         },
+                  //       );
+                  //     }
+                  //   },
+                  //   style: ElevatedButton.styleFrom(
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(15),
+                  //     ),
+                  //     minimumSize: const Size(double.infinity, 50.0),
+                  //     maximumSize: const Size(double.infinity, 60.0),
+                  //     backgroundColor: accent1,
+                  //   ),
+                  //   child: Text(
+                  //     'Continue',
+                  //     style: TextStyle(
+                  //       color: background,
+                  //       fontSize: heading2,
+                  //       fontWeight: FontWeight.w600,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

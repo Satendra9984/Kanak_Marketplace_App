@@ -64,6 +64,10 @@ class UserNotifier extends StateNotifier<User?> {
       state = state!.copyWith(bankAccounts: bankList);
     }
   }
+
+  void updateWalletBalance({required Wallet wallet}) {
+    state = state?.copyWith(wallet: wallet);
+  }
 }
 
 final userProvider =

@@ -506,6 +506,7 @@ class DatastoreServices {
         return;
       }
       dynamic banksData = jsonDecode(banks.data!);
+      debugPrint('addresses list: ----------> $banksData');
 
       if (banksData != null) {
         List<dynamic> bankList = (banksData!['listBankAccounts']['items']);
@@ -537,8 +538,6 @@ class DatastoreServices {
             pincode
             status
             userID
-            updatedAt
-            createdAt
           }
         }
     }""";
@@ -557,9 +556,9 @@ class DatastoreServices {
         return;
       }
       dynamic addressData = jsonDecode(addresses.data!);
-
+      debugPrint('addresses list: ----------> $addressData');
       if (addressData != null) {
-        List<dynamic> bankList = (addressData!['listBankAccounts']['items']);
+        List<dynamic> bankList = (addressData!['listAddresses']['items']);
         List<Address> accounts = [];
         for (dynamic acc in bankList) {
           if (acc['_deleted'] == null) {
@@ -641,8 +640,7 @@ class DatastoreServices {
 
       /// add address list
       List<Address> addresses = await getAddressList(id);
-      User newAUser = user.data!.copyWith(address: addresses);
-      fetchedUser = newAUser;
+      fetchedUser = fetchedUser!.copyWith(address: addresses);
       fetchedUser;
 
       /// TODO: Add wallet data
@@ -952,8 +950,9 @@ class DatastoreServices {
   }
 
   /// <---------------------------------------- Delete ----------------------------------->
-  /// 
-  static Future<bool?> deleteUserBank({required BankAccount bankAccount}) async {
+  ///
+  static Future<bool?> deleteUserBank(
+      {required BankAccount bankAccount}) async {
     bool? deleted;
     await getBankAccountVersion(bankId: bankAccount.id).then((version) async {
       safePrint(version);
@@ -966,10 +965,7 @@ class DatastoreServices {
           }
         }
       """;
-      final variables = {
-        "id": bankAccount.id,
-        "version": version
-      };
+      final variables = {"id": bankAccount.id, "version": version};
       final response = await _instance
           .mutate(
             request: GraphQLRequest<String>(

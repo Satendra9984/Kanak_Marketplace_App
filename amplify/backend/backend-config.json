@@ -112,22 +112,6 @@
         }
       ]
     },
-    "AMPLIFY_function_ratesync_email": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "ratesync"
-        }
-      ]
-    },
-    "AMPLIFY_function_ratesync_password": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "ratesync"
-        }
-      ]
-    },
     "AMPLIFY_function_ratesync_s3Key": {
       "usedBy": [
         {

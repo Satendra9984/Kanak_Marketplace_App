@@ -9,8 +9,7 @@
       "UnauthRoleName": "amplify-tasvat-staging-81356-unauthRole",
       "StackName": "amplify-tasvat-staging-81356",
       "StackId": "arn:aws:cloudformation:ap-south-1:640586525302:stack/amplify-tasvat-staging-81356/069ba160-ae9b-11ed-be0e-069bc1da6864",
-      "AmplifyAppId": "d471l36myb8f7",
-      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-tasvat-staging-81356-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+      "AmplifyAppId": "d471l36myb8f7"
     },
     "categories": {
       "auth": {
@@ -19,19 +18,14 @@
       "storage": {
         "tasvatdb": {}
       },
-      "api": {
-        "Tasvat": {}
-      },
       "function": {
-        "ratesync": {
-          "deploymentBucketName": "amplify-tasvat-staging-81356-deployment",
-          "s3Key": "amplify-builds/ratesync-7666694854637a41656c-build.zip",
-          "email": "subhadeepchowdhury41@gmail.com",
-          "password": "_K/PT_E~X_3[%AS1"
-        },
         "getdailygoldrates": {
           "deploymentBucketName": "amplify-tasvat-staging-81356-deployment",
           "s3Key": "amplify-builds/getdailygoldrates-6c326e646756536a354a-build.zip"
+        },
+        "ratesync": {
+          "deploymentBucketName": "amplify-tasvat-staging-81356-deployment",
+          "s3Key": "amplify-builds/ratesync-7666694854637a41656c-build.zip"
         },
         "tasvattasvatlamdalayer": {
           "deploymentBucketName": "amplify-tasvat-staging-81356-deployment",

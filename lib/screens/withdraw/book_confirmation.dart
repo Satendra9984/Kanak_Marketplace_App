@@ -85,6 +85,7 @@ class BookConfirmationScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 5),
+                Icon(Icons.wallet),
 
                 /// Total
                 Container(

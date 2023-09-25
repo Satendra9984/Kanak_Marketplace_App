@@ -30,7 +30,7 @@ class _WithdrawMoneyScreenState extends ConsumerState<WithdrawMoneyScreen> {
     // TODO: TRANSACTION MODEL
     Transaction transaction = Transaction(
       userId: user.id,
-      type: TransactionType.,
+      type: TransactionType.WITHDRAW_MONEY,
       balance: balance - _availableAmount,
     );
 
